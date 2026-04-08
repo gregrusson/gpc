@@ -24,6 +24,7 @@
 # Ignore drupal core (if not versioning drupal sources)
 /web/vendor
 /web/core
+/web/libraries
 /web/modules/README.txt
 /web/modules/contrib
 /web/profiles/README.txt
@@ -32,6 +33,7 @@
 /web/sites/example.settings.local.php
 /web/sites/example.sites.php
 /web/sites/README.txt
+/web/sites/simpletest/
 /web/themes/README.txt
 /web/themes/contrib
 /web/.csslintrc
@@ -59,7 +61,9 @@
 /composer
 /robo.phar
 /robo
+/scritps
 /drush.phar
 /drush
 /drupal.phar
 /drupal
+/.idea
