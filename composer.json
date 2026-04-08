@@ -20,12 +20,6 @@
         "drupal/core-project-message": "^11.3",
         "drupal/core-recipe-unpack": "^11.3",
         "drupal/core-recommended": "^11.3",
-        "drupal/gin": "^5.0",
-        "drupal/gin_login": "^2.1",
-        "drupal/masquerade": "^2.1",
-        "drupal/module_filter": "^5.0",
-        "drupal/redirect_after_login": "^3.0",
-        "drupal/social_auth_google": "^4.0",
         "drush/drush": "^13.7"
     },
     "conflict": {
@@ -108,6 +102,12 @@
         }
     },
     "require-dev": {
-        "drupal/core-dev": "^11"
+        "drupal/core-dev": "^11",
+        "drupal/gin": "^5.0",
+        "drupal/gin_login": "^2.1",
+        "drupal/masquerade": "^2.1",
+        "drupal/module_filter": "^5.0",
+        "drupal/redirect_after_login": "^3.0",
+        "drupal/social_auth_google": "^4.0"
     }
 }

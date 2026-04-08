@@ -16,7 +16,8 @@
 - To run the full PHPUnit suite:
   - `ddev exec ./vendor/bin/phpunit -c phpunit.xml`
 - To run tests for a specific custom module:
-  - `ddev exec ./vendor/bin/phpunit -c phpunit.xml web/modules/custom/<module_name>/tests`
+  - `ddev exec ./vendor/bin/phpunit -c phpunit.xml web/modules/custom/gpc/tests`
+  - Replace `gpc` with another module name only if you are targeting a different custom module.
 
 ## Browser test prerequisites
 - Ensure `web/sites/simpletest` exists before browser-based Drupal tests.
