@@ -41,13 +41,13 @@ class RecipeListBuilder extends EntityListBuilder {
   public function buildHeader() {
     return [
       'label' => $this->t('Title'),
-      'machine_name' => $this->t('Machine name'),
       'caliber' => $this->t('Caliber'),
       'bullet_component' => $this->t('Bullet'),
       'powder_component' => $this->t('Powder'),
       'powder_charge_weight' => $this->t('Charge'),
+      'overall_length' => $this->t('OAL'),
       'estimated_round_cost' => $this->t('Cost'),
-      'changed' => $this->t('Updated'),
+      'changed' => $this->t('Changed'),
     ] + parent::buildHeader();
   }
 
@@ -56,11 +56,11 @@ class RecipeListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
-    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['bullet_component'] = $entity->get('bullet_component')->first()?->entity?->label() ?? '';
     $row['powder_component'] = $entity->get('powder_component')->first()?->entity?->label() ?? '';
     $row['powder_charge_weight'] = $entity->get('powder_charge_weight')->value ?? '';
+    $row['overall_length'] = $entity->get('overall_length')->value ?? '';
     $row['estimated_round_cost'] = $entity->get('estimated_round_cost')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
