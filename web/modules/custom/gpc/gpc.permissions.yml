@@ -13,3 +13,7 @@ administer gpc recipes:
 administer gpc batches:
   title: 'Administer batches'
   description: 'Create, edit, and delete batch records.'
+
+administer gpc firearms:
+  title: 'Administer firearms'
+  description: 'Create, edit, and delete firearm records.'
