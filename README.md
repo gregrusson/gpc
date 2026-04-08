@@ -15,6 +15,8 @@ The current foundation is the custom Drupal module `gpc`, which already implemen
 - Recipe
 - Batch
 
+Firearm is the next planned entity.
+
 Current implementation goals:
 
 - Drupal 11 custom module architecture
