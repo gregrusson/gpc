@@ -1,0 +1,6 @@
+gpc.caliber.collection:
+  title: 'Calibers'
+  description: 'Manage caliber reference records.'
+  route_name: entity.gpc_caliber.collection
+  parent: system.admin_content
+  weight: 10

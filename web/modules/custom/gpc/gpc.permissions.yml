@@ -1,0 +1,3 @@
+administer gpc calibers:
+  title: 'Administer calibers'
+  description: 'Create, edit, and delete caliber records.'

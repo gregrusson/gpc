@@ -1,0 +1,5 @@
+gpc.caliber.add:
+  route_name: entity.gpc_caliber.add_form
+  title: 'Add caliber'
+  appears_on:
+    - entity.gpc_caliber.collection

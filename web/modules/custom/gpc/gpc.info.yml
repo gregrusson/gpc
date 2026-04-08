@@ -1,0 +1,5 @@
+name: GPC
+type: module
+description: 'Core domain entities for GPC.'
+package: GPC
+core_version_requirement: ^11
