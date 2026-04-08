@@ -9,3 +9,7 @@ administer gpc components:
 administer gpc recipes:
   title: 'Administer recipes'
   description: 'Create, edit, and delete recipe records.'
+
+administer gpc batches:
+  title: 'Administer batches'
+  description: 'Create, edit, and delete batch records.'

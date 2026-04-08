@@ -18,3 +18,10 @@ gpc.recipe.collection:
   route_name: entity.gpc_recipe.collection
   parent: system.admin_content
   weight: 12
+
+gpc.batch.collection:
+  title: 'Batches'
+  description: 'Manage produced batch records.'
+  route_name: entity.gpc_batch.collection
+  parent: system.admin_content
+  weight: 13

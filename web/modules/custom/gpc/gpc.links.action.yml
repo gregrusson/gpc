@@ -15,3 +15,9 @@ gpc.recipe.add:
   title: 'Add recipe'
   appears_on:
     - entity.gpc_recipe.collection
+
+gpc.batch.add:
+  route_name: entity.gpc_batch.add_form
+  title: 'Add batch'
+  appears_on:
+    - entity.gpc_batch.collection
