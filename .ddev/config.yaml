@@ -1,4 +1,4 @@
-name: gunners-project-companion
+name: gpc
 type: drupal
 docroot: web
 php_version: "8.4"

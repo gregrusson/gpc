@@ -1,0 +1,27 @@
+gpc.caliber.collection:
+  title: 'Calibers'
+  description: 'Manage caliber reference records.'
+  route_name: entity.gpc_caliber.collection
+  parent: system.admin_content
+  weight: 10
+
+gpc.component.collection:
+  title: 'Components'
+  description: 'Manage reloading component definitions.'
+  route_name: entity.gpc_component.collection
+  parent: system.admin_content
+  weight: 11
+
+gpc.recipe.collection:
+  title: 'Recipes'
+  description: 'Manage reloading recipe definitions.'
+  route_name: entity.gpc_recipe.collection
+  parent: system.admin_content
+  weight: 12
+
+gpc.batch.collection:
+  title: 'Batches'
+  description: 'Manage produced batch records.'
+  route_name: entity.gpc_batch.collection
+  parent: system.admin_content
+  weight: 13

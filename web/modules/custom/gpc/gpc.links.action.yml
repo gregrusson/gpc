@@ -1,0 +1,23 @@
+gpc.caliber.add:
+  route_name: entity.gpc_caliber.add_form
+  title: 'Add caliber'
+  appears_on:
+    - entity.gpc_caliber.collection
+
+gpc.component.add:
+  route_name: entity.gpc_component.add_form
+  title: 'Add component'
+  appears_on:
+    - entity.gpc_component.collection
+
+gpc.recipe.add:
+  route_name: entity.gpc_recipe.add_form
+  title: 'Add recipe'
+  appears_on:
+    - entity.gpc_recipe.collection
+
+gpc.batch.add:
+  route_name: entity.gpc_batch.add_form
+  title: 'Add batch'
+  appears_on:
+    - entity.gpc_batch.collection
