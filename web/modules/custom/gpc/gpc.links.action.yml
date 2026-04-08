@@ -3,3 +3,9 @@ gpc.caliber.add:
   title: 'Add caliber'
   appears_on:
     - entity.gpc_caliber.collection
+
+gpc.component.add:
+  route_name: entity.gpc_component.add_form
+  title: 'Add component'
+  appears_on:
+    - entity.gpc_component.collection

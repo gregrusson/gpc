@@ -4,3 +4,10 @@ gpc.caliber.collection:
   route_name: entity.gpc_caliber.collection
   parent: system.admin_content
   weight: 10
+
+gpc.component.collection:
+  title: 'Components'
+  description: 'Manage reloading component definitions.'
+  route_name: entity.gpc_component.collection
+  parent: system.admin_content
+  weight: 11

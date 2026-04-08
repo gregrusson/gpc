@@ -1,4 +1,4 @@
-name: GPC
+name: Gunners Project Companion
 type: module
 description: 'Core domain entities for GPC.'
 package: GPC
