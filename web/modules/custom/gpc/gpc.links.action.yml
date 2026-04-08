@@ -9,3 +9,9 @@ gpc.component.add:
   title: 'Add component'
   appears_on:
     - entity.gpc_component.collection
+
+gpc.recipe.add:
+  route_name: entity.gpc_recipe.add_form
+  title: 'Add recipe'
+  appears_on:
+    - entity.gpc_recipe.collection

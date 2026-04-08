@@ -11,3 +11,10 @@ gpc.component.collection:
   route_name: entity.gpc_component.collection
   parent: system.admin_content
   weight: 11
+
+gpc.recipe.collection:
+  title: 'Recipes'
+  description: 'Manage reloading recipe definitions.'
+  route_name: entity.gpc_recipe.collection
+  parent: system.admin_content
+  weight: 12

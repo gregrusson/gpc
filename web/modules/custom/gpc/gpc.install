@@ -28,3 +28,23 @@ function gpc_update_10001(): void {
   $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
 
+/**
+ * Install the Recipe entity schema for existing sites.
+ */
+function gpc_update_10002(): void {
+  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}

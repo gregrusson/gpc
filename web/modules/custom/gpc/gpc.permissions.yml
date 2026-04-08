@@ -5,3 +5,7 @@ administer gpc calibers:
 administer gpc components:
   title: 'Administer components'
   description: 'Create, edit, and delete component records.'
+
+administer gpc recipes:
+  title: 'Administer recipes'
+  description: 'Create, edit, and delete recipe records.'
