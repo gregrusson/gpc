@@ -74,12 +74,6 @@ class Firearm extends ContentEntityBase implements EntityChangedInterface {
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
     }
-    elseif (isset($this->original) && $this->original instanceof self) {
-      $original_machine_name = $this->original->get('machine_name')->value ?? NULL;
-      if ($original_machine_name !== NULL) {
-        $this->set('machine_name', $original_machine_name);
-      }
-    }
 
     $this->setChangedTime($request_time);
   }
@@ -101,13 +95,6 @@ class Firearm extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('The human-readable name of the firearm.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
-
-    $fields['machine_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Machine name'))
-      ->setDescription(t('A unique immutable internal identifier.'))
-      ->setRequired(TRUE)
-      ->setSetting('max_length', 128)
-      ->setSetting('is_ascii', TRUE);
 
     $fields['caliber'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Caliber'))

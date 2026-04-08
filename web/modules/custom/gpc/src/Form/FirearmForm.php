@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\Form;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\gpc\Entity\Firearm;
 
 /**
  * Form controller for firearm add/edit forms.
@@ -30,30 +28,16 @@ class FirearmForm extends EntityForm {
       '#description' => $this->t('The human-readable name shown in admin screens.'),
     ];
 
-    if ($entity->isNew()) {
-      $form['machine_name'] = [
-        '#type' => 'machine_name',
-        '#title' => $this->t('Machine name'),
-        '#default_value' => $entity->get('machine_name')->value ?? '',
-        '#required' => TRUE,
-        '#maxlength' => 128,
-        '#machine_name' => [
-          'exists' => [static::class, 'machineNameExists'],
-          'source' => ['label'],
-        ],
-        '#description' => $this->t('A unique internal identifier.'),
-      ];
-    }
-    else {
-      $form['machine_name'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Machine name'),
-        '#markup' => $entity->get('machine_name')->value ?? '',
-        '#description' => $this->t('This value is fixed after creation.'),
-      ];
-    }
-
-    $form['caliber'] = $this->buildAutocompleteField($entity, 'caliber', $this->t('Caliber'), 'gpc_caliber', TRUE);
+    $form['caliber'] = [
+      '#type' => 'entity_autocomplete',
+      '#title' => $this->t('Caliber'),
+      '#target_type' => 'gpc_caliber',
+      '#default_value' => $entity->get('caliber')->entity ?? NULL,
+      '#required' => TRUE,
+      '#selection_handler' => 'default',
+      '#selection_settings' => [],
+      '#description' => $this->t('Select the caliber associated with this firearm.'),
+    ];
 
     $form['manufacturer'] = [
       '#type' => 'textfield',
@@ -105,38 +89,6 @@ class FirearmForm extends EntityForm {
     $form_state->setRedirectUrl($entity->toUrl('collection'));
 
     return $status;
-  }
-
-  /**
-   * Builds one autocomplete field.
-   */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string $title, string $target_type, bool $required): array {
-    $default_value = NULL;
-    $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
-    if ($target_id) {
-      $default_value = \Drupal::entityTypeManager()->getStorage($target_type)->load($target_id);
-    }
-
-    return [
-      '#type' => 'entity_autocomplete',
-      '#title' => $title,
-      '#target_type' => $target_type,
-      '#default_value' => $default_value,
-      '#required' => $required,
-      '#selection_handler' => 'default',
-      '#selection_settings' => [],
-      '#description' => $required
-        ? $this->t('Select a referenced entity.')
-        : $this->t('Optional reference.'),
-    ];
-  }
-
-  /**
-   * Checks whether a machine name already exists.
-   */
-  public static function machineNameExists(string $machine_name): bool {
-    $storage = \Drupal::entityTypeManager()->getStorage('gpc_firearm');
-    return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
   }
 
 }

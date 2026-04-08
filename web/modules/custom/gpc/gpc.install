@@ -194,3 +194,36 @@ function gpc_update_10008(): void {
   $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions('gpc_firearm');
   $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Rebuild the Firearm entity schema after removing the machine name field.
+ */
+function gpc_update_10009(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+
+  $change_list = $update_manager->getChangeList();
+  if (empty($change_list['gpc_firearm']['entity_type']) && empty($change_list['gpc_firearm']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_firearm');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $base_table = $entity_type->getBaseTable();
+  if ($schema->tableExists($base_table)) {
+    $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
+    if ($row_count > 0) {
+      throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+    }
+
+    $schema->dropTable($base_table);
+  }
+
+  $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions('gpc_firearm');
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}

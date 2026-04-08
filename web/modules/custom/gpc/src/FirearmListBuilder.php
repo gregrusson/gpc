@@ -40,12 +40,11 @@ class FirearmListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
-      'machine_name' => $this->t('Machine name'),
+      'label' => $this->t('Label'),
       'caliber' => $this->t('Caliber'),
       'manufacturer' => $this->t('Manufacturer'),
       'model' => $this->t('Model'),
-      'changed' => $this->t('Updated'),
+      'changed' => $this->t('Changed'),
     ] + parent::buildHeader();
   }
 
@@ -54,7 +53,6 @@ class FirearmListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
-    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
     $row['model'] = $entity->get('model')->value ?? '';
