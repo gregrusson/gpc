@@ -25,3 +25,10 @@ gpc.batch.collection:
   route_name: entity.gpc_batch.collection
   parent: system.admin_content
   weight: 13
+
+gpc.firearm.collection:
+  title: 'Firearms'
+  description: 'Manage firearm records.'
+  route_name: entity.gpc_firearm.collection
+  parent: system.admin_content
+  weight: 14

@@ -21,3 +21,9 @@ gpc.batch.add:
   title: 'Add batch'
   appears_on:
     - entity.gpc_batch.collection
+
+gpc.firearm.add:
+  route_name: entity.gpc_firearm.add_form
+  title: 'Add firearm'
+  appears_on:
+    - entity.gpc_firearm.collection
