@@ -7,7 +7,6 @@ namespace Drupal\gpc\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\gpc\Entity\Batch;
 
 /**
  * Form controller for batch add/edit forms.
@@ -31,24 +30,24 @@ class BatchForm extends EntityForm {
     ];
 
     if ($entity->isNew()) {
-      $form['id'] = [
+      $form['machine_name'] = [
         '#type' => 'machine_name',
         '#title' => $this->t('Machine name'),
-        '#default_value' => $entity->id() ?? '',
+        '#default_value' => $entity->get('machine_name')->value ?? '',
         '#required' => TRUE,
         '#maxlength' => 128,
         '#machine_name' => [
-          'exists' => [Batch::class, 'load'],
+          'exists' => [static::class, 'machineNameExists'],
           'source' => ['label'],
         ],
         '#description' => $this->t('A unique internal identifier.'),
       ];
     }
     else {
-      $form['id'] = [
+      $form['machine_name'] = [
         '#type' => 'item',
         '#title' => $this->t('Machine name'),
-        '#markup' => $entity->id(),
+        '#markup' => $entity->get('machine_name')->value ?? '',
         '#description' => $this->t('This value is fixed after creation.'),
       ];
     }
@@ -143,6 +142,14 @@ class BatchForm extends EntityForm {
         ? $this->t('Select a referenced entity.')
         : $this->t('Optional reference.'),
     ];
+  }
+
+  /**
+   * Checks whether a machine name already exists.
+   */
+  public static function machineNameExists(string $machine_name): bool {
+    $storage = \Drupal::entityTypeManager()->getStorage('gpc_batch');
+    return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
   }
 
 }

@@ -74,6 +74,12 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
     }
+    elseif (isset($this->original) && $this->original instanceof self) {
+      $original_machine_name = $this->original->get('machine_name')->value ?? NULL;
+      if ($original_machine_name !== NULL) {
+        $this->set('machine_name', $original_machine_name);
+      }
+    }
 
     $this->setChangedTime($request_time);
   }
@@ -84,19 +90,24 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields[$entity_type->getKey('id')] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Machine name'))
-      ->setDescription(t('A unique machine name for internal references.'))
-      ->setRequired(TRUE)
+    $fields[$entity_type->getKey('id')] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('ID'))
+      ->setDescription(t('The internal numeric ID for this batch record.'))
       ->setReadOnly(TRUE)
-      ->setSetting('max_length', 128)
-      ->setSetting('is_ascii', TRUE);
+      ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The human-readable name of the batch.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
+
+    $fields['machine_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Machine name'))
+      ->setDescription(t('A unique immutable internal identifier.'))
+      ->setRequired(TRUE)
+      ->setSetting('max_length', 128)
+      ->setSetting('is_ascii', TRUE);
 
     $fields['recipe'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Recipe'))

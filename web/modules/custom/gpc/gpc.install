@@ -69,3 +69,84 @@ function gpc_update_10003(): void {
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_batch');
   $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Rebuild the GPC entity schemas for the numeric-ID refactor.
+ */
+function gpc_update_10004(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+
+  foreach (['gpc_caliber', 'gpc_component', 'gpc_recipe', 'gpc_batch'] as $entity_type_id) {
+    $change_list = $update_manager->getChangeList();
+    $needs_update = !empty($change_list[$entity_type_id]['entity_type']) || !empty($change_list[$entity_type_id]['field_storage_definitions']);
+    if (!$needs_update) {
+      continue;
+    }
+
+    $entity_type = $update_manager->getEntityType($entity_type_id);
+    if ($entity_type === NULL) {
+      continue;
+    }
+
+    $base_table = $entity_type->getBaseTable();
+    if ($schema->tableExists($base_table)) {
+      $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
+      if ($row_count > 0) {
+        throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+      }
+
+      $schema->dropTable($base_table);
+    }
+
+    $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+  }
+}
+
+/**
+ * Install the remaining GPC entity tables after the numeric-ID refactor.
+ */
+function gpc_update_10005(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+
+  foreach (['gpc_component', 'gpc_recipe', 'gpc_batch'] as $entity_type_id) {
+    $change_list = $update_manager->getChangeList();
+    if (empty($change_list[$entity_type_id]['entity_type'])) {
+      continue;
+    }
+
+    $entity_type = $update_manager->getEntityType($entity_type_id);
+    if ($entity_type === NULL) {
+      continue;
+    }
+
+    $update_manager->installEntityType($entity_type);
+    $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+  }
+}
+
+/**
+ * Install the missing GPC entity tables using the live entity definitions.
+ */
+function gpc_update_10006(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $schema = \Drupal::database()->schema();
+
+  foreach (['gpc_component', 'gpc_recipe', 'gpc_batch'] as $entity_type_id) {
+    if ($schema->tableExists($entity_type_id)) {
+      continue;
+    }
+
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+    $update_manager->installEntityType($entity_type);
+    $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+  }
+}

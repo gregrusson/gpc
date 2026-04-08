@@ -42,6 +42,7 @@ class BatchListBuilder extends EntityListBuilder {
   public function buildHeader() {
     return [
       'label' => $this->t('Title'),
+      'machine_name' => $this->t('Machine name'),
       'recipe' => $this->t('Recipe'),
       'batch_date' => $this->t('Date produced'),
       'quantity_produced' => $this->t('Quantity'),
@@ -54,6 +55,7 @@ class BatchListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['recipe'] = $entity->get('recipe')->first()?->entity?->label() ?? '';
     $row['batch_date'] = $entity->get('batch_date')->value
       ? $this->dateFormatter->format((int) $entity->get('batch_date')->value, 'short')

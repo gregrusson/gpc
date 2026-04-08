@@ -32,33 +32,33 @@ class RecipeForm extends EntityForm {
     ];
 
     if ($entity->isNew()) {
-      $form['id'] = [
+      $form['machine_name'] = [
         '#type' => 'machine_name',
         '#title' => $this->t('Machine name'),
-        '#default_value' => $entity->id() ?? '',
+        '#default_value' => $entity->get('machine_name')->value ?? '',
         '#required' => TRUE,
         '#maxlength' => 128,
         '#machine_name' => [
-          'exists' => [Recipe::class, 'load'],
+          'exists' => [static::class, 'machineNameExists'],
           'source' => ['label'],
         ],
         '#description' => $this->t('A unique internal identifier.'),
       ];
     }
     else {
-      $form['id'] = [
+      $form['machine_name'] = [
         '#type' => 'item',
         '#title' => $this->t('Machine name'),
-        '#markup' => $entity->id(),
+        '#markup' => $entity->get('machine_name')->value ?? '',
         '#description' => $this->t('This value is fixed after creation.'),
       ];
     }
 
     $form['caliber'] = $this->buildAutocompleteField($entity, 'caliber', $this->t('Caliber'), 'gpc_caliber', TRUE);
-    $form['bullet_component'] = $this->buildAutocompleteField($entity, 'bullet_component', $this->t('Bullet component'), 'gpc_component', TRUE);
-    $form['powder_component'] = $this->buildAutocompleteField($entity, 'powder_component', $this->t('Powder component'), 'gpc_component', TRUE);
-    $form['primer_component'] = $this->buildAutocompleteField($entity, 'primer_component', $this->t('Primer component'), 'gpc_component', TRUE);
-    $form['brass_component'] = $this->buildAutocompleteField($entity, 'brass_component', $this->t('Brass component'), 'gpc_component', FALSE);
+    $form['bullet_component'] = $this->buildAutocompleteField($entity, 'bullet_component', $this->t('Bullet component'), 'gpc_component', TRUE, $this->t('Expected type: bullet.'));
+    $form['powder_component'] = $this->buildAutocompleteField($entity, 'powder_component', $this->t('Powder component'), 'gpc_component', TRUE, $this->t('Expected type: powder.'));
+    $form['primer_component'] = $this->buildAutocompleteField($entity, 'primer_component', $this->t('Primer component'), 'gpc_component', TRUE, $this->t('Expected type: primer.'));
+    $form['brass_component'] = $this->buildAutocompleteField($entity, 'brass_component', $this->t('Brass component'), 'gpc_component', FALSE, $this->t('Expected type: brass if set.'));
 
     $form['powder_charge_weight'] = [
       '#type' => 'number',
@@ -126,9 +126,34 @@ class RecipeForm extends EntityForm {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    foreach (Recipe::componentFieldTypes() as $field_name => $required_type) {
+      $target_id = $form_state->getValue([$field_name, 0, 'target_id']);
+      if (!$target_id) {
+        continue;
+      }
+
+      $component = \Drupal::entityTypeManager()->getStorage('gpc_component')->load($target_id);
+      if (!$component instanceof Component) {
+        $form_state->setErrorByName($field_name, $this->t('The selected component is not valid.'));
+        continue;
+      }
+
+      $actual_type = $component->get('component_type')->value ?? NULL;
+      if ($actual_type !== $required_type) {
+        $form_state->setErrorByName($field_name, $this->t('The selected component must be a @type component.', ['@type' => $required_type]));
+      }
+    }
+  }
+
+  /**
    * Builds one autocomplete field.
    */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string $title, string $target_type, bool $required): array {
+  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string $title, string $target_type, bool $required, ?string $description = NULL): array {
     $default_value = NULL;
     $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
     if ($target_id) {
@@ -143,10 +168,18 @@ class RecipeForm extends EntityForm {
       '#required' => $required,
       '#selection_handler' => 'default',
       '#selection_settings' => [],
-      '#description' => $required
+      '#description' => $description ?? ($required
         ? $this->t('Select a referenced entity.')
-        : $this->t('Optional reference.'),
+        : $this->t('Optional reference.')),
     ];
+  }
+
+  /**
+   * Checks whether a machine name already exists.
+   */
+  public static function machineNameExists(string $machine_name): bool {
+    $storage = \Drupal::entityTypeManager()->getStorage('gpc_recipe');
+    return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
   }
 
 }

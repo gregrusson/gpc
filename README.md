@@ -8,14 +8,20 @@ The goal is to model a small, durable domain for tracking calibers, firearms, re
 
 ## Current Scope
 
-The current foundation is the custom Drupal module `gpc`, which begins the domain model with the Caliber content entity.
+The current foundation is the custom Drupal module `gpc`, which already implements the core v1 domain entities:
+
+- Caliber
+- Component
+- Recipe
+- Batch
 
 Current implementation goals:
 
 - Drupal 11 custom module architecture
 - Admin-first entity management
-- Clean entity naming and routes
+- Clean entity naming, routes, and permissions
 - Minimal but maintainable content entity design
+- Simple references between the core records
 
 ## Planned Domain Model
 
@@ -23,9 +29,9 @@ Current implementation goals:
 
 - Caliber
 - Firearm
-- Reloading Component
-- Reloading Recipe
-- Reloading Batch
+- Component
+- Recipe
+- Batch
 
 ### Later phase entities
 
@@ -38,6 +44,7 @@ Current implementation goals:
 ### Modeling notes
 
 - Caliber is a shared reference concept across multiple records.
+- Component is a reusable definition, not an inventory lot.
 - Recipe and batch are distinct concepts.
 - Notes fields should hold flexible secondary detail.
 - Inventory automation and analytics are explicitly later work.
@@ -82,15 +89,12 @@ ddev composer install
 
 ## Near-Term Roadmap
 
-1. Caliber foundation is in place.
+1. Caliber, Component, Recipe, and Batch are in place.
 2. Add Firearm as the next core content entity.
-3. Add Reloading Component.
-4. Add Reloading Recipe.
-5. Add Reloading Batch.
-6. Connect the entities with simple references where they are clearly useful.
-7. Defer inventory automation, session analytics, and sharing until the core model is proven useful.
+3. Tighten admin UX and validation around the existing entities as real data usage exposes gaps.
+4. Add only the next clearly useful relationship or field when a current workflow needs it.
+5. Defer inventory automation, session analytics, and sharing until the core model is proven useful.
 
 ## Project Plan
 
 See [PROJECT_PLAN.md](PROJECT_PLAN.md) for the fuller working plan and development principles.
-

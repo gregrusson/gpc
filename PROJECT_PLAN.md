@@ -28,11 +28,12 @@ The application is intended for personal use first. Selective sharing may exist 
 
 - Caliber is a shared reference concept used across firearms, recipes, ammo, and shooting sessions.
 - Firearm is a structured record for a specific gun.
-- Reloading Component represents consumables such as powder, primers, bullets, and brass.
-- Reloading Recipe is a reusable configuration.
-- Reloading Batch is a produced instance created from a recipe.
+- Component is a reusable reloading component definition, not an inventory lot.
+- Recipe is a reusable configuration.
+- Batch is a produced instance created from a recipe.
 - Recipe and batch are distinct concepts and should stay distinct in the model.
 - Notes fields should carry secondary detail that does not yet justify structured fields.
+- Component type is currently a simple list field, which is the simplest good option for v1.
 
 ## Planned Entities
 
@@ -40,9 +41,9 @@ The application is intended for personal use first. Selective sharing may exist 
 
 - Caliber
 - Firearm
-- Reloading Component
-- Reloading Recipe
-- Reloading Batch
+- Component
+- Recipe
+- Batch
 
 ### Later Phase Entities
 
@@ -60,20 +61,18 @@ The application is intended for personal use first. Selective sharing may exist 
 - Keep the module namespaced and organized for future entities.
 - Add only the minimum code needed for a reliable Drupal entity foundation.
 
-### Phase 2: Caliber
+### Phase 2: Core domain records
 
-- Implement Caliber as the first custom content entity.
+- Implement Caliber, Component, Recipe, and Batch as custom content entities.
 - Provide add, edit, list, and delete workflows in admin.
-- Use a machine-name style ID and a human-readable title.
-- Include notes plus created and changed timestamps.
+- Use internal numeric entity IDs plus separate immutable machine-name fields where helpful.
+- Use simple entity references between the core records.
+- Keep Recipe and Batch distinct.
 
-### Phase 3: Core record expansion
+### Phase 3: Firearm and refinement
 
 - Add Firearm.
-- Add Reloading Component.
-- Add Reloading Recipe.
-- Add Reloading Batch.
-- Connect entities with simple entity references where useful.
+- Tighten the current admin UX and field validation based on actual usage.
 
 ### Phase 4: Later operational features
 
@@ -109,4 +108,3 @@ The application is intended for personal use first. Selective sharing may exist 
 - Prefer incremental vertical slices over large cross-cutting implementations.
 - Keep the module shape ready for additional entities, but do not pre-build them.
 - Favor stable, explicit names and small entity APIs that are easy to extend later.
-

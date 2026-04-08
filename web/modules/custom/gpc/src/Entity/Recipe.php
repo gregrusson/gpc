@@ -74,6 +74,12 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
     }
+    elseif (isset($this->original) && $this->original instanceof self) {
+      $original_machine_name = $this->original->get('machine_name')->value ?? NULL;
+      if ($original_machine_name !== NULL) {
+        $this->set('machine_name', $original_machine_name);
+      }
+    }
 
     $this->setChangedTime($request_time);
   }
@@ -84,19 +90,24 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields[$entity_type->getKey('id')] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Machine name'))
-      ->setDescription(t('A unique machine name for internal references.'))
-      ->setRequired(TRUE)
+    $fields[$entity_type->getKey('id')] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('ID'))
+      ->setDescription(t('The internal numeric ID for this recipe record.'))
       ->setReadOnly(TRUE)
-      ->setSetting('max_length', 128)
-      ->setSetting('is_ascii', TRUE);
+      ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The human-readable name of the recipe.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
+
+    $fields['machine_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Machine name'))
+      ->setDescription(t('A unique immutable internal identifier.'))
+      ->setRequired(TRUE)
+      ->setSetting('max_length', 128)
+      ->setSetting('is_ascii', TRUE);
 
     $fields['caliber'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Caliber'))
@@ -106,13 +117,13 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['bullet_component'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Bullet component'))
-      ->setDescription(t('The bullet component used in this recipe.'))
+      ->setDescription(t('The bullet component used in this recipe. The selected component should have type "bullet".'))
       ->setRequired(TRUE)
       ->setSetting('target_type', 'gpc_component');
 
     $fields['powder_component'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Powder component'))
-      ->setDescription(t('The powder component used in this recipe.'))
+      ->setDescription(t('The powder component used in this recipe. The selected component should have type "powder".'))
       ->setRequired(TRUE)
       ->setSetting('target_type', 'gpc_component');
 
@@ -125,13 +136,13 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['primer_component'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Primer component'))
-      ->setDescription(t('The primer component used in this recipe.'))
+      ->setDescription(t('The primer component used in this recipe. The selected component should have type "primer".'))
       ->setRequired(TRUE)
       ->setSetting('target_type', 'gpc_component');
 
     $fields['brass_component'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Brass component'))
-      ->setDescription(t('Optional brass component used in this recipe.'))
+      ->setDescription(t('Optional brass component used in this recipe. If set, the selected component should have type "brass".'))
       ->setSetting('target_type', 'gpc_component');
 
     $fields['overall_length'] = BaseFieldDefinition::create('decimal')
@@ -165,6 +176,21 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('The time that this recipe was last updated.'));
 
     return $fields;
+  }
+
+  /**
+   * Returns the required component type for each recipe component field.
+   *
+   * @return array<string, string>
+   *   Map of recipe field name to allowed component type.
+   */
+  public static function componentFieldTypes(): array {
+    return [
+      'bullet_component' => 'bullet',
+      'powder_component' => 'powder',
+      'primer_component' => 'primer',
+      'brass_component' => 'brass',
+    ];
   }
 
 }

@@ -18,12 +18,12 @@ If a feature is only useful in a later phase, do not implement it now.
 
 ## Current Phase
 
-The project is in early v1 domain implementation.
+The project is in early v1 domain implementation, but the core entity set is already in place.
 
 Current focus:
 
-- Establish the custom module foundation.
-- Model the core reload/references entities.
+- Preserve and refine the existing domain model.
+- Improve admin workflows and validation where the current data model needs it.
 - Keep the admin experience usable and straightforward.
 - Avoid overengineering storage, workflows, and abstraction layers.
 
@@ -89,6 +89,7 @@ Recipe should reference:
 - component records where relevant
 
 Recipe should stay focused on configuration data, not production tracking.
+Recipe component references should be validated against the intended component type in form validation rather than by custom storage complexity.
 
 ### Batch
 
@@ -139,6 +140,7 @@ When implementing a task:
 - Keep admin UX functional and clear.
 - Keep entity IDs short enough to satisfy Drupal limits.
 - Preserve the distinction between recipe and batch.
+- Keep entity validation simple and local unless a broader rule is required.
 
 ## Overengineering Checks
 

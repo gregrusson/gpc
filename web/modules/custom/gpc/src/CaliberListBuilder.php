@@ -41,7 +41,7 @@ class CaliberListBuilder extends EntityListBuilder {
   public function buildHeader() {
     return [
       'label' => $this->t('Title'),
-      'id' => $this->t('Machine name'),
+      'machine_name' => $this->t('Machine name'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -51,7 +51,7 @@ class CaliberListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
-    $row['id'] = $entity->id();
+    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';
