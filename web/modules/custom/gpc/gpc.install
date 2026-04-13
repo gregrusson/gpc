@@ -173,6 +173,27 @@ function gpc_update_10007(): void {
 }
 
 /**
+ * Install the Caliber entity schema for existing sites.
+ */
+function gpc_update_10010(): void {
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_caliber');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists($entity_type->getBaseTable())) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $update_manager->installEntityType($entity_type);
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
  * Install the Firearm entity table using the live entity definition.
  */
 function gpc_update_10008(): void {

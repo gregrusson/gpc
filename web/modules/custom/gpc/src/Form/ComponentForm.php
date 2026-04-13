@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\gpc\Entity\Component;
 
 /**
  * Form controller for component add/edit forms.
  */
-class ComponentForm extends EntityForm {
+class ComponentForm extends GpcEntityFormBase {
 
   /**
    * {@inheritdoc}

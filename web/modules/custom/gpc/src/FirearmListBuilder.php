@@ -52,7 +52,7 @@ class FirearmListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
     $row['model'] = $entity->get('model')->value ?? '';

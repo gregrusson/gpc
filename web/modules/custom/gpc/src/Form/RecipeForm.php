@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Component;
@@ -13,7 +12,7 @@ use Drupal\gpc\Entity\Recipe;
 /**
  * Form controller for recipe add/edit forms.
  */
-class RecipeForm extends EntityForm {
+class RecipeForm extends GpcEntityFormBase {
 
   /**
    * {@inheritdoc}
@@ -153,7 +152,7 @@ class RecipeForm extends EntityForm {
   /**
    * Builds one autocomplete field.
    */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string $title, string $target_type, bool $required, ?string $description = NULL): array {
+  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required, string|\Stringable|null $description = NULL): array {
     $default_value = NULL;
     $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
     if ($target_id) {
