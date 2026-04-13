@@ -2,7 +2,7 @@
 
 ## What This Project Is
 
-Gunners Project Companion is a personal logbook and structured data application built on Drupal 11. It is intended to help manage a shooting and reloading workflow as an internal tool first, with the possibility of limited sharing later.
+Gunners Project Companion is a structured Drupal 11 application for firearms and reloading data. It is intended to help manage a shooting and reloading workflow as a logged-in application first, with the possibility of limited sharing later.
 
 The project is being built as a Drupal application with a clear domain model, not as a generic CMS with loosely organized content types.
 
@@ -23,15 +23,15 @@ The project is in early v1 domain implementation, but the core entity set is alr
 Current focus:
 
 - Preserve and refine the existing domain model.
-- Improve admin workflows and validation where the current data model needs it.
-- Keep the admin experience usable and straightforward.
+- Improve logged-in and admin workflows where the current data model needs it.
+- Keep the user experience usable and straightforward.
 - Avoid overengineering storage, workflows, and abstraction layers.
 
 ## Technical Constraints
 
 - Drupal 11.
 - Custom module approach.
-- Admin-first UI.
+- Logged-in user workflows, not admin-only UI.
 - Prefer custom content entities for core domain records.
 - Use Drupal core patterns before introducing custom frameworks or abstractions.
 - Keep business logic inside the module.
@@ -55,49 +55,52 @@ Keep new code under:
 
 Shared reference concept used by firearms, recipes, batches, and later sessions or ammo records.
 
-Use it as a stable reference entity with a title, internal machine name, notes, and timestamps.
+Use it as a stable shared reference entity. Caliber structured-field expansion is deferred for now.
 
 ### Firearm
 
-Planned later.
+Represents a user-owned firearm record.
 
-Represents a firearm record. It will likely reference caliber and include notes and practical descriptive fields.
+It should require caliber and be visible and editable only by the creating user.
+Use `uid` ownership plus owner-based entity access control with admin override.
 
 ### Component
 
-Reusable reloading component definition, not an inventory lot.
+Reusable catalog definition, not inventory.
 
-Current practical categories are:
+Use bundles for:
 
 - bullet
 - powder
 - primer
 - brass
-- other
 
-Use a simple list field for component type unless there is a concrete reason to move to taxonomy later.
+Inventory is later and should be a separate user-owned concept.
 
 ### Recipe
 
-Reusable reloading configuration.
+User-owned reloading configuration.
 
 Recipe is distinct from Batch.
-
 Recipe should reference:
 
 - caliber
 - component records where relevant
 
+Recipe should use `field_recipe_code` plus optional `field_label`.
 Recipe should stay focused on configuration data, not production tracking.
 Recipe component references should be validated against the intended component type in form validation rather than by custom storage complexity.
+Use `uid` ownership plus owner-based entity access control with admin override.
 
 ### Batch
 
-Produced instance created from a recipe.
+User-owned produced instance created from a recipe.
 
 Batch records what was produced, when it was produced, and how much was produced.
 
+Batch should use `field_batch_code`.
 Batch is not inventory and should not deduct stock or consume lots.
+Use `uid` ownership plus owner-based entity access control with admin override.
 
 ## Planned Entities
 
@@ -128,6 +131,12 @@ Use entity references for real relationships between records.
 
 Avoid turning everything into taxonomy or reference entities too early.
 
+## Decision Summary
+
+- Components are global because they are reusable catalog definitions, not stock on hand.
+- Inventory is deferred because it is a separate user-owned concept that should not be folded into the component catalog.
+- Owner-based access is the v1 choice because it is the simplest durable rule for user-owned records and keeps admin override available without building sharing now.
+
 ## Development Guardrails
 
 When implementing a task:
@@ -137,7 +146,7 @@ When implementing a task:
 - Do not invent abstractions before the code needs them.
 - Do not add repositories, custom storage handlers, or plugin systems unless they solve an immediate problem.
 - Prefer standard Drupal entity forms, list builders, permissions, menu links, and route providers.
-- Keep admin UX functional and clear.
+- Keep user and admin UX functional and clear.
 - Keep entity IDs short enough to satisfy Drupal limits.
 - Preserve the distinction between recipe and batch.
 - Keep entity validation simple and local unless a broader rule is required.
