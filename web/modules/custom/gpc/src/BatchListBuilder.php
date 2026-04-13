@@ -54,7 +54,7 @@ class BatchListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['recipe'] = $entity->get('recipe')->first()?->entity?->label() ?? '';
     $row['batch_date'] = $entity->get('batch_date')->value

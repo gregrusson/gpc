@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form controller for batch add/edit forms.
  */
-class BatchForm extends EntityForm {
+class BatchForm extends GpcEntityFormBase {
 
   /**
    * {@inheritdoc}
@@ -123,7 +122,7 @@ class BatchForm extends EntityForm {
   /**
    * Builds one autocomplete field.
    */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string $title, string $target_type, bool $required): array {
+  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required): array {
     $default_value = NULL;
     $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
     if ($target_id) {

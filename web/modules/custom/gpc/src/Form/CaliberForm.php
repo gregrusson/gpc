@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form controller for caliber add/edit forms.
  */
-class CaliberForm extends EntityForm {
+class CaliberForm extends GpcEntityFormBase {
 
   /**
    * {@inheritdoc}

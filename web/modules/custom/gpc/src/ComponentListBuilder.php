@@ -54,7 +54,7 @@ class ComponentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $options = Component::componentTypeOptions();
-    $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $component_type = $entity->get('component_type')->value ?? NULL;
     $row['component_type'] = $component_type && isset($options[$component_type])

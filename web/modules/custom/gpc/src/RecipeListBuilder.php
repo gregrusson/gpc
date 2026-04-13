@@ -55,7 +55,7 @@ class RecipeListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['bullet_component'] = $entity->get('bullet_component')->first()?->entity?->label() ?? '';
     $row['powder_component'] = $entity->get('powder_component')->first()?->entity?->label() ?? '';

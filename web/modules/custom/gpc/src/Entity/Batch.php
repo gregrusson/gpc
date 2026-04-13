@@ -74,8 +74,8 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
     }
-    elseif (isset($this->original) && $this->original instanceof self) {
-      $original_machine_name = $this->original->get('machine_name')->value ?? NULL;
+    elseif (($original = $this->getOriginal()) instanceof self) {
+      $original_machine_name = $original->get('machine_name')->value ?? NULL;
       if ($original_machine_name !== NULL) {
         $this->set('machine_name', $original_machine_name);
       }

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form controller for firearm add/edit forms.
  */
-class FirearmForm extends EntityForm {
+class FirearmForm extends GpcEntityFormBase {
 
   /**
    * {@inheritdoc}
