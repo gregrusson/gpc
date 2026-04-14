@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Link;
 use Drupal\gpc\Entity\Caliber;
-use Drupal\physical\LengthUnit;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -95,8 +94,8 @@ class CaliberListBuilder extends EntityListBuilder {
     }
 
     $measurement = $item->toMeasurement();
-    if ($measurement->getUnit() !== LengthUnit::INCH) {
-      $measurement = $measurement->convert(LengthUnit::INCH);
+    if ($measurement->getUnit() !== 'in') {
+      $measurement = $measurement->convert('in');
     }
 
     return (string) $measurement;

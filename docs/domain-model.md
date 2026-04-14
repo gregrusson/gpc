@@ -18,7 +18,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Caliber: global reference record with a canonical display name, optional nickname, physical length and diameter measurements, reloading primer type, and notes.
 - Caliber measurement fields accept inches and millimeters, with inches remaining the default display unit.
 - Component: reusable catalog definition, not inventory.
-- Firearm: user-owned structured record tied to Caliber.
+- Firearm: user-owned structured record tied to Caliber, with a display label that should be driven by manufacturer and model where possible.
 - Recipe: user-owned reloading configuration that should prefer a required recipe code plus optional nickname or label.
 - Batch: user-owned produced record that should prefer a batch number or code instead of a generic title.
 

@@ -74,6 +74,7 @@ Represents a user-owned firearm record.
 
 It should require caliber and be visible and editable only by the creating user.
 Use `uid` ownership plus owner-based entity access control with admin override.
+The display label should favor manufacturer and model, with the label field treated as the user-facing firearm name rather than a generic title.
 
 ### Component
 

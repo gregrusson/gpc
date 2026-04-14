@@ -7,16 +7,18 @@ namespace Drupal\gpc\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\FirearmAccessControlHandler;
 use Drupal\gpc\FirearmListBuilder;
 use Drupal\gpc\Form\FirearmForm;
-use Drupal\gpc\Routing\FirearmHtmlRouteProvider;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the firearm entity class.
@@ -32,7 +34,7 @@ use Drupal\gpc\Routing\FirearmHtmlRouteProvider;
     'plural' => '@count firearms',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => FirearmAccessControlHandler::class,
     'list_builder' => FirearmListBuilder::class,
     'form' => [
       'add' => FirearmForm::class,
@@ -41,27 +43,31 @@ use Drupal\gpc\Routing\FirearmHtmlRouteProvider;
       'default' => FirearmForm::class,
     ],
     'route_provider' => [
-      'html' => FirearmHtmlRouteProvider::class,
+      'html' => DefaultHtmlRouteProvider::class,
     ],
   ],
   links: [
-    'collection' => '/admin/content/gpc/firearms',
-    'add-form' => '/admin/content/gpc/firearms/add',
-    'edit-form' => '/admin/content/gpc/firearms/{gpc_firearm}/edit',
-    'delete-form' => '/admin/content/gpc/firearms/{gpc_firearm}/delete',
+    'canonical' => '/gpc/firearms/{gpc_firearm}',
+    'collection' => '/gpc/firearms',
+    'add-form' => '/gpc/firearms/add',
+    'edit-form' => '/gpc/firearms/{gpc_firearm}/edit',
+    'delete-form' => '/gpc/firearms/{gpc_firearm}/delete',
   ],
+  collection_permission: 'view gpc firearms',
   admin_permission: 'administer gpc firearms',
   base_table: 'gpc_firearm',
   entity_keys: [
     'id' => 'id',
     'label' => 'label',
+    'owner' => 'uid',
     'uuid' => 'uuid',
   ],
   translatable: FALSE,
 )]
-class Firearm extends ContentEntityBase implements EntityChangedInterface {
+class Firearm extends ContentEntityBase implements EntityChangedInterface, EntityOwnerInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -70,6 +76,10 @@ class Firearm extends ContentEntityBase implements EntityChangedInterface {
     parent::preSave($storage);
 
     $request_time = \Drupal::time()->getRequestTime();
+
+    if ($this->isNew() && $this->get('uid')->isEmpty()) {
+      $this->set('uid', \Drupal::currentUser()->id());
+    }
 
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
@@ -91,10 +101,15 @@ class Firearm extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The human-readable name of the firearm.'))
+      ->setLabel(t('Firearm name'))
+      ->setDescription(t('The display name of the firearm. Use manufacturer and model where possible.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
+
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
+    $fields['uid']
+      ->setLabel(t('Owner'))
+      ->setDescription(t('The user who owns this firearm.'));
 
     $fields['caliber'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Caliber'))
@@ -104,12 +119,12 @@ class Firearm extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['manufacturer'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Manufacturer'))
-      ->setDescription(t('Optional manufacturer or brand.'))
+      ->setDescription(t('Optional manufacturer or brand used in the firearm display label.'))
       ->setSetting('max_length', 255);
 
     $fields['model'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Model'))
-      ->setDescription(t('Optional model or series name.'))
+      ->setDescription(t('Optional model or series name used in the firearm display label.'))
       ->setSetting('max_length', 255);
 
     $fields['serial_number'] = BaseFieldDefinition::create('string')

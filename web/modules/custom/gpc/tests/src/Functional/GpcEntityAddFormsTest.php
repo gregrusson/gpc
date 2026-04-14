@@ -8,13 +8,11 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\physical\LengthUnit;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Covers the core GPC entity add workflows.
  */
 #[Group('gpc')]
-#[RunTestsInSeparateProcesses]
 class GpcEntityAddFormsTest extends BrowserTestBase {
 
   /**
@@ -24,6 +22,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     'gpc',
     'field',
     'filter',
+    'physical',
     'options',
     'text',
   ];

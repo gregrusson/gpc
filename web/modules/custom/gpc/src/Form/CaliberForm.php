@@ -7,8 +7,6 @@ namespace Drupal\gpc\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Caliber;
 use Drupal\physical\Calculator;
-use Drupal\physical\LengthUnit;
-use Drupal\physical\MeasurementType;
 use Drupal\Component\Utility\NestedArray;
 
 /**
@@ -129,24 +127,24 @@ class CaliberForm extends GpcEntityFormBase {
     $field_item = $entity->get($field_name)->first();
     $default_value = [
       'number' => '',
-      'unit' => LengthUnit::INCH,
+      'unit' => 'in',
     ];
     if ($field_item && !$field_item->isEmpty()) {
       $default_value = [
         'number' => $field_item->number,
-        'unit' => $field_item->unit ?: LengthUnit::INCH,
+        'unit' => $field_item->unit ?: 'in',
       ];
     }
 
     return [
       '#type' => 'physical_measurement',
-      '#measurement_type' => MeasurementType::LENGTH,
+      '#measurement_type' => 'length',
       '#title' => $title,
       '#default_value' => $default_value,
       '#required' => FALSE,
       '#available_units' => [
-        LengthUnit::INCH,
-        LengthUnit::MILLIMETER,
+        'in',
+        'mm',
       ],
       '#description' => $description,
       '#element_validate' => [

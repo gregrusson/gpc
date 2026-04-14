@@ -9,7 +9,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +22,7 @@ class FirearmListBuilder extends EntityListBuilder {
   /**
    * Constructs a firearm list builder.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, protected DateFormatterInterface $dateFormatter) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, protected DateFormatterInterface $dateFormatter, protected AccountProxyInterface $currentUser) {
     parent::__construct($entity_type, $storage);
   }
 
@@ -31,7 +33,8 @@ class FirearmListBuilder extends EntityListBuilder {
     return new static(
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('current_user')
     );
   }
 
@@ -40,7 +43,7 @@ class FirearmListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Label'),
+      'label' => $this->t('Firearm'),
       'caliber' => $this->t('Caliber'),
       'manufacturer' => $this->t('Manufacturer'),
       'model' => $this->t('Model'),
@@ -69,6 +72,19 @@ class FirearmListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Firearms');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEntityListQuery(): QueryInterface {
+    $query = parent::getEntityListQuery();
+
+    if (!$this->currentUser->hasPermission('administer gpc firearms')) {
+      $query->condition('uid', $this->currentUser->id());
+    }
+
+    return $query;
   }
 
 }
