@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Link;
+use Drupal\gpc\Entity\Caliber;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,8 +41,11 @@ class CaliberListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
+      'label' => $this->t('Caliber name'),
       'machine_name' => $this->t('Machine name'),
+      'bullet_diameter' => $this->t('Bullet diameter'),
+      'case_length' => $this->t('Case length'),
+      'primer_type' => $this->t('Primer type'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -50,8 +54,19 @@ class CaliberListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    if ($entity->access('update', NULL, TRUE)->isAllowed()) {
+      $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    }
+    else {
+      $row['label']['data'] = [
+        '#plain_text' => (string) $entity->label(),
+      ];
+    }
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
+    $row['bullet_diameter'] = $entity->get('bullet_diameter')->value ?? '';
+    $row['case_length'] = $entity->get('case_length')->value ?? '';
+    $primer_type = $entity->get('primer_type')->value ?? '';
+    $row['primer_type'] = Caliber::primerTypeOptions()[$primer_type] ?? $primer_type;
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';

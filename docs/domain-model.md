@@ -15,7 +15,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 
 ## Current Entity Shape
 
-- Caliber: global reference record. Structured-field expansion is deferred for now.
+- Caliber: global reference record with a canonical display name plus bullet diameter, case length, primer type, and notes.
 - Component: reusable catalog definition, not inventory.
 - Firearm: user-owned structured record tied to Caliber.
 - Recipe: user-owned reloading configuration that should prefer a required recipe code plus optional nickname or label.
@@ -26,6 +26,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Keep v1 small and explicit.
 - Prefer entity references for real relationships.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
+- Give Caliber a specific display-label strategy rather than relying on a generic title field.
 - Avoid pre-building inventory, analytics, or sharing flows before the core model is proven useful.
 
 ## Decision Summary

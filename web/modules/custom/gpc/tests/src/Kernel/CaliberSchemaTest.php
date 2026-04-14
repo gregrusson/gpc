@@ -60,6 +60,9 @@ class CaliberSchemaTest extends KernelTestBase {
     $caliber = $storage->create([
       'label' => '9mm Luger',
       'machine_name' => '9mm_luger',
+      'bullet_diameter' => '0.355',
+      'case_length' => '0.754',
+      'primer_type' => 'boxer',
       'notes' => 'Common pistol caliber.',
     ]);
     $caliber->save();
@@ -68,6 +71,9 @@ class CaliberSchemaTest extends KernelTestBase {
     $this->assertNotNull($loaded);
     $this->assertSame('9mm_luger', $loaded->get('machine_name')->value);
     $this->assertSame('9mm Luger', $loaded->label());
+    $this->assertSame('0.355', $loaded->get('bullet_diameter')->value);
+    $this->assertSame('0.754', $loaded->get('case_length')->value);
+    $this->assertSame('boxer', $loaded->get('primer_type')->value);
   }
 
 }

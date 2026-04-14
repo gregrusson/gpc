@@ -6,17 +6,17 @@ namespace Drupal\gpc\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\ContentEntityDeleteForm;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\CaliberAccessControlHandler;
 use Drupal\gpc\CaliberListBuilder;
 use Drupal\gpc\Form\CaliberForm;
-use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
 
 /**
  * Defines the caliber entity class.
@@ -32,7 +32,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
     'plural' => '@count calibers',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => CaliberAccessControlHandler::class,
     'list_builder' => CaliberListBuilder::class,
     'form' => [
       'add' => CaliberForm::class,
@@ -41,7 +41,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
       'default' => CaliberForm::class,
     ],
     'route_provider' => [
-      'html' => CaliberHtmlRouteProvider::class,
+      'html' => DefaultHtmlRouteProvider::class,
     ],
   ],
   links: [
@@ -50,7 +50,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
     'edit-form' => '/admin/content/gpc/calibers/{gpc_caliber}/edit',
     'delete-form' => '/admin/content/gpc/calibers/{gpc_caliber}/delete',
   ],
-  admin_permission: 'administer gpc calibers',
+  collection_permission: 'view gpc calibers',
   base_table: 'gpc_caliber',
   entity_keys: [
     'id' => 'id',
@@ -97,17 +97,36 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The human-readable name of the caliber.'))
+      ->setLabel(t('Caliber name'))
+      ->setDescription(t('The human-readable display name of the caliber.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
     $fields['machine_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Machine name'))
-      ->setDescription(t('A unique immutable internal identifier.'))
+      ->setDescription(t('A unique immutable internal identifier used for imports and integrations.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 128)
       ->setSetting('is_ascii', TRUE);
+
+    $fields['bullet_diameter'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Bullet diameter'))
+      ->setDescription(t('The bullet diameter in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['case_length'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Case length'))
+      ->setDescription(t('The case length in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['primer_type'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Primer type'))
+      ->setDescription(t('The primer family used by this caliber.'))
+      ->setSettings([
+        'allowed_values' => static::primerTypeOptions(),
+      ]);
 
     $fields['notes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Notes'))
@@ -122,6 +141,21 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('The time that this caliber was last updated.'));
 
     return $fields;
+  }
+
+  /**
+   * Returns the allowed primer type values.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   The allowed values keyed by machine name.
+   */
+  public static function primerTypeOptions(): array {
+    return [
+      'boxer' => t('Boxer'),
+      'berdan' => t('Berdan'),
+      'rimfire' => t('Rimfire'),
+      'other' => t('Other'),
+    ];
   }
 
 }

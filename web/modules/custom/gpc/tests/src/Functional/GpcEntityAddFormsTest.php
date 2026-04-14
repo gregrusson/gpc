@@ -48,6 +48,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->adminUser = $this->drupalCreateUser([
       'access administration pages',
       'administer gpc calibers',
+      'view gpc calibers',
+      'create gpc calibers',
+      'edit gpc calibers',
+      'delete gpc calibers',
       'administer gpc components',
       'administer gpc recipes',
       'administer gpc batches',
@@ -56,20 +60,91 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the caliber add form.
+   * Tests the caliber add form for a non-admin user with shared-reference permissions.
    */
   public function testCaliberAddForm(): void {
+    $this->drupalLogout();
+    $caliberUser = $this->drupalCreateUser([
+      'view gpc calibers',
+      'create gpc calibers',
+    ]);
+    $this->drupalLogin($caliberUser);
+
     $this->drupalGet('/admin/content/gpc/calibers/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
       'label' => '9mm Luger',
       'machine_name' => '9mm_luger',
+      'bullet_diameter' => '0.355',
+      'case_length' => '0.754',
+      'primer_type' => 'boxer',
       'notes' => 'Common pistol caliber.',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the 9mm Luger caliber.');
     $this->assertSession()->pageTextContains('9mm Luger');
+  }
+
+  /**
+   * Tests the caliber edit form.
+   */
+  public function testCaliberEditForm(): void {
+    $caliber = $this->createCaliber([
+      'label' => '.308 Winchester',
+      'machine_name' => '308_winchester',
+      'bullet_diameter' => '0.308',
+      'case_length' => '2.015',
+      'primer_type' => 'boxer',
+      'notes' => 'Common rifle caliber.',
+    ]);
+
+    $this->drupalGet('/admin/content/gpc/calibers/' . $caliber->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldValueEquals('Caliber name', '.308 Winchester');
+
+    $this->submitForm([
+      'label' => '.308 Win',
+      'bullet_diameter' => '0.308',
+      'case_length' => '2.015',
+      'primer_type' => 'boxer',
+      'notes' => 'Updated note.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Updated the .308 Win caliber.');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->load($caliber->id());
+    $this->assertNotNull($loaded);
+    $this->assertSame('.308 Win', $loaded?->label());
+    $this->assertSame('0.308', $loaded?->get('bullet_diameter')->value);
+    $this->assertSame('2.015', $loaded?->get('case_length')->value);
+    $this->assertSame('boxer', $loaded?->get('primer_type')->value);
+  }
+
+  /**
+   * Tests caliber validation for structured fields.
+   */
+  public function testCaliberValidation(): void {
+    $this->drupalLogout();
+    $caliberUser = $this->drupalCreateUser([
+      'view gpc calibers',
+      'create gpc calibers',
+    ]);
+    $this->drupalLogin($caliberUser);
+
+    $this->drupalGet('/admin/content/gpc/calibers/add');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => 'Invalid Caliber',
+      'machine_name' => 'invalid_caliber',
+      'bullet_diameter' => '-0.001',
+      'case_length' => '-1.000',
+      'notes' => 'Should fail validation.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Bullet diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Case length must be higher than or equal to 0.');
   }
 
   /**

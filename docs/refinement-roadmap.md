@@ -14,7 +14,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 ## Model Refinements
 
 - Keep Component on bundles for Bullet, Powder, Primer, and Brass.
-- Keep Caliber structured-field expansion deferred until a concrete need appears.
+- Caliber now carries the core structured reference fields needed for filtering and compatibility checks.
 - Add ownership-aware access controls for user-owned records.
 
 ## Deferred Work
