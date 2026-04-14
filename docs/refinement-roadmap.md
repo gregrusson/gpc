@@ -5,6 +5,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 ## Near Term
 
 - Keep Caliber and Component as the global reference layer.
+- Use `drupal/physical` for Caliber measurements that need units.
 - Finish making Firearm a user-owned entity that requires Caliber.
 - Move Recipe to `field_recipe_code` plus optional `field_label`.
 - Move Batch to `field_batch_code`.
@@ -14,7 +15,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 ## Model Refinements
 
 - Keep Component on bundles for Bullet, Powder, Primer, and Brass.
-- Caliber now carries the core structured reference fields needed for filtering and compatibility checks.
+- Caliber measurements stay in module code and use `drupal/physical` rather than ad hoc UI-added fields.
 - Add ownership-aware access controls for user-owned records.
 
 ## Deferred Work
