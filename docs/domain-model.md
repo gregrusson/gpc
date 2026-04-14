@@ -15,7 +15,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 
 ## Current Entity Shape
 
-- Caliber: global reference record with a canonical display name, optional nickname, bullet diameter, case length, neck diameter, shoulder diameter, base diameter, rim diameter, max overall length, reloading primer type, and notes.
+- Caliber: global reference record with a canonical display name, optional nickname, physical length and diameter measurements, reloading primer type, and notes.
 - Component: reusable catalog definition, not inventory.
 - Firearm: user-owned structured record tied to Caliber.
 - Recipe: user-owned reloading configuration that should prefer a required recipe code plus optional nickname or label.
@@ -27,6 +27,8 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Prefer entity references for real relationships.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
+- Use `drupal/physical` for caliber measurements that have units.
+- Keep caliber identity, aliases, and business meaning in custom GPC code.
 - Avoid pre-building inventory, analytics, or sharing flows before the core model is proven useful.
 
 ## Decision Summary

@@ -95,7 +95,7 @@ function gpc_update_10004(): void {
     if ($schema->tableExists($base_table)) {
       $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
       if ($row_count > 0) {
-        throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+        throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
       }
 
       $schema->dropTable($base_table);
@@ -173,27 +173,6 @@ function gpc_update_10007(): void {
 }
 
 /**
- * Install the Caliber entity schema for existing sites.
- */
-function gpc_update_10010(): void {
-  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_caliber');
-  if ($entity_type === NULL) {
-    return;
-  }
-
-  $schema = \Drupal::database()->schema();
-  if ($schema->tableExists($entity_type->getBaseTable())) {
-    return;
-  }
-
-  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
-  $update_manager = \Drupal::service('entity.definition_update_manager');
-  $update_manager->installEntityType($entity_type);
-  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
-  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
-}
-
-/**
  * Install the Firearm entity table using the live entity definition.
  */
 function gpc_update_10008(): void {
@@ -239,7 +218,7 @@ function gpc_update_10009(): void {
   if ($schema->tableExists($base_table)) {
     $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
     if ($row_count > 0) {
-      throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+      throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
     }
 
     $schema->dropTable($base_table);
@@ -250,27 +229,40 @@ function gpc_update_10009(): void {
 }
 
 /**
- * Apply the Caliber structured-field update for existing sites.
+ * Install the Caliber entity schema for existing sites.
  */
-function gpc_update_10011(): void {
-  $update_manager = \Drupal::service('entity.definition_update_manager');
-  $change_list = $update_manager->getChangeList();
-
-  if (empty($change_list['gpc_caliber']['entity_type']) && empty($change_list['gpc_caliber']['field_storage_definitions'])) {
-    return;
-  }
-
-  $entity_type = $update_manager->getEntityType('gpc_caliber');
+function gpc_update_10010(): void {
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_caliber');
   if ($entity_type === NULL) {
     return;
   }
 
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists($entity_type->getBaseTable())) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $update_manager->installEntityType($entity_type);
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
-  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
 
 /**
- * Apply the Caliber reference-data expansion for existing sites.
+ * Ensure the Physical module is enabled before Caliber field updates run.
+ */
+function gpc_update_10011(): void {
+  $module_handler = \Drupal::service('module_handler');
+  if ($module_handler->moduleExists('physical')) {
+    return;
+  }
+
+  \Drupal::service('module_installer')->install(['physical']);
+}
+
+/**
+ * Apply the Caliber physical-field update for existing sites.
  */
 function gpc_update_10012(): void {
   $update_manager = \Drupal::service('entity.definition_update_manager');
@@ -285,6 +277,19 @@ function gpc_update_10012(): void {
     return;
   }
 
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+  $base_table = $entity_type->getBaseTable();
+  if ($schema->tableExists($base_table)) {
+    $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
+    if ($row_count > 0) {
+      throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains Caliber data and cannot be rebuilt automatically after the switch to Physical measurement fields. Migrate the existing data manually, then rerun updates.', $base_table));
+    }
+
+    $schema->dropTable($base_table);
+  }
+
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
-  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+  $update_manager->installEntityType($entity_type);
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }

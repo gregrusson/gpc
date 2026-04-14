@@ -76,6 +76,14 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->submitForm([
       'label' => '9mm Luger',
       'machine_name' => '9mm_luger',
+      'bullet_diameter[number]' => '0.355',
+      'case_length[number]' => '0.754',
+      'neck_diameter[number]' => '0.380',
+      'shoulder_diameter[number]' => '0.391',
+      'base_diameter[number]' => '0.391',
+      'rim_diameter[number]' => '0.392',
+      'max_overall_length[number]' => '1.169',
+      'primer_type' => 'small_pistol',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the 9mm Luger caliber.');
@@ -108,14 +116,14 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->submitForm([
       'label' => '.308 Win',
       'nickname' => '.308',
-      'bullet_diameter' => '0.308',
-      'case_length' => '2.015',
+      'bullet_diameter[number]' => '0.308',
+      'case_length[number]' => '2.015',
       'primer_type' => 'small_rifle',
-      'neck_diameter' => '0.344',
-      'shoulder_diameter' => '0.454',
-      'base_diameter' => '0.470',
-      'rim_diameter' => '0.473',
-      'max_overall_length' => '2.800',
+      'neck_diameter[number]' => '0.344',
+      'shoulder_diameter[number]' => '0.454',
+      'base_diameter[number]' => '0.470',
+      'rim_diameter[number]' => '0.473',
+      'max_overall_length[number]' => '2.800',
       'notes' => 'Updated note.',
     ], 'Save');
 
@@ -125,14 +133,15 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertNotNull($loaded);
     $this->assertSame('.308 Win', $loaded?->label());
     $this->assertSame('.308', $loaded?->get('nickname')->value);
-    $this->assertSame('0.308', $loaded?->get('bullet_diameter')->value);
-    $this->assertSame('2.015', $loaded?->get('case_length')->value);
+    $this->assertSame('0.308000', $loaded?->get('bullet_diameter')->number);
+    $this->assertSame('in', $loaded?->get('bullet_diameter')->unit);
+    $this->assertSame('2.015000', $loaded?->get('case_length')->number);
     $this->assertSame('small_rifle', $loaded?->get('primer_type')->value);
-    $this->assertSame('0.344', $loaded?->get('neck_diameter')->value);
-    $this->assertSame('0.454', $loaded?->get('shoulder_diameter')->value);
-    $this->assertSame('0.470', $loaded?->get('base_diameter')->value);
-    $this->assertSame('0.473', $loaded?->get('rim_diameter')->value);
-    $this->assertSame('2.800', $loaded?->get('max_overall_length')->value);
+    $this->assertSame('0.344000', $loaded?->get('neck_diameter')->number);
+    $this->assertSame('0.454000', $loaded?->get('shoulder_diameter')->number);
+    $this->assertSame('0.470000', $loaded?->get('base_diameter')->number);
+    $this->assertSame('0.473000', $loaded?->get('rim_diameter')->number);
+    $this->assertSame('2.800000', $loaded?->get('max_overall_length')->number);
   }
 
   /**
@@ -152,13 +161,13 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->submitForm([
       'label' => 'Invalid Caliber',
       'machine_name' => 'invalid_caliber',
-      'bullet_diameter' => '-0.001',
-      'case_length' => '-1.000',
-      'neck_diameter' => '-0.001',
-      'shoulder_diameter' => '-0.001',
-      'base_diameter' => '-0.001',
-      'rim_diameter' => '-0.001',
-      'max_overall_length' => '-0.001',
+      'bullet_diameter[number]' => '-0.001',
+      'case_length[number]' => '-1.000',
+      'neck_diameter[number]' => '-0.001',
+      'shoulder_diameter[number]' => '-0.001',
+      'base_diameter[number]' => '-0.001',
+      'rim_diameter[number]' => '-0.001',
+      'max_overall_length[number]' => '-0.001',
       'notes' => 'Should fail validation.',
     ], 'Save');
 

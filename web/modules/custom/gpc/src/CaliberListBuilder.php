@@ -65,8 +65,8 @@ class CaliberListBuilder extends EntityListBuilder {
     }
     $row['nickname'] = $entity->get('nickname')->value ?? '';
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
-    $row['bullet_diameter'] = $entity->get('bullet_diameter')->value ?? '';
-    $row['case_length'] = $entity->get('case_length')->value ?? '';
+    $row['bullet_diameter'] = $this->formatMeasurement($entity, 'bullet_diameter');
+    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
     $primer_type = $entity->get('primer_type')->value ?? '';
     $row['primer_type'] = Caliber::primerTypeOptions()[$primer_type] ?? $primer_type;
     $row['changed'] = $entity->getChangedTime()
@@ -82,6 +82,19 @@ class CaliberListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Calibers');
+  }
+
+  /**
+   * Formats a physical measurement for table output.
+   */
+  protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || $item->isEmpty()) {
+      return '';
+    }
+
+    $measurement = $item->toMeasurement();
+    return (string) $measurement;
   }
 
 }

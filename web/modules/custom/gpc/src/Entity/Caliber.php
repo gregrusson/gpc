@@ -17,6 +17,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\gpc\CaliberAccessControlHandler;
 use Drupal\gpc\CaliberListBuilder;
 use Drupal\gpc\Form\CaliberForm;
+use Drupal\physical\LengthUnit;
+use Drupal\physical\MeasurementType;
 
 /**
  * Defines the caliber entity class.
@@ -114,17 +116,15 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('An optional abbreviation or shorthand for the caliber name.'))
       ->setSetting('max_length', 255);
 
-    $fields['bullet_diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Bullet diameter'))
-      ->setDescription(t('The bullet diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['bullet_diameter'] = static::buildLengthMeasurementField(
+      'Bullet diameter',
+      'The bullet diameter in inches.'
+    );
 
-    $fields['case_length'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Case length'))
-      ->setDescription(t('The case length in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['case_length'] = static::buildLengthMeasurementField(
+      'Case length',
+      'The case length in inches.'
+    );
 
     $fields['primer_type'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Primer type'))
@@ -133,35 +133,30 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
         'allowed_values' => static::primerTypeOptions(),
       ]);
 
-    $fields['neck_diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Neck diameter'))
-      ->setDescription(t('The neck diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['neck_diameter'] = static::buildLengthMeasurementField(
+      'Neck diameter',
+      'The neck diameter in inches.'
+    );
 
-    $fields['shoulder_diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Shoulder diameter'))
-      ->setDescription(t('The shoulder diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['shoulder_diameter'] = static::buildLengthMeasurementField(
+      'Shoulder diameter',
+      'The shoulder diameter in inches.'
+    );
 
-    $fields['base_diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Base diameter'))
-      ->setDescription(t('The base diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['base_diameter'] = static::buildLengthMeasurementField(
+      'Base diameter',
+      'The base diameter in inches.'
+    );
 
-    $fields['rim_diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Rim diameter'))
-      ->setDescription(t('The rim diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['rim_diameter'] = static::buildLengthMeasurementField(
+      'Rim diameter',
+      'The rim diameter in inches.'
+    );
 
-    $fields['max_overall_length'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Max overall length'))
-      ->setDescription(t('The maximum overall length in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['max_overall_length'] = static::buildLengthMeasurementField(
+      'Max overall length',
+      'The maximum overall length in inches.'
+    );
 
     $fields['notes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Notes'))
@@ -197,6 +192,32 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       'rimfire' => t('Rimfire'),
       'shotshell_209' => t('Shotshell / 209'),
     ];
+  }
+
+  /**
+   * Builds a length measurement field stored via Physical.
+   */
+  protected static function buildLengthMeasurementField(string $label, string $description): BaseFieldDefinition {
+    return BaseFieldDefinition::create('physical_measurement')
+      ->setLabel(t($label))
+      ->setDescription(t($description))
+      ->setSettings([
+        'measurement_type' => MeasurementType::LENGTH,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'default_unit' => LengthUnit::INCH,
+          'allow_unit_change' => FALSE,
+          'available_units' => [LengthUnit::INCH],
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'output_unit' => LengthUnit::INCH,
+        ],
+      ]);
   }
 
 }
