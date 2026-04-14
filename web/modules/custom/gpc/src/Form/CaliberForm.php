@@ -47,12 +47,12 @@ class CaliberForm extends GpcEntityFormBase {
       ];
     }
     else {
-      $form['machine_name'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Machine name'),
-        '#markup' => $entity->get('machine_name')->value ?? '',
-        '#description' => $this->t('This value is fixed after creation.'),
-      ];
+      // $form['machine_name'] = [
+      //   '#type' => 'item',
+      //   '#title' => $this->t('Machine name'),
+      //   '#markup' => $entity->get('machine_name')->value ?? '',
+      //   '#description' => $this->t('This value is fixed after creation.'),
+      // ];
     }
 
     $form['nickname'] = [
@@ -63,10 +63,6 @@ class CaliberForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional abbreviation or shorthand for the caliber name.'),
     ];
 
-    $form['bullet_diameter'] = $this->buildLengthMeasurementElement($entity, 'bullet_diameter', $this->t('Bullet diameter'), $this->t('Optional bullet diameter in inches or millimeters.'));
-
-    $form['case_length'] = $this->buildLengthMeasurementElement($entity, 'case_length', $this->t('Case length'), $this->t('Optional case length in inches or millimeters.'));
-
     $form['primer_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Primer type'),
@@ -76,6 +72,8 @@ class CaliberForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional reloading primer family used by this caliber.'),
     ];
 
+    $form['bullet_diameter'] = $this->buildLengthMeasurementElement($entity, 'bullet_diameter', $this->t('Bullet diameter'), $this->t('Optional bullet diameter in inches or millimeters.'));
+
     $form['neck_diameter'] = $this->buildLengthMeasurementElement($entity, 'neck_diameter', $this->t('Neck diameter'), $this->t('Optional neck diameter in inches or millimeters.'));
 
     $form['shoulder_diameter'] = $this->buildLengthMeasurementElement($entity, 'shoulder_diameter', $this->t('Shoulder diameter'), $this->t('Optional shoulder diameter in inches or millimeters.'));
@@ -83,6 +81,8 @@ class CaliberForm extends GpcEntityFormBase {
     $form['base_diameter'] = $this->buildLengthMeasurementElement($entity, 'base_diameter', $this->t('Base diameter'), $this->t('Optional base diameter in inches or millimeters.'));
 
     $form['rim_diameter'] = $this->buildLengthMeasurementElement($entity, 'rim_diameter', $this->t('Rim diameter'), $this->t('Optional rim diameter in inches or millimeters.'));
+
+    $form['case_length'] = $this->buildLengthMeasurementElement($entity, 'case_length', $this->t('Case length'), $this->t('Optional case length in inches or millimeters.'));
 
     $form['max_overall_length'] = $this->buildLengthMeasurementElement($entity, 'max_overall_length', $this->t('Max overall length'), $this->t('Optional maximum overall length in inches or millimeters.'));
 
