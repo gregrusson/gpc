@@ -18,14 +18,15 @@ class ComponentForm extends GpcEntityFormBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $entity = $this->entity;
+    $bundle = $entity->bundle();
 
     $form['label'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Title'),
+      '#title' => $this->t('Component name'),
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The human-readable name shown in admin screens.'),
+      '#description' => $this->t('The product or model name shown in admin screens and recipe references.'),
     ];
 
     if ($entity->isNew()) {
@@ -52,12 +53,10 @@ class ComponentForm extends GpcEntityFormBase {
     }
 
     $form['component_type'] = [
-      '#type' => 'select',
+      '#type' => 'item',
       '#title' => $this->t('Component type'),
-      '#default_value' => $entity->get('component_type')->value ?? 'other',
-      '#required' => TRUE,
-      '#options' => Component::componentTypeOptions(),
-      '#description' => $this->t('The broad category used for filtering and recipe structure.'),
+      '#markup' => Component::bundleLabel($bundle ?? ''),
+      '#description' => $this->t('The bundle is chosen from the add page and cannot be changed here.'),
     ];
 
     $form['manufacturer'] = [
@@ -65,8 +64,28 @@ class ComponentForm extends GpcEntityFormBase {
       '#title' => $this->t('Manufacturer'),
       '#default_value' => $entity->get('manufacturer')->value ?? '',
       '#maxlength' => 255,
-      '#description' => $this->t('Optional brand or manufacturer name.'),
+      '#description' => $this->t('Optional manufacturer or brand.'),
     ];
+
+    if ($bundle === 'bullet') {
+      $form['weight'] = $this->buildDecimalFieldElement($entity, 'weight', $this->t('Bullet weight'), $this->t('Enter the bullet weight in grains.'));
+      $form['diameter'] = $this->buildDecimalFieldElement($entity, 'diameter', $this->t('Bullet diameter'), $this->t('Enter the bullet diameter in inches.'));
+      $form['sectional_density'] = $this->buildDecimalFieldElement($entity, 'sectional_density', $this->t('Sectional density'), $this->t('Enter the sectional density as a unitless decimal.'));
+    }
+    elseif ($bundle === 'primer') {
+      $form['primer_type'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Primer type'),
+        '#default_value' => $entity->get('primer_type')->value ?? '',
+        '#required' => TRUE,
+        '#options' => Component::primerTypeOptions(),
+        '#empty_option' => $this->t('- Select -'),
+        '#description' => $this->t('Select the primer family or format.'),
+      ];
+    }
+    elseif ($bundle === 'brass') {
+      $form['case_length'] = $this->buildDecimalFieldElement($entity, 'case_length', $this->t('Case length'), $this->t('Enter the case length in inches.'));
+    }
 
     $form['notes'] = [
       '#type' => 'textarea',
@@ -102,6 +121,41 @@ class ComponentForm extends GpcEntityFormBase {
   public static function machineNameExists(string $machine_name): bool {
     $storage = \Drupal::entityTypeManager()->getStorage('gpc_component');
     return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
+  }
+
+  /**
+   * Builds a decimal textfield for bundle-specific component data.
+   */
+  protected function buildDecimalFieldElement($entity, string $field_name, string|\Stringable $title, string|\Stringable $description): array {
+    $default_value = $entity->get($field_name)->value ?? '';
+
+    return [
+      '#type' => 'number',
+      '#title' => $title,
+      '#default_value' => $default_value,
+      '#min' => 0,
+      '#step' => 0.0001,
+      '#description' => $description,
+      '#element_validate' => [
+        [$this, 'validateNonNegativeDecimalElement'],
+      ],
+    ];
+  }
+
+  /**
+   * Validates that a numeric component field is not negative.
+   */
+  public function validateNonNegativeDecimalElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
+    $value = $form_state->getValue($element['#parents']);
+    if ($value === NULL || $value === '') {
+      return;
+    }
+
+    if (!is_numeric($value) || (float) $value < 0) {
+      $form_state->setError($element, $this->t('%title must be a non-negative number.', [
+        '%title' => $element['#title'],
+      ]));
+    }
   }
 
 }

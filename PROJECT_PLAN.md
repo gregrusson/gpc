@@ -28,13 +28,13 @@ The application is intended to be usable by logged-in users, not only through `/
 
 - Caliber is global shared reference data.
 - Firearm is a user-owned structured record for a specific gun.
-- Component is a reusable catalog definition, not inventory.
+- Component is a reusable catalog definition, not inventory, and is modeled with fixed Bullet/Powder/Primer/Brass bundles.
 - Recipe is a user-owned reloading configuration.
 - Batch is a user-owned produced instance created from a recipe.
 - Recipe and batch are distinct concepts and should stay distinct in the model.
 - Notes fields should carry secondary detail that does not yet justify structured fields.
 - User-owned entities should use `uid` plus owner-based entity access control with admin override.
-- Component uses bundles for Bullet, Powder, Primer, and Brass.
+- Component keeps shared fields simple and adds only narrowly useful bundle-specific fields where they help immediately.
 - Generic title fields should be avoided when they duplicate a more specific identifier.
 - Recipe should use `field_recipe_code` plus optional `field_label`.
 - Batch should use `field_batch_code`.

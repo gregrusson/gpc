@@ -228,17 +228,35 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the component add form.
+   * Tests the component add page exposes the supported bundles.
    */
-  public function testComponentAddForm(): void {
+  public function testComponentAddPage(): void {
     $this->drupalGet('/admin/content/gpc/components/add');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Bullet');
+    $this->assertSession()->linkExists('Powder');
+    $this->assertSession()->linkExists('Primer');
+    $this->assertSession()->linkExists('Brass');
+  }
+
+  /**
+   * Tests the bullet component add form.
+   */
+  public function testBulletComponentAddForm(): void {
+    $this->drupalGet('/admin/content/gpc/components/add/bullet');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Component name');
+    $this->assertSession()->fieldExists('Bullet weight');
+    $this->assertSession()->fieldExists('Bullet diameter');
+    $this->assertSession()->fieldExists('Sectional density');
 
     $this->submitForm([
       'label' => '147gr FMJ',
       'machine_name' => '147gr_fmj',
-      'component_type' => 'bullet',
       'manufacturer' => 'Example Co.',
+      'weight' => '147.500',
+      'diameter' => '0.3550',
+      'sectional_density' => '0.1670',
       'notes' => 'Practice bullet.',
     ], 'Save');
 
@@ -269,6 +287,11 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'machine_name' => 'cci_300',
       'component_type' => 'primer',
     ]);
+    $brass = $this->createComponent([
+      'label' => 'Starline 10mm',
+      'machine_name' => 'starline_10mm',
+      'component_type' => 'brass',
+    ]);
 
     $this->drupalGet('/admin/content/gpc/recipes/add');
     $this->assertSession()->statusCodeEquals(200);
@@ -280,6 +303,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'bullet_component' => $this->entityAutocompleteValue($bullet),
       'powder_component' => $this->entityAutocompleteValue($powder),
       'primer_component' => $this->entityAutocompleteValue($primer),
+      'brass_component' => $this->entityAutocompleteValue($brass),
       'powder_charge_weight' => '8.200',
       'overall_length' => '1.255',
       'notes' => 'Range use.',

@@ -351,3 +351,7 @@ function gpc_update_10016(): void {
     );
   }
 }
+
+/**
+ * Install the shared Component bundle definitions for existing sites.
+ */

@@ -41,9 +41,9 @@ class ComponentListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
+      'label' => $this->t('Component name'),
       'machine_name' => $this->t('Machine name'),
-      'component_type' => $this->t('Type'),
+      'component_type' => $this->t('Component type'),
       'manufacturer' => $this->t('Manufacturer'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
@@ -53,13 +53,10 @@ class ComponentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $options = Component::componentTypeOptions();
     $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
-    $component_type = $entity->get('component_type')->value ?? NULL;
-    $row['component_type'] = $component_type && isset($options[$component_type])
-      ? $options[$component_type]
-      : '';
+    $bundle = $entity->bundle();
+    $row['component_type'] = $bundle ? Component::bundleLabel($bundle) : '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')

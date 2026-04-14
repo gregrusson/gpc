@@ -45,13 +45,13 @@ Current implementation goals:
 ### Modeling notes
 
 - Caliber is global shared reference data.
-- Component is global shared reference data and should stay reusable.
+- Component is global shared reference data and stays reusable through fixed bundles for Bullet, Powder, Primer, and Brass.
 - Firearm, Recipe, and Batch are user-owned records.
 - User-owned entities should use `uid` plus owner-based entity access control with admin override.
 - Recipe and batch are distinct concepts.
 - Recipe should use `field_recipe_code` plus optional `field_label`.
 - Batch should use `field_batch_code`.
-- Component should use bundles for Bullet, Powder, Primer, and Brass.
+- Component should keep shared fields like manufacturer, product/model name, and notes straightforward, with bundle-specific fields only where they add immediate value.
 - Notes fields should hold flexible secondary detail.
 - Inventory is deferred as a later separate user-owned concept.
 - Caliber structured-field expansion is deferred for now.
