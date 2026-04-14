@@ -44,10 +44,10 @@ class CaliberListBuilder extends EntityListBuilder {
     return [
       'label' => $this->t('Caliber name'),
       'nickname' => $this->t('Nickname'),
-      'machine_name' => $this->t('Machine name'),
+      'primer_type' => $this->t('Primer type'),
       'bullet_diameter' => $this->t('Bullet diameter'),
       'case_length' => $this->t('Case length'),
-      'primer_type' => $this->t('Primer type'),
+      'max_overall_length' => $this->t('Max overall length'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -65,11 +65,11 @@ class CaliberListBuilder extends EntityListBuilder {
       ];
     }
     $row['nickname'] = $entity->get('nickname')->value ?? '';
-    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
-    $row['bullet_diameter'] = $this->formatMeasurement($entity, 'bullet_diameter');
-    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
     $primer_type = $entity->get('primer_type')->value ?? '';
     $row['primer_type'] = Caliber::primerTypeOptions()[$primer_type] ?? $primer_type;
+    $row['bullet_diameter'] = $this->formatMeasurement($entity, 'bullet_diameter');
+    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
+    $row['max_overall_length'] = $this->formatMeasurement($entity, 'max_overall_length');
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';
