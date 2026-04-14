@@ -17,8 +17,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\gpc\CaliberAccessControlHandler;
 use Drupal\gpc\CaliberListBuilder;
 use Drupal\gpc\Form\CaliberForm;
-use Drupal\physical\LengthUnit;
-use Drupal\physical\MeasurementType;
 
 /**
  * Defines the caliber entity class.
@@ -202,23 +200,23 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setLabel(t($label))
       ->setDescription(t($description))
       ->setSettings([
-        'measurement_type' => MeasurementType::LENGTH,
+        'measurement_type' => 'length',
       ])
       ->setDisplayOptions('form', [
         'type' => 'physical_measurement_default',
         'settings' => [
-          'default_unit' => LengthUnit::INCH,
+          'default_unit' => 'in',
           'allow_unit_change' => TRUE,
           'available_units' => [
-            LengthUnit::INCH,
-            LengthUnit::MILLIMETER,
+            'in',
+            'mm',
           ],
         ],
       ])
       ->setDisplayOptions('view', [
         'type' => 'physical_measurement_default',
         'settings' => [
-          'output_unit' => LengthUnit::INCH,
+          'output_unit' => 'in',
         ],
       ]);
   }

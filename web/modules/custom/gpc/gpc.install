@@ -280,3 +280,74 @@ function gpc_update_10012(): void {
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
   $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Add Firearm ownership support for existing sites.
+ */
+function gpc_update_10013(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_firearm']['entity_type']) && empty($change_list['gpc_firearm']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_firearm');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_firearm');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_firearm', 'f')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_firearm')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+/**
+ * Install the Firearm owner field storage on sites that missed the previous update.
+ */
+function gpc_update_10014(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_firearm']['field_storage_definitions']['uid']) && empty($change_list['gpc_firearm']['entity_type'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_firearm');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_firearm');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_firearm', 'f')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_firearm')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+function gpc_update_10016(): void {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_storage_definitions = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions('gpc_firearm');
+
+  if (isset($field_storage_definitions['type'])) {
+    $update_manager->installFieldStorageDefinition(
+      'type',
+      'gpc_firearm',
+      'gpc',
+      $field_storage_definitions['type']
+    );
+  }
+}

@@ -6,7 +6,7 @@ This document defines the access model for the current GPC direction.
 
 - Caliber is shared reference data and is governed by dedicated view, create, edit, and delete permissions.
 - Component is shared reference data and may be managed by privileged users.
-- Firearm is owned by the creating user.
+- Firearm is owned by the creating user and uses owner-based access with admin override.
 - Recipe is owned by the creating user.
 - Batch is owned by the creating user.
 - User-owned records should use `uid` plus owner-based entity access control with admin override.
@@ -17,6 +17,7 @@ This document defines the access model for the current GPC direction.
 - The application should be usable by logged-in users, not only through `/admin`.
 - Shared reference entities should not assume admin-only access for normal create and edit flows.
 - Add and edit flows for owned records should support direct user interaction from the application UI.
+- Firearm uses a normal logged-in UI path and is not treated as admin-only content.
 
 ## Practical Implications
 

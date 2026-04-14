@@ -33,3 +33,19 @@ administer gpc batches:
 administer gpc firearms:
   title: 'Administer firearms'
   description: 'Create, edit, and delete firearm records.'
+
+view gpc firearms:
+  title: 'View firearms'
+  description: 'View the firearm collection and access owned firearms.'
+
+create gpc firearms:
+  title: 'Create firearms'
+  description: 'Create new firearm records.'
+
+edit gpc firearms:
+  title: 'Edit firearms'
+  description: 'Edit firearm records you own.'
+
+delete gpc firearms:
+  title: 'Delete firearms'
+  description: 'Delete firearm records you own.'

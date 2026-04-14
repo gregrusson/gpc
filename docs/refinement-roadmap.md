@@ -8,7 +8,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Use `drupal/physical` for Caliber measurements that need units.
 - Keep Caliber measurement input restricted to inches and millimeters, with inch display defaults.
 - Keep Caliber physical-field updates additive and in-place on existing sites whenever possible.
-- Finish making Firearm a user-owned entity that requires Caliber.
+- Keep Firearm user-owned, caliber-required, and usable through the logged-in UI.
 - Move Recipe to `field_recipe_code` plus optional `field_label`.
 - Move Batch to `field_batch_code`.
 - Keep the user-owned workflow usable outside `/admin`.
@@ -20,6 +20,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Caliber measurements stay in module code and use `drupal/physical` rather than ad hoc UI-added fields.
 - Caliber measurement fields should keep a small, explicit unit policy instead of exposing generic physical unit lists.
 - Add ownership-aware access controls for user-owned records.
+- Keep Firearm display naming anchored to manufacturer and model instead of a generic title field.
 
 ## Deferred Work
 

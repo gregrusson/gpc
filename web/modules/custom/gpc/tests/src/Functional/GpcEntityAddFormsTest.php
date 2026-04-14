@@ -24,6 +24,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     'gpc',
     'field',
     'filter',
+    'physical',
     'options',
     'text',
   ];
