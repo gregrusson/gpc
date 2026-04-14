@@ -55,7 +55,18 @@ Keep new code under:
 
 Shared reference concept used by firearms, recipes, batches, and later sessions or ammo records.
 
-Use it as a stable shared reference entity. Caliber structured-field expansion is deferred for now.
+Use it as a stable shared reference entity.
+GPC uses `drupal/physical` for measurement fields only, so caliber measurements are shipped in module code rather than added manually in the UI.
+Caliber identity, naming, aliases, and business rules remain in custom GPC code.
+Existing Caliber rows are updated in place by the module update hook when the physical field policy changes.
+
+## Caliber Unit Policy
+
+- Caliber length and diameter fields allow inches and millimeters only.
+- Inches remain the current default display unit for caliber measurement output.
+- Input, storage, and display are separate concerns, so mm input may be displayed in inches when formatter or list settings call for that.
+- Keep unit lists intentionally small and domain-specific.
+- Other entities may use different measurement policies if their domain requires them.
 
 ### Firearm
 
@@ -124,6 +135,10 @@ Later-phase entities or capabilities:
 ## Fielding Guidance
 
 Use structured fields for important stable data.
+
+Use `drupal/physical` for true measurements where units matter.
+Prefer inches for caliber display defaults, but allow millimeters for caliber measurement input.
+Do not let the physical package define the domain model.
 
 Use notes fields for secondary details, context, and anything that does not yet justify a dedicated schema.
 

@@ -6,17 +6,19 @@ namespace Drupal\gpc\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\ContentEntityDeleteForm;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\CaliberAccessControlHandler;
 use Drupal\gpc\CaliberListBuilder;
 use Drupal\gpc\Form\CaliberForm;
-use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
+use Drupal\physical\LengthUnit;
+use Drupal\physical\MeasurementType;
 
 /**
  * Defines the caliber entity class.
@@ -32,7 +34,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
     'plural' => '@count calibers',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => CaliberAccessControlHandler::class,
     'list_builder' => CaliberListBuilder::class,
     'form' => [
       'add' => CaliberForm::class,
@@ -41,7 +43,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
       'default' => CaliberForm::class,
     ],
     'route_provider' => [
-      'html' => CaliberHtmlRouteProvider::class,
+      'html' => DefaultHtmlRouteProvider::class,
     ],
   ],
   links: [
@@ -50,7 +52,7 @@ use Drupal\gpc\Routing\CaliberHtmlRouteProvider;
     'edit-form' => '/admin/content/gpc/calibers/{gpc_caliber}/edit',
     'delete-form' => '/admin/content/gpc/calibers/{gpc_caliber}/delete',
   ],
-  admin_permission: 'administer gpc calibers',
+  collection_permission: 'view gpc calibers',
   base_table: 'gpc_caliber',
   entity_keys: [
     'id' => 'id',
@@ -97,17 +99,64 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The human-readable name of the caliber.'))
+      ->setLabel(t('Caliber name'))
+      ->setDescription(t('The human-readable display name of the caliber.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
     $fields['machine_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Machine name'))
-      ->setDescription(t('A unique immutable internal identifier.'))
+      ->setDescription(t('A unique immutable internal identifier used for imports and integrations.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 128)
       ->setSetting('is_ascii', TRUE);
+
+    $fields['nickname'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Nickname'))
+      ->setDescription(t('An optional abbreviation or shorthand for the caliber name.'))
+      ->setSetting('max_length', 255);
+
+    $fields['bullet_diameter'] = static::buildLengthMeasurementField(
+      'Bullet diameter',
+      'The bullet diameter. Enter inches or millimeters.'
+    );
+
+    $fields['case_length'] = static::buildLengthMeasurementField(
+      'Case length',
+      'The case length. Enter inches or millimeters.'
+    );
+
+    $fields['primer_type'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Primer type'))
+      ->setDescription(t('The reloading primer family used by this caliber.'))
+      ->setSettings([
+        'allowed_values' => static::primerTypeOptions(),
+      ]);
+
+    $fields['neck_diameter'] = static::buildLengthMeasurementField(
+      'Neck diameter',
+      'The neck diameter. Enter inches or millimeters.'
+    );
+
+    $fields['shoulder_diameter'] = static::buildLengthMeasurementField(
+      'Shoulder diameter',
+      'The shoulder diameter. Enter inches or millimeters.'
+    );
+
+    $fields['base_diameter'] = static::buildLengthMeasurementField(
+      'Base diameter',
+      'The base diameter. Enter inches or millimeters.'
+    );
+
+    $fields['rim_diameter'] = static::buildLengthMeasurementField(
+      'Rim diameter',
+      'The rim diameter. Enter inches or millimeters.'
+    );
+
+    $fields['max_overall_length'] = static::buildLengthMeasurementField(
+      'Max overall length',
+      'The maximum overall length. Enter inches or millimeters.'
+    );
 
     $fields['notes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Notes'))
@@ -122,6 +171,56 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('The time that this caliber was last updated.'));
 
     return $fields;
+  }
+
+  /**
+   * Returns the allowed primer type values.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   The allowed values keyed by machine name.
+   */
+  public static function primerTypeOptions(): array {
+    return [
+      'small_pistol' => t('Small pistol'),
+      'small_pistol_magnum' => t('Small pistol magnum'),
+      'small_rifle' => t('Small rifle'),
+      'small_rifle_magnum' => t('Small rifle magnum'),
+      'large_pistol' => t('Large pistol'),
+      'large_pistol_magnum' => t('Large pistol magnum'),
+      'large_rifle' => t('Large rifle'),
+      'large_rifle_magnum' => t('Large rifle magnum'),
+      'rimfire' => t('Rimfire'),
+      'shotshell_209' => t('Shotshell / 209'),
+    ];
+  }
+
+  /**
+   * Builds a length measurement field stored via Physical.
+   */
+  protected static function buildLengthMeasurementField(string $label, string $description): BaseFieldDefinition {
+    return BaseFieldDefinition::create('physical_measurement')
+      ->setLabel(t($label))
+      ->setDescription(t($description))
+      ->setSettings([
+        'measurement_type' => MeasurementType::LENGTH,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'default_unit' => LengthUnit::INCH,
+          'allow_unit_change' => TRUE,
+          'available_units' => [
+            LengthUnit::INCH,
+            LengthUnit::MILLIMETER,
+          ],
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'output_unit' => LengthUnit::INCH,
+        ],
+      ]);
   }
 
 }

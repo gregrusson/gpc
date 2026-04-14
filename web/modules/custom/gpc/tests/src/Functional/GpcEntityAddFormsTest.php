@@ -6,6 +6,7 @@ namespace Drupal\Tests\gpc\Functional;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\physical\LengthUnit;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -48,6 +49,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->adminUser = $this->drupalCreateUser([
       'access administration pages',
       'administer gpc calibers',
+      'view gpc calibers',
+      'create gpc calibers',
+      'edit gpc calibers',
+      'delete gpc calibers',
       'administer gpc components',
       'administer gpc recipes',
       'administer gpc batches',
@@ -56,20 +61,169 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the caliber add form.
+   * Tests the caliber add form for a non-admin user with shared-reference permissions.
    */
   public function testCaliberAddForm(): void {
+    $this->drupalLogout();
+    $caliberUser = $this->drupalCreateUser([
+      'view gpc calibers',
+      'create gpc calibers',
+    ]);
+    $this->drupalLogin($caliberUser);
+
     $this->drupalGet('/admin/content/gpc/calibers/add');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->optionExists('bullet_diameter[unit]', LengthUnit::MILLIMETER);
+    $this->assertSession()->fieldValueEquals('bullet_diameter[unit]', LengthUnit::INCH);
 
     $this->submitForm([
       'label' => '9mm Luger',
       'machine_name' => '9mm_luger',
-      'notes' => 'Common pistol caliber.',
+      'bullet_diameter[number]' => '25.4',
+      'bullet_diameter[unit]' => LengthUnit::MILLIMETER,
+      'case_length[number]' => '25.4',
+      'case_length[unit]' => LengthUnit::MILLIMETER,
+      'neck_diameter[number]' => '0.380',
+      'neck_diameter[unit]' => LengthUnit::INCH,
+      'shoulder_diameter[number]' => '0.391',
+      'shoulder_diameter[unit]' => LengthUnit::INCH,
+      'base_diameter[number]' => '0.391',
+      'base_diameter[unit]' => LengthUnit::INCH,
+      'rim_diameter[number]' => '0.392',
+      'rim_diameter[unit]' => LengthUnit::INCH,
+      'max_overall_length[number]' => '1.169',
+      'max_overall_length[unit]' => LengthUnit::INCH,
+      'primer_type' => 'small_pistol',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the 9mm Luger caliber.');
     $this->assertSession()->pageTextContains('9mm Luger');
+    $this->assertSession()->pageTextContains('1 in');
+  }
+
+  /**
+   * Tests the caliber edit form.
+   */
+  public function testCaliberEditForm(): void {
+    $caliber = $this->createCaliber([
+      'label' => '.308 Winchester',
+      'machine_name' => '308_winchester',
+      'nickname' => '.308 Win',
+      'bullet_diameter' => [
+        'number' => '7.82',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'case_length' => [
+        'number' => '51.18',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'primer_type' => 'small_rifle',
+      'neck_diameter' => [
+        'number' => '8.74',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'shoulder_diameter' => [
+        'number' => '11.53',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'base_diameter' => [
+        'number' => '11.94',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'rim_diameter' => [
+        'number' => '12.02',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'max_overall_length' => [
+        'number' => '71.12',
+        'unit' => LengthUnit::MILLIMETER,
+      ],
+      'notes' => 'Common rifle caliber.',
+    ]);
+
+    $this->drupalGet('/admin/content/gpc/calibers/' . $caliber->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldValueEquals('Caliber name', '.308 Winchester');
+    $this->assertSession()->fieldValueEquals('bullet_diameter[unit]', LengthUnit::MILLIMETER);
+
+    $this->submitForm([
+      'label' => '.308 Win',
+      'nickname' => '.308',
+      'bullet_diameter[number]' => '7.82',
+      'bullet_diameter[unit]' => LengthUnit::MILLIMETER,
+      'case_length[number]' => '51.18',
+      'case_length[unit]' => LengthUnit::MILLIMETER,
+      'primer_type' => 'small_rifle',
+      'neck_diameter[number]' => '8.74',
+      'neck_diameter[unit]' => LengthUnit::MILLIMETER,
+      'shoulder_diameter[number]' => '11.53',
+      'shoulder_diameter[unit]' => LengthUnit::MILLIMETER,
+      'base_diameter[number]' => '11.94',
+      'base_diameter[unit]' => LengthUnit::MILLIMETER,
+      'rim_diameter[number]' => '12.02',
+      'rim_diameter[unit]' => LengthUnit::MILLIMETER,
+      'max_overall_length[number]' => '71.12',
+      'max_overall_length[unit]' => LengthUnit::MILLIMETER,
+      'notes' => 'Updated note.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Updated the .308 Win caliber.');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->load($caliber->id());
+    $this->assertNotNull($loaded);
+    $this->assertSame('.308 Win', $loaded?->label());
+    $this->assertSame('.308', $loaded?->get('nickname')->value);
+    $this->assertSame('7.820000', $loaded?->get('bullet_diameter')->number);
+    $this->assertSame('mm', $loaded?->get('bullet_diameter')->unit);
+    $this->assertSame('51.180000', $loaded?->get('case_length')->number);
+    $this->assertSame('mm', $loaded?->get('case_length')->unit);
+    $this->assertSame('small_rifle', $loaded?->get('primer_type')->value);
+    $this->assertSame('8.740000', $loaded?->get('neck_diameter')->number);
+    $this->assertSame('mm', $loaded?->get('neck_diameter')->unit);
+    $this->assertSame('11.530000', $loaded?->get('shoulder_diameter')->number);
+    $this->assertSame('mm', $loaded?->get('shoulder_diameter')->unit);
+    $this->assertSame('11.940000', $loaded?->get('base_diameter')->number);
+    $this->assertSame('mm', $loaded?->get('base_diameter')->unit);
+    $this->assertSame('12.020000', $loaded?->get('rim_diameter')->number);
+    $this->assertSame('mm', $loaded?->get('rim_diameter')->unit);
+    $this->assertSame('71.120000', $loaded?->get('max_overall_length')->number);
+    $this->assertSame('mm', $loaded?->get('max_overall_length')->unit);
+  }
+
+  /**
+   * Tests caliber validation for structured fields.
+   */
+  public function testCaliberValidation(): void {
+    $this->drupalLogout();
+    $caliberUser = $this->drupalCreateUser([
+      'view gpc calibers',
+      'create gpc calibers',
+    ]);
+    $this->drupalLogin($caliberUser);
+
+    $this->drupalGet('/admin/content/gpc/calibers/add');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => 'Invalid Caliber',
+      'machine_name' => 'invalid_caliber',
+      'bullet_diameter[number]' => '-0.001',
+      'case_length[number]' => '-1.000',
+      'neck_diameter[number]' => '-0.001',
+      'shoulder_diameter[number]' => '-0.001',
+      'base_diameter[number]' => '-0.001',
+      'rim_diameter[number]' => '-0.001',
+      'max_overall_length[number]' => '-0.001',
+      'notes' => 'Should fail validation.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Bullet diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Case length must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Neck diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Shoulder diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Base diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Rim diameter must be higher than or equal to 0.');
+    $this->assertSession()->pageTextContains('Max overall length must be higher than or equal to 0.');
   }
 
   /**
