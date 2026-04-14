@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\gpc\Entity\Firearm;
 
 /**
  * Form controller for firearm add/edit forms.
@@ -25,6 +26,16 @@ class FirearmForm extends GpcEntityFormBase {
       '#required' => TRUE,
       '#maxlength' => 255,
       '#description' => $this->t('The display name for this firearm. Use manufacturer and model where possible.'),
+    ];
+
+    $form['firearm_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Firearm type'),
+      '#default_value' => $entity->get('type')->value ?? '',
+      '#required' => TRUE,
+      '#options' => Firearm::firearmTypeOptions(),
+      '#empty_option' => $this->t('- Select -'),
+      '#description' => $this->t('The type of firearm.'),
     ];
 
     $form['caliber'] = [

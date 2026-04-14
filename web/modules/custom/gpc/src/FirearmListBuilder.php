@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\gpc\Entity\Firearm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -44,6 +45,7 @@ class FirearmListBuilder extends EntityListBuilder {
   public function buildHeader() {
     return [
       'label' => $this->t('Firearm'),
+      'type' => $this->t('Type'),
       'caliber' => $this->t('Caliber'),
       'manufacturer' => $this->t('Manufacturer'),
       'model' => $this->t('Model'),
@@ -57,6 +59,8 @@ class FirearmListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     $display_label = $this->buildDisplayLabel($entity);
     $row['label']['data'] = Link::fromTextAndUrl($display_label, $entity->toUrl('edit-form'))->toRenderable();
+    $type = $entity->get('type')->value ?? '';
+    $row['type'] = Firearm::firearmTypeOptions()[$type] ?? $type;
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
     $row['model'] = $entity->get('model')->value ?? '';
