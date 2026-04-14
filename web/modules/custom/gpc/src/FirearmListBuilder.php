@@ -55,7 +55,8 @@ class FirearmListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $display_label = $this->buildDisplayLabel($entity);
+    $row['label']['data'] = Link::fromTextAndUrl($display_label, $entity->toUrl('edit-form'))->toRenderable();
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
     $row['model'] = $entity->get('model')->value ?? '';
@@ -85,6 +86,21 @@ class FirearmListBuilder extends EntityListBuilder {
     }
 
     return $query;
+  }
+
+  /**
+   * Builds the preferred firearm display label.
+   */
+  protected function buildDisplayLabel(EntityInterface $entity): string {
+    $manufacturer = trim((string) ($entity->get('manufacturer')->value ?? ''));
+    $model = trim((string) ($entity->get('model')->value ?? ''));
+    $parts = array_values(array_filter([$manufacturer, $model], static fn (string $value): bool => $value !== ''));
+
+    if ($parts !== []) {
+      return implode(' ', $parts);
+    }
+
+    return (string) $entity->label();
   }
 
 }

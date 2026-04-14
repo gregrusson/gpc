@@ -7,11 +7,13 @@ namespace Drupal\Tests\gpc\Functional;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Covers firearm ownership, access, and creation.
  */
 #[Group('gpc')]
+#[RunTestsInSeparateProcesses]
 class FirearmAccessTest extends BrowserTestBase {
 
   /**
