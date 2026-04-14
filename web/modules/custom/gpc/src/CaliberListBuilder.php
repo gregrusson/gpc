@@ -42,6 +42,7 @@ class CaliberListBuilder extends EntityListBuilder {
   public function buildHeader() {
     return [
       'label' => $this->t('Caliber name'),
+      'nickname' => $this->t('Nickname'),
       'machine_name' => $this->t('Machine name'),
       'bullet_diameter' => $this->t('Bullet diameter'),
       'case_length' => $this->t('Case length'),
@@ -62,6 +63,7 @@ class CaliberListBuilder extends EntityListBuilder {
         '#plain_text' => (string) $entity->label(),
       ];
     }
+    $row['nickname'] = $entity->get('nickname')->value ?? '';
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
     $row['bullet_diameter'] = $entity->get('bullet_diameter')->value ?? '';
     $row['case_length'] = $entity->get('case_length')->value ?? '';

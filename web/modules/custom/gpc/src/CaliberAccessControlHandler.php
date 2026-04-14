@@ -18,10 +18,8 @@ class CaliberAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermissions($account, [
-      'view gpc calibers',
-      'create gpc calibers',
-    ])->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'));
+    return AccessResult::allowedIfHasPermission($account, 'create gpc calibers')
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'));
   }
 
   /**

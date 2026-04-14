@@ -268,3 +268,23 @@ function gpc_update_10011(): void {
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
   $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Apply the Caliber reference-data expansion for existing sites.
+ */
+function gpc_update_10012(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_caliber']['entity_type']) && empty($change_list['gpc_caliber']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_caliber');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}

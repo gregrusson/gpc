@@ -51,6 +51,14 @@ class CaliberForm extends GpcEntityFormBase {
       ];
     }
 
+    $form['nickname'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Nickname'),
+      '#default_value' => $entity->get('nickname')->value ?? '',
+      '#maxlength' => 255,
+      '#description' => $this->t('Optional abbreviation or shorthand for the caliber name.'),
+    ];
+
     $form['bullet_diameter'] = [
       '#type' => 'number',
       '#title' => $this->t('Bullet diameter'),
@@ -75,7 +83,52 @@ class CaliberForm extends GpcEntityFormBase {
       '#default_value' => $entity->get('primer_type')->value ?? '',
       '#options' => Caliber::primerTypeOptions(),
       '#empty_option' => $this->t('- Select -'),
-      '#description' => $this->t('Optional primer family used by this caliber.'),
+      '#description' => $this->t('Optional reloading primer family used by this caliber.'),
+    ];
+
+    $form['neck_diameter'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Neck diameter'),
+      '#default_value' => $entity->get('neck_diameter')->value ?? '',
+      '#step' => 0.001,
+      '#min' => 0,
+      '#description' => $this->t('Optional neck diameter in inches.'),
+    ];
+
+    $form['shoulder_diameter'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Shoulder diameter'),
+      '#default_value' => $entity->get('shoulder_diameter')->value ?? '',
+      '#step' => 0.001,
+      '#min' => 0,
+      '#description' => $this->t('Optional shoulder diameter in inches.'),
+    ];
+
+    $form['base_diameter'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Base diameter'),
+      '#default_value' => $entity->get('base_diameter')->value ?? '',
+      '#step' => 0.001,
+      '#min' => 0,
+      '#description' => $this->t('Optional base diameter in inches.'),
+    ];
+
+    $form['rim_diameter'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Rim diameter'),
+      '#default_value' => $entity->get('rim_diameter')->value ?? '',
+      '#step' => 0.001,
+      '#min' => 0,
+      '#description' => $this->t('Optional rim diameter in inches.'),
+    ];
+
+    $form['max_overall_length'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Max overall length'),
+      '#default_value' => $entity->get('max_overall_length')->value ?? '',
+      '#step' => 0.001,
+      '#min' => 0,
+      '#description' => $this->t('Optional maximum overall length in inches.'),
     ];
 
     $form['notes'] = [
@@ -112,7 +165,15 @@ class CaliberForm extends GpcEntityFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    foreach (['bullet_diameter' => 'Bullet diameter', 'case_length' => 'Case length'] as $field_name => $label) {
+    foreach ([
+      'bullet_diameter' => 'Bullet diameter',
+      'case_length' => 'Case length',
+      'neck_diameter' => 'Neck diameter',
+      'shoulder_diameter' => 'Shoulder diameter',
+      'base_diameter' => 'Base diameter',
+      'rim_diameter' => 'Rim diameter',
+      'max_overall_length' => 'Max overall length',
+    ] as $field_name => $label) {
       $value = $form_state->getValue($field_name);
       if ($value === '' || $value === NULL) {
         continue;

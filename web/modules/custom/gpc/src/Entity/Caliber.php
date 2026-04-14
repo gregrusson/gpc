@@ -109,6 +109,11 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('max_length', 128)
       ->setSetting('is_ascii', TRUE);
 
+    $fields['nickname'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Nickname'))
+      ->setDescription(t('An optional abbreviation or shorthand for the caliber name.'))
+      ->setSetting('max_length', 255);
+
     $fields['bullet_diameter'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Bullet diameter'))
       ->setDescription(t('The bullet diameter in inches.'))
@@ -123,10 +128,40 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['primer_type'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Primer type'))
-      ->setDescription(t('The primer family used by this caliber.'))
+      ->setDescription(t('The reloading primer family used by this caliber.'))
       ->setSettings([
         'allowed_values' => static::primerTypeOptions(),
       ]);
+
+    $fields['neck_diameter'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Neck diameter'))
+      ->setDescription(t('The neck diameter in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['shoulder_diameter'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Shoulder diameter'))
+      ->setDescription(t('The shoulder diameter in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['base_diameter'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Base diameter'))
+      ->setDescription(t('The base diameter in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['rim_diameter'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Rim diameter'))
+      ->setDescription(t('The rim diameter in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
+
+    $fields['max_overall_length'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Max overall length'))
+      ->setDescription(t('The maximum overall length in inches.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 3);
 
     $fields['notes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Notes'))
@@ -151,10 +186,16 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
    */
   public static function primerTypeOptions(): array {
     return [
-      'boxer' => t('Boxer'),
-      'berdan' => t('Berdan'),
+      'small_pistol' => t('Small pistol'),
+      'small_pistol_magnum' => t('Small pistol magnum'),
+      'small_rifle' => t('Small rifle'),
+      'small_rifle_magnum' => t('Small rifle magnum'),
+      'large_pistol' => t('Large pistol'),
+      'large_pistol_magnum' => t('Large pistol magnum'),
+      'large_rifle' => t('Large rifle'),
+      'large_rifle_magnum' => t('Large rifle magnum'),
       'rimfire' => t('Rimfire'),
-      'other' => t('Other'),
+      'shotshell_209' => t('Shotshell / 209'),
     ];
   }
 
