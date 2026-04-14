@@ -28,7 +28,7 @@ class FirearmForm extends GpcEntityFormBase {
       '#description' => $this->t('The display name for this firearm. Use manufacturer and model where possible.'),
     ];
 
-    $form['firearm_type'] = [
+    $form['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Firearm type'),
       '#default_value' => $entity->get('type')->value ?? '',

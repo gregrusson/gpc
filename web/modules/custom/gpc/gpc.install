@@ -337,23 +337,17 @@ function gpc_update_10014(): void {
   }
 }
 
-/**
- * Install the Firearm entity schema for existing sites.
- */
-function gpc_update_10015(): void {
-  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_firearm');
-  if ($entity_type === NULL) {
-    return;
-  }
+function gpc_update_10016(): void {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_storage_definitions = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions('gpc_firearm');
 
-  $schema = \Drupal::database()->schema();
-  if ($schema->tableExists($entity_type->getBaseTable())) {
-    return;
+  if (isset($field_storage_definitions['type'])) {
+    $update_manager->installFieldStorageDefinition(
+      'type',
+      'gpc_firearm',
+      'gpc',
+      $field_storage_definitions['type']
+    );
   }
-
-  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
-  $update_manager = \Drupal::service('entity.definition_update_manager');
-  $update_manager->installEntityType($entity_type);
-  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_firearm');
-  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
