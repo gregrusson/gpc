@@ -277,19 +277,6 @@ function gpc_update_10012(): void {
     return;
   }
 
-  $connection = \Drupal::database();
-  $schema = $connection->schema();
-  $base_table = $entity_type->getBaseTable();
-  if ($schema->tableExists($base_table)) {
-    $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
-    if ($row_count > 0) {
-      throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains Caliber data and cannot be rebuilt automatically after the switch to Physical measurement fields. Migrate the existing data manually, then rerun updates.', $base_table));
-    }
-
-    $schema->dropTable($base_table);
-  }
-
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
-  $update_manager->installEntityType($entity_type);
-  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
 }

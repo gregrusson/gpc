@@ -118,12 +118,12 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['bullet_diameter'] = static::buildLengthMeasurementField(
       'Bullet diameter',
-      'The bullet diameter in inches.'
+      'The bullet diameter. Enter inches or millimeters.'
     );
 
     $fields['case_length'] = static::buildLengthMeasurementField(
       'Case length',
-      'The case length in inches.'
+      'The case length. Enter inches or millimeters.'
     );
 
     $fields['primer_type'] = BaseFieldDefinition::create('list_string')
@@ -135,27 +135,27 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
 
     $fields['neck_diameter'] = static::buildLengthMeasurementField(
       'Neck diameter',
-      'The neck diameter in inches.'
+      'The neck diameter. Enter inches or millimeters.'
     );
 
     $fields['shoulder_diameter'] = static::buildLengthMeasurementField(
       'Shoulder diameter',
-      'The shoulder diameter in inches.'
+      'The shoulder diameter. Enter inches or millimeters.'
     );
 
     $fields['base_diameter'] = static::buildLengthMeasurementField(
       'Base diameter',
-      'The base diameter in inches.'
+      'The base diameter. Enter inches or millimeters.'
     );
 
     $fields['rim_diameter'] = static::buildLengthMeasurementField(
       'Rim diameter',
-      'The rim diameter in inches.'
+      'The rim diameter. Enter inches or millimeters.'
     );
 
     $fields['max_overall_length'] = static::buildLengthMeasurementField(
       'Max overall length',
-      'The maximum overall length in inches.'
+      'The maximum overall length. Enter inches or millimeters.'
     );
 
     $fields['notes'] = BaseFieldDefinition::create('string_long')
@@ -208,8 +208,11 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
         'type' => 'physical_measurement_default',
         'settings' => [
           'default_unit' => LengthUnit::INCH,
-          'allow_unit_change' => FALSE,
-          'available_units' => [LengthUnit::INCH],
+          'allow_unit_change' => TRUE,
+          'available_units' => [
+            LengthUnit::INCH,
+            LengthUnit::MILLIMETER,
+          ],
         ],
       ])
       ->setDisplayOptions('view', [

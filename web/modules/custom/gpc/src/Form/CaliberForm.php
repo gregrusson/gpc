@@ -63,9 +63,9 @@ class CaliberForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional abbreviation or shorthand for the caliber name.'),
     ];
 
-    $form['bullet_diameter'] = $this->buildLengthMeasurementElement($entity, 'bullet_diameter', $this->t('Bullet diameter'), $this->t('Optional bullet diameter in inches.'));
+    $form['bullet_diameter'] = $this->buildLengthMeasurementElement($entity, 'bullet_diameter', $this->t('Bullet diameter'), $this->t('Optional bullet diameter in inches or millimeters.'));
 
-    $form['case_length'] = $this->buildLengthMeasurementElement($entity, 'case_length', $this->t('Case length'), $this->t('Optional case length in inches.'));
+    $form['case_length'] = $this->buildLengthMeasurementElement($entity, 'case_length', $this->t('Case length'), $this->t('Optional case length in inches or millimeters.'));
 
     $form['primer_type'] = [
       '#type' => 'select',
@@ -76,15 +76,15 @@ class CaliberForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional reloading primer family used by this caliber.'),
     ];
 
-    $form['neck_diameter'] = $this->buildLengthMeasurementElement($entity, 'neck_diameter', $this->t('Neck diameter'), $this->t('Optional neck diameter in inches.'));
+    $form['neck_diameter'] = $this->buildLengthMeasurementElement($entity, 'neck_diameter', $this->t('Neck diameter'), $this->t('Optional neck diameter in inches or millimeters.'));
 
-    $form['shoulder_diameter'] = $this->buildLengthMeasurementElement($entity, 'shoulder_diameter', $this->t('Shoulder diameter'), $this->t('Optional shoulder diameter in inches.'));
+    $form['shoulder_diameter'] = $this->buildLengthMeasurementElement($entity, 'shoulder_diameter', $this->t('Shoulder diameter'), $this->t('Optional shoulder diameter in inches or millimeters.'));
 
-    $form['base_diameter'] = $this->buildLengthMeasurementElement($entity, 'base_diameter', $this->t('Base diameter'), $this->t('Optional base diameter in inches.'));
+    $form['base_diameter'] = $this->buildLengthMeasurementElement($entity, 'base_diameter', $this->t('Base diameter'), $this->t('Optional base diameter in inches or millimeters.'));
 
-    $form['rim_diameter'] = $this->buildLengthMeasurementElement($entity, 'rim_diameter', $this->t('Rim diameter'), $this->t('Optional rim diameter in inches.'));
+    $form['rim_diameter'] = $this->buildLengthMeasurementElement($entity, 'rim_diameter', $this->t('Rim diameter'), $this->t('Optional rim diameter in inches or millimeters.'));
 
-    $form['max_overall_length'] = $this->buildLengthMeasurementElement($entity, 'max_overall_length', $this->t('Max overall length'), $this->t('Optional maximum overall length in inches.'));
+    $form['max_overall_length'] = $this->buildLengthMeasurementElement($entity, 'max_overall_length', $this->t('Max overall length'), $this->t('Optional maximum overall length in inches or millimeters.'));
 
     $form['notes'] = [
       '#type' => 'textarea',
@@ -123,11 +123,14 @@ class CaliberForm extends GpcEntityFormBase {
   }
 
   /**
-   * Builds a physical length measurement element locked to inches.
+   * Builds a physical length measurement element for caliber units.
    */
   protected function buildLengthMeasurementElement($entity, string $field_name, string|\Stringable $title, string|\Stringable $description): array {
     $field_item = $entity->get($field_name)->first();
-    $default_value = NULL;
+    $default_value = [
+      'number' => '',
+      'unit' => LengthUnit::INCH,
+    ];
     if ($field_item && !$field_item->isEmpty()) {
       $default_value = [
         'number' => $field_item->number,
@@ -141,7 +144,10 @@ class CaliberForm extends GpcEntityFormBase {
       '#title' => $title,
       '#default_value' => $default_value,
       '#required' => FALSE,
-      '#available_units' => [LengthUnit::INCH],
+      '#available_units' => [
+        LengthUnit::INCH,
+        LengthUnit::MILLIMETER,
+      ],
       '#description' => $description,
       '#element_validate' => [
         [$this, 'validateLengthMeasurementElement'],
