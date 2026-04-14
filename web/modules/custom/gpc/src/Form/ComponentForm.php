@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Component;
+use Drupal\physical\Calculator;
 
 /**
  * Form controller for component add/edit forms.
@@ -69,7 +71,7 @@ class ComponentForm extends GpcEntityFormBase {
 
     if ($bundle === 'bullet') {
       $form['weight'] = $this->buildDecimalFieldElement($entity, 'weight', $this->t('Bullet weight'), $this->t('Enter the bullet weight in grains.'));
-      $form['diameter'] = $this->buildDecimalFieldElement($entity, 'diameter', $this->t('Bullet diameter'), $this->t('Enter the bullet diameter in inches.'));
+      $form['diameter'] = $this->buildLengthMeasurementElement($entity, 'diameter', $this->t('Bullet diameter'), $this->t('Enter the bullet diameter in inches or millimeters.'));
       $form['sectional_density'] = $this->buildDecimalFieldElement($entity, 'sectional_density', $this->t('Sectional density'), $this->t('Enter the sectional density as a unitless decimal.'));
     }
     elseif ($bundle === 'primer') {
@@ -84,7 +86,7 @@ class ComponentForm extends GpcEntityFormBase {
       ];
     }
     elseif ($bundle === 'brass') {
-      $form['case_length'] = $this->buildDecimalFieldElement($entity, 'case_length', $this->t('Case length'), $this->t('Enter the case length in inches.'));
+      $form['case_length'] = $this->buildLengthMeasurementElement($entity, 'case_length', $this->t('Case length'), $this->t('Enter the case length in inches or millimeters.'));
     }
 
     $form['notes'] = [
@@ -143,6 +145,39 @@ class ComponentForm extends GpcEntityFormBase {
   }
 
   /**
+   * Builds a physical length measurement element for component units.
+   */
+  protected function buildLengthMeasurementElement($entity, string $field_name, string|\Stringable $title, string|\Stringable $description): array {
+    $field_item = $entity->get($field_name)->first();
+    $default_value = [
+      'number' => '',
+      'unit' => 'in',
+    ];
+    if ($field_item && !$field_item->isEmpty()) {
+      $default_value = [
+        'number' => $field_item->number,
+        'unit' => $field_item->unit ?: 'in',
+      ];
+    }
+
+    return [
+      '#type' => 'physical_measurement',
+      '#measurement_type' => 'length',
+      '#title' => $title,
+      '#default_value' => $default_value,
+      '#required' => FALSE,
+      '#available_units' => [
+        'in',
+        'mm',
+      ],
+      '#description' => $description,
+      '#element_validate' => [
+        [$this, 'validateLengthMeasurementElement'],
+      ],
+    ];
+  }
+
+  /**
    * Validates that a numeric component field is not negative.
    */
   public function validateNonNegativeDecimalElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
@@ -154,6 +189,23 @@ class ComponentForm extends GpcEntityFormBase {
     if (!is_numeric($value) || (float) $value < 0) {
       $form_state->setError($element, $this->t('%title must be a non-negative number.', [
         '%title' => $element['#title'],
+      ]));
+    }
+  }
+
+  /**
+   * Validates that a physical component measurement is not negative.
+   */
+  public function validateLengthMeasurementElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
+    $value = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+    if (!is_array($value) || !isset($value['number']) || $value['number'] === '') {
+      return;
+    }
+
+    if (Calculator::compare($value['number'], '0') < 0) {
+      $form_state->setError($element['number'], $this->t('%title must be higher than or equal to %min.', [
+        '%title' => $element['#title'],
+        '%min' => '0',
       ]));
     }
   }

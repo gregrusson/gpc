@@ -87,6 +87,10 @@ Use bundles for:
 - primer
 - brass
 
+Use `drupal/physical` for Component length measurements that have a clear unit policy.
+Keep bullet diameter and brass case length in Physical-backed fields.
+Keep bullet weight as a decimal until the project has a clean grains-based Physical policy.
+
 Inventory is later and should be a separate user-owned concept.
 
 ### Recipe

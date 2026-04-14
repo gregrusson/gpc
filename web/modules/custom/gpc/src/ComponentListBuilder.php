@@ -45,6 +45,9 @@ class ComponentListBuilder extends EntityListBuilder {
       'machine_name' => $this->t('Machine name'),
       'component_type' => $this->t('Component type'),
       'manufacturer' => $this->t('Manufacturer'),
+      'weight' => $this->t('Bullet weight'),
+      'diameter' => $this->t('Bullet diameter'),
+      'case_length' => $this->t('Case length'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -58,6 +61,9 @@ class ComponentListBuilder extends EntityListBuilder {
     $bundle = $entity->bundle();
     $row['component_type'] = $bundle ? Component::bundleLabel($bundle) : '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
+    $row['weight'] = $entity->get('weight')->value ?? '';
+    $row['diameter'] = $this->formatMeasurement($entity, 'diameter');
+    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';
@@ -71,6 +77,23 @@ class ComponentListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Components');
+  }
+
+  /**
+   * Formats a physical measurement for table output.
+   */
+  protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || $item->isEmpty()) {
+      return '';
+    }
+
+    $measurement = $item->toMeasurement();
+    if ($measurement->getUnit() !== 'in') {
+      $measurement = $measurement->convert('in');
+    }
+
+    return (string) $measurement;
   }
 
 }

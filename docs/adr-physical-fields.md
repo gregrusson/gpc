@@ -48,7 +48,8 @@ Storage, input, and display remain separate concerns, so a value entered in mill
 - Primer type business rules
 - Ownership or access rules
 - Notes fields
-- Other entities such as Component, Recipe, Batch, or Firearm
+- Other entities such as Recipe, Batch, or Firearm
+- Component measurements, which have their own measurement policy note
 
 ## Rationale
 

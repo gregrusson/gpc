@@ -247,7 +247,8 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Component name');
     $this->assertSession()->fieldExists('Bullet weight');
-    $this->assertSession()->fieldExists('Bullet diameter');
+    $this->assertSession()->optionExists('diameter[unit]', LengthUnit::MILLIMETER);
+    $this->assertSession()->fieldValueEquals('diameter[unit]', LengthUnit::INCH);
     $this->assertSession()->fieldExists('Sectional density');
 
     $this->submitForm([
@@ -255,13 +256,52 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'machine_name' => '147gr_fmj',
       'manufacturer' => 'Example Co.',
       'weight' => '147.500',
-      'diameter' => '0.3550',
+      'diameter[number]' => '0.3550',
+      'diameter[unit]' => LengthUnit::INCH,
       'sectional_density' => '0.1670',
       'notes' => 'Practice bullet.',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the 147gr FMJ component.');
     $this->assertSession()->pageTextContains('147gr FMJ');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_component')->loadByProperties([
+      'machine_name' => '147gr_fmj',
+    ]);
+    $loaded = reset($loaded);
+    $this->assertNotFalse($loaded);
+    $this->assertSame('0.355000', $loaded->get('diameter')->number);
+    $this->assertSame('in', $loaded->get('diameter')->unit);
+  }
+
+  /**
+   * Tests the brass component add form.
+   */
+  public function testBrassComponentAddForm(): void {
+    $this->drupalGet('/admin/content/gpc/components/add/brass');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->optionExists('case_length[unit]', LengthUnit::MILLIMETER);
+    $this->assertSession()->fieldValueEquals('case_length[unit]', LengthUnit::INCH);
+
+    $this->submitForm([
+      'label' => 'Starline 10mm',
+      'machine_name' => 'starline_10mm',
+      'manufacturer' => 'Starline',
+      'case_length[number]' => '1.250',
+      'case_length[unit]' => LengthUnit::INCH,
+      'notes' => 'Once-fired brass.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Created the Starline 10mm component.');
+    $this->assertSession()->pageTextContains('Starline 10mm');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_component')->loadByProperties([
+      'machine_name' => 'starline_10mm',
+    ]);
+    $loaded = reset($loaded);
+    $this->assertNotFalse($loaded);
+    $this->assertSame('1.250000', $loaded->get('case_length')->number);
+    $this->assertSame('in', $loaded->get('case_length')->unit);
   }
 
   /**

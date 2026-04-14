@@ -17,7 +17,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 
 - Caliber: global reference record with a canonical display name, optional nickname, physical length and diameter measurements, reloading primer type, and notes.
 - Caliber measurement fields accept inches and millimeters, with inches remaining the default display unit.
-- Component: reusable catalog definition, not inventory.
+- Component: reusable catalog definition, not inventory, with bullet diameter and brass case length stored as Physical length fields while bullet weight remains a decimal grains value for now.
 - Firearm: user-owned structured record tied to Caliber, with a display label that should be driven by manufacturer and model where possible.
 - Recipe: user-owned reloading configuration that should prefer a required recipe code plus optional nickname or label.
 - Batch: user-owned produced record that should prefer a batch number or code instead of a generic title.
@@ -28,11 +28,13 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Prefer entity references for real relationships.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
-- Use `drupal/physical` for caliber measurements that have units.
-- Restrict Caliber measurement units to domain-relevant choices, currently inches and millimeters.
+- Use `drupal/physical` for Caliber and Component measurements that have units.
+- Restrict Caliber and Component length measurements to domain-relevant choices, currently inches and millimeters.
 - Keep storage, input, and display concerns separate so mm values can be entered while inch-based display remains the default.
 - Apply additive Caliber physical-field changes in place on existing sites when the schema change does not require data loss.
+- Apply the same additive strategy to Component length fields when the schema change does not require data loss.
 - Keep caliber identity, aliases, and business meaning in custom GPC code.
+- Keep bullet weight as a decimal until there is a clean Physical unit policy for grains.
 - Avoid pre-building inventory, analytics, or sharing flows before the core model is proven useful.
 
 ## Decision Summary

@@ -141,11 +141,10 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('precision', 10)
       ->setSetting('scale', 3);
 
-    $fields['diameter'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Bullet diameter'))
-      ->setDescription(t('The bullet diameter in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 4);
+    $fields['diameter'] = static::buildLengthMeasurementField(
+      'Bullet diameter',
+      'The bullet diameter. Enter inches or millimeters.'
+    );
 
     $fields['sectional_density'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Sectional density'))
@@ -160,11 +159,10 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
         'allowed_values' => static::primerTypeOptions(),
       ]);
 
-    $fields['case_length'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Case length'))
-      ->setDescription(t('The case length in inches.'))
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+    $fields['case_length'] = static::buildLengthMeasurementField(
+      'Case length',
+      'The case length. Enter inches or millimeters.'
+    );
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -175,6 +173,35 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('The time that this component was last updated.'));
 
     return $fields;
+  }
+
+  /**
+   * Builds a length measurement field stored via Physical.
+   */
+  protected static function buildLengthMeasurementField(string $label, string $description): BaseFieldDefinition {
+    return BaseFieldDefinition::create('physical_measurement')
+      ->setLabel(t($label))
+      ->setDescription(t($description))
+      ->setSettings([
+        'measurement_type' => 'length',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'default_unit' => 'in',
+          'allow_unit_change' => TRUE,
+          'available_units' => [
+            'in',
+            'mm',
+          ],
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'output_unit' => 'in',
+        ],
+      ]);
   }
 
   /**
