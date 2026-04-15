@@ -38,14 +38,20 @@ class CaliberAccessControlHandler extends EntityAccessControlHandler {
 
     $permission = match ($operation) {
       'update' => 'review gpc calibers',
-      'delete' => 'delete gpc calibers',
       default => NULL,
     };
 
     if ($permission !== NULL) {
       return AccessResult::allowedIfHasPermission($account, $permission)
         ->orIf(AccessResult::allowedIfHasPermission($account, 'edit gpc calibers'))
-        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'));
+        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'))
+        ->addCacheableDependency($entity);
+    }
+
+    if ($operation === 'delete') {
+      return AccessResult::allowedIfHasPermission($account, 'delete gpc calibers')
+        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'))
+        ->addCacheableDependency($entity);
     }
 
     return parent::checkAccess($entity, $operation, $account);

@@ -1,6 +1,6 @@
 gpc.dashboard:
   title: 'GPC'
-  description: 'Firearms, recipes, and batches.'
+  description: 'Firearms, recipes, batches, and shared reference contributions.'
   route_name: gpc.dashboard
   menu_name: main
   weight: 20
@@ -28,14 +28,14 @@ gpc.firearm.collection:
 
 gpc.caliber.collection:
   title: 'Calibers'
-  description: 'Manage caliber reference records.'
+  description: 'Manage shared caliber reference records.'
   route_name: entity.gpc_caliber.collection
   parent: system.admin_content
   weight: 10
 
 gpc.component.collection:
   title: 'Components'
-  description: 'Manage reloading component definitions.'
+  description: 'Manage shared component reference records.'
   route_name: entity.gpc_component.collection
   parent: system.admin_content
   weight: 11
