@@ -23,7 +23,7 @@ class GpcDashboardController extends ControllerBase {
         'class' => ['gpc-dashboard'],
       ],
       'intro' => [
-        '#markup' => '<p>' . $this->t('Use the links below to work with your firearms, recipes, and batches.'). '</p>',
+        '#markup' => '<p>' . $this->t('Use the links below to work with your firearms, recipes, batches, and shared reference records.'). '</p>',
       ],
       'sections' => [
         '#type' => 'container',
@@ -51,6 +51,7 @@ class GpcDashboardController extends ControllerBase {
           'entity.gpc_batch.add_form',
           'create gpc batches'
         ),
+        'references' => $this->buildReferenceSection(),
       ],
     ];
   }
@@ -77,6 +78,33 @@ class GpcDashboardController extends ControllerBase {
       ],
       'description' => [
         '#markup' => '<p>' . $description . '</p>',
+      ],
+      'links' => [
+        '#theme' => 'item_list',
+        '#items' => $items,
+      ],
+    ];
+  }
+
+  /**
+   * Builds the shared-reference contribution section.
+   */
+  protected function buildReferenceSection(): array {
+    $items = [
+      Link::fromTextAndUrl($this->t('Add Caliber'), Url::fromRoute('entity.gpc_caliber.add_form')),
+      Link::fromTextAndUrl($this->t('Add Component'), Url::fromRoute('entity.gpc_component.add_page')),
+    ];
+
+    return [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['gpc-dashboard__section'],
+      ],
+      'title' => [
+        '#markup' => '<h2>' . $this->t('Shared references') . '</h2>',
+      ],
+      'description' => [
+        '#markup' => '<p>' . $this->t('Contribute new caliber and component records for shared use.'). '</p>',
       ],
       'links' => [
         '#theme' => 'item_list',
