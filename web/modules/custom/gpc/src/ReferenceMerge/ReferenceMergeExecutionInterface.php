@@ -7,7 +7,7 @@ namespace Drupal\gpc\ReferenceMerge;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Executes the limited, confirmed manual merge workflow.
+ * Executes the limited, confirmed manual merge helper.
  */
 interface ReferenceMergeExecutionInterface {
 

@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Builds the admin-only reference merge preview workflow.
+ * Builds the admin-only manual merge helper workflow.
  */
 final class GpcReferenceMergeController extends ControllerBase {
 

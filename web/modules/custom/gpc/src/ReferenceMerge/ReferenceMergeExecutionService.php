@@ -15,7 +15,7 @@ use Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryInterface;
 use InvalidArgumentException;
 
 /**
- * Executes a limited repoint of known inbound references.
+ * Executes a limited repoint of known inbound references for the manual merge helper.
  */
 final class ReferenceMergeExecutionService implements ReferenceMergeExecutionInterface {
 
@@ -304,7 +304,7 @@ final class ReferenceMergeExecutionService implements ReferenceMergeExecutionInt
   }
 
   /**
-   * Annotates the source entity with a retention note and canonical pointer.
+   * Annotates the source / duplicate entity with a retention note and canonical pointer.
    */
   protected function annotateSourceEntity(EntityInterface $source_entity, EntityInterface $target_entity, AccountInterface $actor): void {
     if ($source_entity->hasField('duplicate_of')) {

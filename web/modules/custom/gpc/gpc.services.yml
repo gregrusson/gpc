@@ -1,5 +1,5 @@
 parameters:
-  # Explicitly supported inbound reference fields for the limited manual merge helper.
+  # Explicitly supported inbound reference fields for the admin-only manual merge helper.
   # Add new source definitions here intentionally; unsupported references are not discovered.
   gpc.reference_discovery.sources:
     gpc_caliber:
@@ -20,7 +20,7 @@ parameters:
         field_name: brass_component
       - source_entity_type: gpc_component
         field_name: duplicate_of
-  # Supported merge targets for the manual preview workflow.
+  # Supported merge targets for the manual merge helper.
   # Add new targets intentionally as execution support expands.
   gpc.reference_merge.targets:
     caliber:

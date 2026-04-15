@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\ReferenceDiscovery;
 
 /**
- * Discovers known inbound references for supported merge targets.
+ * Discovers known inbound references for the manual merge helper targets.
  */
 interface ReferenceDiscoveryInterface {
 

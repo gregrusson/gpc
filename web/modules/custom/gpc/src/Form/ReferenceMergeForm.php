@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Form for choosing source and target records for a manual merge preview.
+ * Form for choosing source / duplicate and target / canonical records for the manual merge helper preview.
  */
 final class ReferenceMergeForm extends FormBase {
 

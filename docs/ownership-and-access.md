@@ -30,6 +30,7 @@ This document defines the access model for the current GPC direction.
 - User-owned entities should carry ownership metadata from the start.
 - Access checks should be simple and explicit.
 - Do not introduce sharing logic until the feature is actually needed.
+- The admin-only manual merge helper is limited to Caliber and Component duplicates and is not a generalized moderation workflow.
 
 ## Decision Summary
 
@@ -39,4 +40,4 @@ This document defines the access model for the current GPC direction.
 - Recipe keeps its code as the main human-facing identifier while still remaining user-owned.
 - Batch keeps its batch code as the main human-facing identifier while still remaining user-owned, with recipe code paired in listings for context.
 - Shared Caliber and Component records are contributed by authenticated users, then remain globally reusable rather than privately owned.
-- Governance is intentionally lightweight: records carry review status, review notes, submitter attribution, and a duplicate pointer for manual consolidation.
+- Governance is intentionally lightweight: records carry review status, review notes, submitter attribution, and a duplicate pointer for the admin-only manual merge helper.

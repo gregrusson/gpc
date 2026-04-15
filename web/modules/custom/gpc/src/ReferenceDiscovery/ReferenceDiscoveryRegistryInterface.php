@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\ReferenceDiscovery;
 
 /**
- * Exposes the intentionally supported reference-discovery map.
+ * Exposes the intentionally supported reference-discovery map for the manual merge helper.
  */
 interface ReferenceDiscoveryRegistryInterface {
 

@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use InvalidArgumentException;
 
 /**
- * Discover inbound references from the explicitly supported source map.
+ * Discovers inbound references from the explicitly supported source map.
  */
 final class ReferenceDiscoveryService implements ReferenceDiscoveryInterface {
 

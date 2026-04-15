@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\ReferenceMerge;
 
 /**
- * Registry for supported manual merge preview target types.
+ * Registry for supported manual merge helper target types.
  *
  * This workflow is intentionally limited to explicit Caliber and Component
  * targets. Add new target definitions here intentionally when execution support

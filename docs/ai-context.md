@@ -158,6 +158,7 @@ Use notes fields for secondary details, context, and anything that does not yet 
 
 Use entity references for real relationships between records.
 Use lightweight governance for shared reference records: review state, review notes, submitter attribution, and a duplicate pointer are enough for v1.
+- The admin-only manual merge helper is limited to confirmed Caliber and Component duplicates and should not be treated as a general moderation system.
 
 Avoid turning everything into taxonomy or reference entities too early.
 

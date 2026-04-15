@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\ReferenceDiscovery;
 
 /**
- * Registry-backed map of supported inbound references.
+ * Registry-backed map of supported inbound references for the manual merge helper.
  *
  * This does not attempt to infer references dynamically. Only the explicitly
  * registered Caliber and Component reference fields are considered discoverable

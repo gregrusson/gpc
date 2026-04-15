@@ -22,13 +22,14 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Recipe: user-owned reloading configuration with a required recipe code, optional nickname, notes as secondary detail, physical overall length, and a crimped yes/no flag.
 - Batch: user-owned produced record with a required batch code, recipe reference, production date, quantity produced, and notes.
 - Shared reference maintenance for Caliber and Component remains admin-managed for list, edit, and delete workflows, while authenticated users can contribute new records through the logged-in application flow.
+- Duplicate Caliber and Component cleanup uses an admin-only manual merge helper that previews known inbound references, requires explicit confirmation, repoints supported references, and retains the source record for auditability.
 
 ## Modeling Notes
 
 - Keep v1 small and explicit.
 - Prefer entity references for real relationships.
 - Keep contributor workflows simple: shared reference records can be created by authenticated users but remain globally reusable rather than user-owned.
-- Add lightweight governance metadata to shared records: submitter attribution, review status, review notes, and a duplicate-of pointer for manual consolidation.
+- Add lightweight governance metadata to shared records: submitter attribution, review status, review notes, and a duplicate-of pointer for the admin-only manual merge helper.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
 - Use `drupal/physical` for Caliber and Component measurements that have units.
@@ -55,3 +56,4 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Owner-based access is the v1 choice because it is the simplest durable rule for user-owned records and keeps admin override available without building sharing now.
 - Shared Caliber and Component records are contributed by authenticated users, then remain globally reusable rather than privately owned.
 - Governance is intentionally lightweight and does not block immediate usability of newly created shared records.
+- The manual merge helper is limited to Caliber and Component and does not imply a full moderation system.

@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Confirmation form that executes the selected manual merge.
+ * Confirmation form that executes the selected manual merge helper action.
  */
 final class ReferenceMergeExecuteForm extends FormBase {
 
