@@ -23,11 +23,11 @@ class RecipeForm extends GpcEntityFormBase {
 
     $form['label'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Title'),
+      '#title' => $this->t('Recipe code'),
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The human-readable name shown in admin screens.'),
+      '#description' => $this->t('The primary human-facing identifier for the recipe.'),
     ];
 
     if ($entity->isNew()) {
@@ -41,7 +41,7 @@ class RecipeForm extends GpcEntityFormBase {
           'exists' => [static::class, 'machineNameExists'],
           'source' => ['label'],
         ],
-        '#description' => $this->t('A unique internal identifier.'),
+        '#description' => $this->t('A unique internal identifier derived from the recipe code.'),
       ];
     }
     else {
@@ -52,6 +52,14 @@ class RecipeForm extends GpcEntityFormBase {
         '#description' => $this->t('This value is fixed after creation.'),
       ];
     }
+
+    $form['nickname'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Nickname'),
+      '#default_value' => $entity->get('nickname')->value ?? '',
+      '#maxlength' => 255,
+      '#description' => $this->t('Optional nickname or alternate label.'),
+    ];
 
     $form['caliber'] = $this->buildAutocompleteField($entity, 'caliber', $this->t('Caliber'), 'gpc_caliber', TRUE);
     $form['bullet_component'] = $this->buildAutocompleteField($entity, 'bullet_component', $this->t('Bullet component'), 'gpc_component', TRUE, $this->t('Expected type: bullet.'));
@@ -130,6 +138,11 @@ class RecipeForm extends GpcEntityFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
+    $recipe_code = trim((string) ($form_state->getValue('label') ?? ''));
+    if ($recipe_code === '') {
+      $form_state->setErrorByName('label', $this->t('Recipe code is required.'));
+    }
+
     foreach (Recipe::componentFieldTypes() as $field_name => $required_type) {
       $target_id = $form_state->getValue([$field_name, 0, 'target_id']);
       if (!$target_id) {
@@ -181,6 +194,24 @@ class RecipeForm extends GpcEntityFormBase {
   public static function machineNameExists(string $machine_name): bool {
     $storage = \Drupal::entityTypeManager()->getStorage('gpc_recipe');
     return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\gpc\Entity\Recipe $entity */
+    $entity = parent::buildEntity($form, $form_state);
+
+    $recipe_code = trim((string) ($form_state->getValue('label') ?? ''));
+    if ($recipe_code !== '') {
+      $entity->set('label', $recipe_code);
+    }
+
+    $nickname = trim((string) ($form_state->getValue('nickname') ?? ''));
+    $entity->set('nickname', $nickname === '' ? NULL : $nickname);
+
+    return $entity;
   }
 
 }

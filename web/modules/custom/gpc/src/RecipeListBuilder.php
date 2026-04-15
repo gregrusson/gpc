@@ -9,7 +9,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +22,7 @@ class RecipeListBuilder extends EntityListBuilder {
   /**
    * Constructs a recipe list builder.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, protected DateFormatterInterface $dateFormatter) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, protected DateFormatterInterface $dateFormatter, protected AccountProxyInterface $currentUser) {
     parent::__construct($entity_type, $storage);
   }
 
@@ -31,7 +33,8 @@ class RecipeListBuilder extends EntityListBuilder {
     return new static(
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('current_user')
     );
   }
 
@@ -40,7 +43,8 @@ class RecipeListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
+      'label' => $this->t('Recipe code'),
+      'nickname' => $this->t('Nickname'),
       'caliber' => $this->t('Caliber'),
       'bullet_component' => $this->t('Bullet'),
       'powder_component' => $this->t('Powder'),
@@ -55,7 +59,8 @@ class RecipeListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    $row['label']['data'] = Link::fromTextAndUrl($this->buildDisplayLabel($entity), $entity->toUrl('edit-form'))->toRenderable();
+    $row['nickname'] = $entity->get('nickname')->value ?? '';
     $row['caliber'] = $entity->get('caliber')->first()?->entity?->label() ?? '';
     $row['bullet_component'] = $entity->get('bullet_component')->first()?->entity?->label() ?? '';
     $row['powder_component'] = $entity->get('powder_component')->first()?->entity?->label() ?? '';
@@ -75,6 +80,37 @@ class RecipeListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Recipes');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEntityListQuery(): QueryInterface {
+    $query = parent::getEntityListQuery();
+
+    if (!$this->currentUser->hasPermission('administer gpc recipes')) {
+      $query->condition('uid', $this->currentUser->id());
+    }
+
+    return $query;
+  }
+
+  /**
+   * Builds the preferred recipe display label.
+   */
+  protected function buildDisplayLabel(EntityInterface $entity): string {
+    $recipe_code = trim((string) $entity->label());
+    $nickname = trim((string) ($entity->get('nickname')->value ?? ''));
+
+    if ($recipe_code === '') {
+      return $nickname !== '' ? $nickname : '';
+    }
+
+    if ($nickname === '') {
+      return $recipe_code;
+    }
+
+    return $recipe_code . ' (' . $nickname . ')';
   }
 
 }

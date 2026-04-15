@@ -19,7 +19,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Caliber measurement fields accept inches and millimeters, with inches remaining the default display unit.
 - Component: reusable catalog definition, not inventory, with bullet diameter, bullet length, and brass case length stored as Physical length fields while bullet weight remains a decimal grains value for now. Bullet ballistic coefficient is modeled as a numeric value plus a G1/G7 model selector, and UPC is stored as text so leading zeroes are preserved.
 - Firearm: user-owned structured record tied to Caliber, with a display label that should be driven by manufacturer and model where possible.
-- Recipe: user-owned reloading configuration that should prefer a required recipe code plus optional nickname or label.
+- Recipe: user-owned reloading configuration with a required recipe code, optional nickname, and notes as secondary detail.
 - Batch: user-owned produced record that should prefer a batch number or code instead of a generic title.
 
 ## Modeling Notes
@@ -37,6 +37,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Keep bullet weight as a decimal until there is a clean Physical unit policy for grains.
 - Keep abstract technical attributes such as ballistic coefficient as simple numeric values plus constrained selectors rather than forcing them into Physical.
 - Keep searchable identifiers such as UPC in text fields so leading zeroes remain intact.
+- Keep Recipe label semantics centered on the recipe code, not a generic title.
 - Avoid pre-building inventory, analytics, or sharing flows before the core model is proven useful.
 
 ## Decision Summary

@@ -10,7 +10,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep Caliber physical-field updates additive and in-place on existing sites whenever possible.
 - Keep Component length-field updates additive and in-place on existing sites whenever possible.
 - Keep Firearm user-owned, caliber-required, and usable through the logged-in UI.
-- Move Recipe to `field_recipe_code` plus optional `field_label`.
+- Refine Recipe to a required recipe code plus optional nickname while keeping owner-based access.
 - Move Batch to `field_batch_code`.
 - Keep the user-owned workflow usable outside `/admin`.
 - Use `uid` ownership plus owner-based entity access control with admin override for user-owned entities.

@@ -31,3 +31,4 @@ This document defines the access model for the current GPC direction.
 - Components are global because they are reusable catalog definitions, not stock on hand.
 - Inventory is deferred because it is a separate user-owned concept and should not be folded into the component catalog.
 - Owner-based access is the v1 choice because it keeps the rules simple, supports admin override, and avoids premature sharing infrastructure.
+- Recipe keeps its code as the main human-facing identifier while still remaining user-owned.

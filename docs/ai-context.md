@@ -100,12 +100,13 @@ Inventory is later and should be a separate user-owned concept.
 User-owned reloading configuration.
 
 Recipe is distinct from Batch.
+Recipe code is the primary human-facing identifier and should replace generic title wording in the UI.
 Recipe should reference:
 
 - caliber
 - component records where relevant
 
-Recipe should use `field_recipe_code` plus optional `field_label`.
+Recipe should use a required code, optional nickname, and notes as secondary detail.
 Recipe should stay focused on configuration data, not production tracking.
 Recipe component references should be validated against the intended component type in form validation rather than by custom storage complexity.
 Use `uid` ownership plus owner-based entity access control with admin override.

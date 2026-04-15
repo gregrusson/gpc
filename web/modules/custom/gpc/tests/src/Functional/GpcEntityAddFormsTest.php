@@ -55,6 +55,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'edit gpc calibers',
       'delete gpc calibers',
       'administer gpc components',
+      'view gpc recipes',
+      'create gpc recipes',
+      'edit gpc recipes',
+      'delete gpc recipes',
       'administer gpc recipes',
       'administer gpc batches',
     ]);
@@ -353,11 +357,14 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'component_type' => 'brass',
     ]);
 
-    $this->drupalGet('/admin/content/gpc/recipes/add');
+    $this->drupalGet('/gpc/recipes/add');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Recipe code');
+    $this->assertSession()->fieldExists('Nickname');
 
     $this->submitForm([
       'label' => 'Practice Load',
+      'nickname' => 'Range load',
       'machine_name' => 'practice_load',
       'caliber' => $this->entityAutocompleteValue($caliber),
       'bullet_component' => $this->entityAutocompleteValue($bullet),
@@ -371,6 +378,178 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->assertSession()->pageTextContains('Created the Practice Load recipe.');
     $this->assertSession()->pageTextContains('Practice Load');
+    $this->assertSession()->pageTextContains('Range load');
+  }
+
+  /**
+   * Tests that a user can view and edit their own recipe.
+   */
+  public function testOwnerCanViewAndEditOwnRecipe(): void {
+    $this->drupalLogout();
+    $owner = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+      'edit gpc recipes',
+      'delete gpc recipes',
+    ]);
+
+    $recipe = $this->createRecipe([
+      'label' => 'Practice Load',
+      'nickname' => 'Range load',
+      'machine_name' => 'practice_load_owner',
+      'uid' => $owner->id(),
+      'caliber' => $this->createCaliber([
+        'label' => '10mm Auto',
+        'machine_name' => '10mm_auto_owner',
+      ])->id(),
+      'bullet_component' => $this->createComponent([
+        'label' => '180gr JHP',
+        'machine_name' => '180gr_jhp_owner',
+        'component_type' => 'bullet',
+      ])->id(),
+      'powder_component' => $this->createComponent([
+        'label' => 'Longshot',
+        'machine_name' => 'longshot_owner',
+        'component_type' => 'powder',
+      ])->id(),
+      'primer_component' => $this->createComponent([
+        'label' => 'CCI 300',
+        'machine_name' => 'cci_300_owner',
+        'component_type' => 'primer',
+      ])->id(),
+      'powder_charge_weight' => '8.200',
+      'overall_length' => '1.255',
+    ]);
+
+    $this->drupalLogin($owner);
+
+    $this->drupalGet('/gpc/recipes/' . $recipe->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Practice Load');
+
+    $this->drupalGet('/gpc/recipes/' . $recipe->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => 'Practice Load v2',
+      'nickname' => 'Updated range load',
+      'caliber' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_caliber')->load($recipe->get('caliber')->target_id)),
+      'bullet_component' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_component')->load($recipe->get('bullet_component')->target_id)),
+      'powder_component' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_component')->load($recipe->get('powder_component')->target_id)),
+      'primer_component' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_component')->load($recipe->get('primer_component')->target_id)),
+      'powder_charge_weight' => '8.100',
+      'overall_length' => '1.245',
+      'notes' => 'Updated recipe.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Updated the Practice Load v2 recipe.');
+  }
+
+  /**
+   * Tests that one user cannot access another user's recipe.
+   */
+  public function testUserCannotAccessAnotherUsersRecipe(): void {
+    $owner = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+      'edit gpc recipes',
+      'delete gpc recipes',
+    ]);
+    $other_user = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+      'edit gpc recipes',
+      'delete gpc recipes',
+    ]);
+
+    $recipe = $this->createRecipe([
+      'label' => 'Owner Load',
+      'nickname' => 'Private',
+      'machine_name' => 'owner_load_private',
+      'uid' => $owner->id(),
+      'caliber' => $this->createCaliber([
+        'label' => '9mm Luger',
+        'machine_name' => '9mm_luger_private',
+      ])->id(),
+      'bullet_component' => $this->createComponent([
+        'label' => '124gr FMJ',
+        'machine_name' => '124gr_fmj_private',
+        'component_type' => 'bullet',
+      ])->id(),
+      'powder_component' => $this->createComponent([
+        'label' => 'Titegroup',
+        'machine_name' => 'titegroup_private',
+        'component_type' => 'powder',
+      ])->id(),
+      'primer_component' => $this->createComponent([
+        'label' => 'CCI 500',
+        'machine_name' => 'cci_500_private',
+        'component_type' => 'primer',
+      ])->id(),
+      'powder_charge_weight' => '4.700',
+      'overall_length' => '1.120',
+    ]);
+
+    $this->drupalLogin($other_user);
+
+    $this->drupalGet('/gpc/recipes/' . $recipe->id());
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalGet('/gpc/recipes/' . $recipe->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalGet('/gpc/recipes');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('Owner Load');
+  }
+
+  /**
+   * Tests the recipe add form requires a recipe code.
+   */
+  public function testRecipeRequiresCode(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+    ]);
+    $this->drupalLogin($user);
+
+    $caliber = $this->createCaliber([
+      'label' => '9mm Luger',
+      'machine_name' => '9mm_luger_recipe_required',
+    ]);
+    $bullet = $this->createComponent([
+      'label' => '147gr FMJ',
+      'machine_name' => '147gr_fmj_recipe_required',
+      'component_type' => 'bullet',
+    ]);
+    $powder = $this->createComponent([
+      'label' => 'Longshot',
+      'machine_name' => 'longshot_recipe_required',
+      'component_type' => 'powder',
+    ]);
+    $primer = $this->createComponent([
+      'label' => 'CCI 300',
+      'machine_name' => 'cci_300_recipe_required',
+      'component_type' => 'primer',
+    ]);
+
+    $this->drupalGet('/gpc/recipes/add');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => '',
+      'machine_name' => 'invalid_recipe',
+      'caliber' => $this->entityAutocompleteValue($caliber),
+      'bullet_component' => $this->entityAutocompleteValue($bullet),
+      'powder_component' => $this->entityAutocompleteValue($powder),
+      'primer_component' => $this->entityAutocompleteValue($primer),
+      'powder_charge_weight' => '8.200',
+      'overall_length' => '1.255',
+      'notes' => 'Should fail.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Recipe code field is required.');
   }
 
   /**
@@ -398,7 +577,9 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $recipe = $this->createRecipe([
       'label' => 'Training Load',
+      'nickname' => 'Baseline',
       'machine_name' => 'training_load',
+      'uid' => $this->adminUser->id(),
       'caliber' => $caliber->id(),
       'bullet_component' => $bullet->id(),
       'powder_component' => $powder->id(),

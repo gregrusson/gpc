@@ -403,3 +403,31 @@ function gpc_update_10019(): void {
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
   $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Apply the Recipe ownership and label updates for existing sites.
+ */
+function gpc_update_10020(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type']) && empty($change_list['gpc_recipe']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_recipe', 'r')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_recipe')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
