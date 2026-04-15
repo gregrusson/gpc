@@ -100,12 +100,15 @@ Inventory is later and should be a separate user-owned concept.
 User-owned reloading configuration.
 
 Recipe is distinct from Batch.
+Recipe code is the primary human-facing identifier and should replace generic title wording in the UI.
 Recipe should reference:
 
 - caliber
 - component records where relevant
 
-Recipe should use `field_recipe_code` plus optional `field_label`.
+Recipe should use a required code, optional nickname, and notes as secondary detail.
+Recipe overall length should use `drupal/physical` because it is a true measurable dimension.
+Recipe crimp should be a boolean checkbox, not a free-text field.
 Recipe should stay focused on configuration data, not production tracking.
 Recipe component references should be validated against the intended component type in form validation rather than by custom storage complexity.
 Use `uid` ownership plus owner-based entity access control with admin override.
@@ -144,6 +147,7 @@ Later-phase entities or capabilities:
 Use structured fields for important stable data.
 
 Use `drupal/physical` for true measurements where units matter.
+Use `drupal/physical` for recipe overall length because it is a true measurement.
 Prefer inches for caliber display defaults, but allow millimeters for caliber measurement input.
 Do not let the physical package define the domain model.
 
@@ -158,6 +162,7 @@ Avoid turning everything into taxonomy or reference entities too early.
 - Components are global because they are reusable catalog definitions, not stock on hand.
 - Inventory is deferred because it is a separate user-owned concept that should not be folded into the component catalog.
 - Owner-based access is the v1 choice because it is the simplest durable rule for user-owned records and keeps admin override available without building sharing now.
+- Use Physical for measurable quantities, boolean fields for yes/no attributes, and text fields for searchable identifiers.
 
 ## Development Guardrails
 

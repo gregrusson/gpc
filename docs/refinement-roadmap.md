@@ -10,7 +10,8 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep Caliber physical-field updates additive and in-place on existing sites whenever possible.
 - Keep Component length-field updates additive and in-place on existing sites whenever possible.
 - Keep Firearm user-owned, caliber-required, and usable through the logged-in UI.
-- Move Recipe to `field_recipe_code` plus optional `field_label`.
+- Refine Recipe to a required recipe code plus optional nickname while keeping owner-based access.
+- Keep Recipe overall length on the Physical measurement model and keep crimp as a boolean yes/no flag.
 - Move Batch to `field_batch_code`.
 - Keep the user-owned workflow usable outside `/admin`.
 - Use `uid` ownership plus owner-based entity access control with admin override for user-owned entities.
@@ -23,6 +24,8 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep bullet weight as a decimal until the project has a clean grains-based Physical policy.
 - Keep bullet ballistic coefficient as a paired value/model field set rather than a single ambiguous scalar.
 - Keep UPC in text storage so leading zeroes survive round-trips and search.
+- Keep Recipe overall length in Physical because it is a measurable dimension.
+- Keep Recipe crimp as a boolean checkbox because it is only a yes/no attribute.
 - Add ownership-aware access controls for user-owned records.
 - Keep Firearm display naming anchored to manufacturer and model instead of a generic title field.
 

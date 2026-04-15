@@ -403,3 +403,99 @@ function gpc_update_10019(): void {
   $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
   $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Apply the Recipe ownership and label updates for existing sites.
+ */
+function gpc_update_10020(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type']) && empty($change_list['gpc_recipe']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_recipe', 'r')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_recipe')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+/**
+ * Apply the Recipe measurement and crimp-field updates for existing sites.
+ */
+function gpc_update_10021(): void {
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+  $existing_values = [];
+
+  if ($schema->tableExists('gpc_recipe')) {
+    $fields = ['id'];
+    if ($schema->fieldExists('gpc_recipe', 'overall_length')) {
+      $fields[] = 'overall_length';
+    }
+    if ($schema->fieldExists('gpc_recipe', 'crimp')) {
+      $fields[] = 'crimp';
+    }
+
+    if (count($fields) > 1) {
+      $result = $connection->select('gpc_recipe', 'r')
+        ->fields('r', $fields)
+        ->execute();
+
+      foreach ($result as $record) {
+        $existing_values[(int) $record->id] = [
+          'overall_length' => $record->overall_length ?? NULL,
+          'crimp' => $record->crimp ?? NULL,
+        ];
+      }
+    }
+  }
+
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type']) && empty($change_list['gpc_recipe']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  if ($existing_values === []) {
+    return;
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('gpc_recipe');
+  $recipes = $storage->loadMultiple(array_keys($existing_values));
+
+  foreach ($recipes as $recipe) {
+    $values = $existing_values[(int) $recipe->id()] ?? [];
+
+    if (isset($values['overall_length']) && $values['overall_length'] !== '' && $values['overall_length'] !== NULL) {
+      $recipe->set('overall_length', [
+        'number' => (string) $values['overall_length'],
+        'unit' => 'in',
+      ]);
+    }
+
+    $recipe->set('crimp', !empty($values['crimp']) ? 1 : 0);
+    $recipe->save();
+  }
+}
