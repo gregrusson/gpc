@@ -89,6 +89,14 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       }
     }
 
+    $upc = $this->get('upc')->value ?? NULL;
+    if (is_string($upc) && $upc !== '') {
+      $normalized_upc = static::normalizeUpc($upc);
+      if ($normalized_upc !== $upc) {
+        $this->set('upc', $normalized_upc);
+      }
+    }
+
     $this->setChangedTime($request_time);
   }
 
@@ -146,11 +154,29 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       'The bullet diameter. Enter inches or millimeters.'
     );
 
+    $fields['length'] = static::buildLengthMeasurementField(
+      'Bullet length',
+      'The bullet length. Enter inches or millimeters.'
+    );
+
     $fields['sectional_density'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Sectional density'))
       ->setDescription(t('The sectional density as a unitless decimal.'))
       ->setSetting('precision', 10)
       ->setSetting('scale', 4);
+
+    $fields['ballistic_coefficient_value'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Ballistic coefficient value'))
+      ->setDescription(t('The ballistic coefficient numeric value associated with the selected drag model.'))
+      ->setSetting('precision', 10)
+      ->setSetting('scale', 4);
+
+    $fields['ballistic_coefficient_model'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Ballistic coefficient model'))
+      ->setDescription(t('Select the drag model used by the ballistic coefficient value.'))
+      ->setSettings([
+        'allowed_values' => static::ballisticCoefficientModelOptions(),
+      ]);
 
     $fields['primer_type'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Primer type'))
@@ -163,6 +189,12 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       'Case length',
       'The case length. Enter inches or millimeters.'
     );
+
+    $fields['upc'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('UPC'))
+      ->setDescription(t('Optional UPC or similar product code. Store digits only so leading zeroes are preserved and searching stays reliable.'))
+      ->setSetting('max_length', 14)
+      ->setSetting('is_ascii', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -202,6 +234,26 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
           'output_unit' => 'in',
         ],
       ]);
+  }
+
+  /**
+   * Returns the allowed ballistic coefficient model values.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   The allowed values keyed by the stored value.
+   */
+  public static function ballisticCoefficientModelOptions(): array {
+    return [
+      'G1' => t('G1'),
+      'G7' => t('G7'),
+    ];
+  }
+
+  /**
+   * Normalizes a UPC-like identifier to digits only.
+   */
+  public static function normalizeUpc(string $upc): string {
+    return preg_replace('/[\s-]+/', '', trim($upc)) ?? '';
   }
 
   /**

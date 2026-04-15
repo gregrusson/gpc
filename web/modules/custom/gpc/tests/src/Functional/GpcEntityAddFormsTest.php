@@ -247,18 +247,30 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Component name');
     $this->assertSession()->fieldExists('Bullet weight');
+    $this->assertSession()->fieldExists('UPC');
     $this->assertSession()->optionExists('diameter[unit]', LengthUnit::MILLIMETER);
     $this->assertSession()->fieldValueEquals('diameter[unit]', LengthUnit::INCH);
+    $this->assertSession()->optionExists('ballistic_coefficient_model', 'G1');
+    $this->assertSession()->optionExists('ballistic_coefficient_model', 'G7');
+    $this->assertSession()->fieldExists('length[number]');
+    $this->assertSession()->fieldValueEquals('length[unit]', LengthUnit::INCH);
+    $this->assertSession()->fieldExists('Ballistic coefficient value');
+    $this->assertSession()->fieldExists('Ballistic coefficient model');
     $this->assertSession()->fieldExists('Sectional density');
 
     $this->submitForm([
       'label' => '147gr FMJ',
       'machine_name' => '147gr_fmj',
       'manufacturer' => 'Example Co.',
+      'upc' => '000123456789',
       'weight' => '147.500',
       'diameter[number]' => '0.3550',
       'diameter[unit]' => LengthUnit::INCH,
+      'length[number]' => '0.5750',
+      'length[unit]' => LengthUnit::INCH,
       'sectional_density' => '0.1670',
+      'ballistic_coefficient_value' => '0.4350',
+      'ballistic_coefficient_model' => 'G7',
       'notes' => 'Practice bullet.',
     ], 'Save');
 
@@ -270,8 +282,13 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $loaded = reset($loaded);
     $this->assertNotFalse($loaded);
+    $this->assertSame('000123456789', $loaded->get('upc')->value);
     $this->assertSame('0.355000', $loaded->get('diameter')->number);
     $this->assertSame('in', $loaded->get('diameter')->unit);
+    $this->assertSame('0.575000', $loaded->get('length')->number);
+    $this->assertSame('in', $loaded->get('length')->unit);
+    $this->assertSame('0.4350', $loaded->get('ballistic_coefficient_value')->value);
+    $this->assertSame('G7', $loaded->get('ballistic_coefficient_model')->value);
   }
 
   /**
@@ -280,6 +297,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   public function testBrassComponentAddForm(): void {
     $this->drupalGet('/admin/content/gpc/components/add/brass');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('UPC');
     $this->assertSession()->optionExists('case_length[unit]', LengthUnit::MILLIMETER);
     $this->assertSession()->fieldValueEquals('case_length[unit]', LengthUnit::INCH);
 
@@ -287,6 +305,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'label' => 'Starline 10mm',
       'machine_name' => 'starline_10mm',
       'manufacturer' => 'Starline',
+      'upc' => '00622404310125',
       'case_length[number]' => '1.250',
       'case_length[unit]' => LengthUnit::INCH,
       'notes' => 'Once-fired brass.',
@@ -300,6 +319,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $loaded = reset($loaded);
     $this->assertNotFalse($loaded);
+    $this->assertSame('00622404310125', $loaded->get('upc')->value);
     $this->assertSame('1.250000', $loaded->get('case_length')->number);
     $this->assertSame('in', $loaded->get('case_length')->unit);
   }

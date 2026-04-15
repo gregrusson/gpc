@@ -45,9 +45,14 @@ class ComponentListBuilder extends EntityListBuilder {
       'machine_name' => $this->t('Machine name'),
       'component_type' => $this->t('Component type'),
       'manufacturer' => $this->t('Manufacturer'),
+      'upc' => $this->t('UPC'),
       'weight' => $this->t('Bullet weight'),
       'diameter' => $this->t('Bullet diameter'),
+      'length' => $this->t('Bullet length'),
       'case_length' => $this->t('Case length'),
+      'sectional_density' => $this->t('Sectional density'),
+      'ballistic_coefficient_value' => $this->t('Ballistic coefficient value'),
+      'ballistic_coefficient_model' => $this->t('Ballistic coefficient model'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -61,9 +66,14 @@ class ComponentListBuilder extends EntityListBuilder {
     $bundle = $entity->bundle();
     $row['component_type'] = $bundle ? Component::bundleLabel($bundle) : '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
+    $row['upc'] = $entity->get('upc')->value ?? '';
     $row['weight'] = $entity->get('weight')->value ?? '';
     $row['diameter'] = $this->formatMeasurement($entity, 'diameter');
+    $row['length'] = $this->formatMeasurement($entity, 'length');
     $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
+    $row['sectional_density'] = $entity->get('sectional_density')->value ?? '';
+    $row['ballistic_coefficient_value'] = $entity->get('ballistic_coefficient_value')->value ?? '';
+    $row['ballistic_coefficient_model'] = $entity->get('ballistic_coefficient_model')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';

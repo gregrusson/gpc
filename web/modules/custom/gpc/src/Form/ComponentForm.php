@@ -69,10 +69,22 @@ class ComponentForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional manufacturer or brand.'),
     ];
 
+    $form['upc'] = $this->buildUpcFieldElement($entity);
+
     if ($bundle === 'bullet') {
       $form['weight'] = $this->buildDecimalFieldElement($entity, 'weight', $this->t('Bullet weight'), $this->t('Enter the bullet weight in grains.'));
       $form['diameter'] = $this->buildLengthMeasurementElement($entity, 'diameter', $this->t('Bullet diameter'), $this->t('Enter the bullet diameter in inches or millimeters.'));
+      $form['length'] = $this->buildLengthMeasurementElement($entity, 'length', $this->t('Bullet length'), $this->t('Enter the bullet length in inches or millimeters.'));
       $form['sectional_density'] = $this->buildDecimalFieldElement($entity, 'sectional_density', $this->t('Sectional density'), $this->t('Enter the sectional density as a unitless decimal.'));
+      $form['ballistic_coefficient_value'] = $this->buildDecimalFieldElement($entity, 'ballistic_coefficient_value', $this->t('Ballistic coefficient value'), $this->t('Enter the ballistic coefficient value.'));
+      $form['ballistic_coefficient_model'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Ballistic coefficient model'),
+        '#default_value' => $entity->get('ballistic_coefficient_model')->value ?? '',
+        '#options' => Component::ballisticCoefficientModelOptions(),
+        '#empty_option' => $this->t('- Select -'),
+        '#description' => $this->t('Select the drag model used by the ballistic coefficient value.'),
+      ];
     }
     elseif ($bundle === 'primer') {
       $form['primer_type'] = [
@@ -145,6 +157,24 @@ class ComponentForm extends GpcEntityFormBase {
   }
 
   /**
+   * Builds a UPC textfield for component records.
+   */
+  protected function buildUpcFieldElement($entity): array {
+    $default_value = $entity->get('upc')->value ?? '';
+
+    return [
+      '#type' => 'textfield',
+      '#title' => $this->t('UPC'),
+      '#default_value' => $default_value,
+      '#maxlength' => 32,
+      '#description' => $this->t('Optional UPC or similar product code. Digits, spaces, and hyphens are accepted; digits are stored so leading zeroes are preserved.'),
+      '#element_validate' => [
+        [$this, 'validateUpcElement'],
+      ],
+    ];
+  }
+
+  /**
    * Builds a physical length measurement element for component units.
    */
   protected function buildLengthMeasurementElement($entity, string $field_name, string|\Stringable $title, string|\Stringable $description): array {
@@ -208,6 +238,27 @@ class ComponentForm extends GpcEntityFormBase {
         '%min' => '0',
       ]));
     }
+  }
+
+  /**
+   * Validates and normalizes a UPC field.
+   */
+  public function validateUpcElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
+    $value = (string) ($form_state->getValue($element['#parents']) ?? '');
+    $value = trim($value);
+    if ($value === '') {
+      return;
+    }
+
+    $normalized = Component::normalizeUpc($value);
+    if ($normalized === '' || !preg_match('/^\d{8,14}$/', $normalized)) {
+      $form_state->setError($element, $this->t('%title must contain 8 to 14 digits.', [
+        '%title' => $element['#title'],
+      ]));
+      return;
+    }
+
+    $form_state->setValueForElement($element, $normalized);
   }
 
 }

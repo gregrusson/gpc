@@ -21,6 +21,8 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Caliber and Component length measurements stay in module code and use `drupal/physical` rather than ad hoc UI-added fields.
 - Caliber and Component length fields should keep a small, explicit unit policy instead of exposing generic physical unit lists.
 - Keep bullet weight as a decimal until the project has a clean grains-based Physical policy.
+- Keep bullet ballistic coefficient as a paired value/model field set rather than a single ambiguous scalar.
+- Keep UPC in text storage so leading zeroes survive round-trips and search.
 - Add ownership-aware access controls for user-owned records.
 - Keep Firearm display naming anchored to manufacturer and model instead of a generic title field.
 

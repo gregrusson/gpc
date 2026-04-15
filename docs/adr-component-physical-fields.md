@@ -31,12 +31,16 @@ Millimeters are allowed as an input unit so users can enter data in either commo
 ## Applies To
 
 - `diameter`
+- `length`
 - `case_length`
 
 ## Does Not Apply To
 
 - `weight`
 - `sectional_density`
+- `ballistic_coefficient_value`
+- `ballistic_coefficient_model`
+- `upc`
 - `label`
 - `machine_name`
 - `manufacturer`
@@ -47,9 +51,12 @@ Millimeters are allowed as an input unit so users can enter data in either commo
 ## Rationale
 
 - `diameter` and `case_length` are true length measurements and fit the Physical model cleanly.
+- `length` is also a true length measurement and fits the Physical model cleanly.
 - Keeping the unit list small avoids broadening the domain model beyond the project's actual needs.
 - Component weight is stored in grains, and the current Physical weight units do not provide a clean grains-based policy.
+- Ballistic coefficient is an abstract technical value, not a physical measurement, so Physical would blur the semantic model without adding value.
 - `sectional_density` is unitless, so Physical would add noise without adding semantic value.
+- UPC is an identifier/code, so it belongs in text storage rather than a measurement field.
 - Identity and categorical fields should stay in custom GPC code.
 
 ## Tradeoffs
