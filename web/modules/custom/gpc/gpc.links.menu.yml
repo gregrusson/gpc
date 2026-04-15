@@ -53,3 +53,10 @@ gpc.component.review_queue:
   route_name: gpc.component_review_queue
   parent: system.admin_content
   weight: 13
+
+gpc.reference_merge:
+  title: 'Reference merge'
+  description: 'Preview manual Caliber and Component merge candidates.'
+  route_name: gpc.reference_merge.landing
+  parent: system.admin_content
+  weight: 14

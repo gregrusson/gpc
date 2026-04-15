@@ -19,3 +19,43 @@ gpc.component_review_queue:
     _controller: '\Drupal\gpc\Controller\GpcGovernanceReviewRedirectController::component'
   requirements:
     _permission: 'review gpc components'
+
+gpc.reference_discovery_report:
+  path: '/admin/content/gpc/reference-discovery/{target_entity_type_id}/{target_entity_id}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcReferenceDiscoveryController::build'
+    _title: 'Reference discovery'
+  requirements:
+    _permission: 'administer gpc reference discovery'
+  options:
+    _admin_route: TRUE
+
+gpc.reference_merge.landing:
+  path: '/admin/content/gpc/reference-merge'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcReferenceMergeController::landing'
+    _title: 'Reference merge'
+  requirements:
+    _permission: 'administer gpc reference merges'
+  options:
+    _admin_route: TRUE
+
+gpc.reference_merge.form:
+  path: '/admin/content/gpc/reference-merge/{merge_type}'
+  defaults:
+    _form: '\Drupal\gpc\Form\ReferenceMergeForm'
+    _title: 'Reference merge preview'
+  requirements:
+    _permission: 'administer gpc reference merges'
+  options:
+    _admin_route: TRUE
+
+gpc.reference_merge.preview:
+  path: '/admin/content/gpc/reference-merge/{merge_type}/preview/{source_entity_id}/{target_entity_id}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcReferenceMergeController::preview'
+    _title: 'Reference merge preview'
+  requirements:
+    _permission: 'administer gpc reference merges'
+  options:
+    _admin_route: TRUE

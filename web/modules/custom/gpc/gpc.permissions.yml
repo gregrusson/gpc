@@ -97,3 +97,11 @@ edit gpc firearms:
 delete gpc firearms:
   title: 'Delete firearms'
   description: 'Delete firearm records you own.'
+
+administer gpc reference discovery:
+  title: 'Administer reference discovery'
+  description: 'Inspect intentionally supported inbound references for Caliber and Component records.'
+
+administer gpc reference merges:
+  title: 'Administer reference merges'
+  description: 'Preview manual Caliber and Component merge candidates.'
