@@ -10,9 +10,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Access control for caliber entities.
+ * Access control for component entities.
  */
-class CaliberAccessControlHandler extends EntityAccessControlHandler {
+class ComponentAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}
@@ -37,20 +37,14 @@ class CaliberAccessControlHandler extends EntityAccessControlHandler {
     }
 
     $permission = match ($operation) {
-      'update' => 'review gpc calibers',
+      'update' => 'review gpc components',
+      'delete' => 'administer gpc components',
       default => NULL,
     };
 
     if ($permission !== NULL) {
       return AccessResult::allowedIfHasPermission($account, $permission)
-        ->orIf(AccessResult::allowedIfHasPermission($account, 'edit gpc calibers'))
-        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'))
-        ->addCacheableDependency($entity);
-    }
-
-    if ($operation === 'delete') {
-      return AccessResult::allowedIfHasPermission($account, 'delete gpc calibers')
-        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc calibers'))
+        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc components'))
         ->addCacheableDependency($entity);
     }
 

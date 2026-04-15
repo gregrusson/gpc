@@ -1,34 +1,69 @@
-gpc.caliber.collection:
-  title: 'Calibers'
-  description: 'Manage caliber reference records.'
-  route_name: entity.gpc_caliber.collection
-  parent: system.admin_content
-  weight: 10
+gpc.dashboard:
+  title: 'GPC'
+  description: 'Firearms, recipes, batches, and shared reference contributions.'
+  route_name: gpc.dashboard
+  menu_name: main
+  weight: 20
 
-gpc.component.collection:
-  title: 'Components'
-  description: 'Manage reloading component definitions.'
-  route_name: entity.gpc_component.collection
-  parent: system.admin_content
-  weight: 11
+gpc.admin:
+  title: 'GPC'
+  description: 'Shared reference management and governance tools.'
+  route_name: gpc.admin
+  parent: system.admin
+  weight: 30
 
 gpc.recipe.collection:
   title: 'Recipes'
   description: 'Manage reloading recipe definitions.'
   route_name: entity.gpc_recipe.collection
-  parent: system.admin_content
-  weight: 12
+  parent: gpc.dashboard
+  weight: 10
 
 gpc.batch.collection:
   title: 'Batches'
   description: 'Manage produced batch records.'
   route_name: entity.gpc_batch.collection
-  parent: system.admin_content
-  weight: 13
+  parent: gpc.dashboard
+  weight: 11
 
 gpc.firearm.collection:
   title: 'Firearms'
   description: 'Manage firearm records.'
   route_name: entity.gpc_firearm.collection
-  parent: system.admin_content
+  parent: gpc.dashboard
+  weight: 12
+
+gpc.caliber.collection:
+  title: 'Calibers'
+  description: 'Manage shared caliber reference records.'
+  route_name: entity.gpc_caliber.collection
+  parent: gpc.admin
+  weight: 10
+
+gpc.component.collection:
+  title: 'Components'
+  description: 'Manage shared component reference records.'
+  route_name: entity.gpc_component.collection
+  parent: gpc.admin
+  weight: 11
+
+gpc.caliber.review_queue:
+  title: 'Caliber review'
+  description: 'Review new and questionable caliber submissions.'
+  route_name: gpc.caliber_review_queue
+  parent: gpc.admin
+  weight: 12
+
+gpc.component.review_queue:
+  title: 'Component review'
+  description: 'Review new and questionable component submissions.'
+  route_name: gpc.component_review_queue
+  parent: gpc.admin
+  weight: 13
+
+gpc.reference_merge:
+  title: 'Reference merge'
+  description: 'Preview and execute manual Caliber and Component merge candidates.'
+  route_name: gpc.reference_merge.landing
+  parent: gpc.admin
   weight: 14

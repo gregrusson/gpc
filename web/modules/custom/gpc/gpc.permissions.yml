@@ -8,7 +8,11 @@ view gpc calibers:
 
 create gpc calibers:
   title: 'Create calibers'
-  description: 'Create new caliber records.'
+  description: 'Create new shared caliber records.'
+
+review gpc calibers:
+  title: 'Review calibers'
+  description: 'Review, correct, and flag shared caliber records for correctness, duplicates, and spam.'
 
 edit gpc calibers:
   title: 'Edit calibers'
@@ -21,6 +25,18 @@ delete gpc calibers:
 administer gpc components:
   title: 'Administer components'
   description: 'Create, edit, and delete component records.'
+
+view gpc components:
+  title: 'View components'
+  description: 'View shared component records and use them in references.'
+
+create gpc components:
+  title: 'Create components'
+  description: 'Create new shared component records.'
+
+review gpc components:
+  title: 'Review components'
+  description: 'Review, correct, and flag shared component records for correctness, duplicates, and spam.'
 
 view gpc recipes:
   title: 'View recipes'
@@ -81,3 +97,11 @@ edit gpc firearms:
 delete gpc firearms:
   title: 'Delete firearms'
   description: 'Delete firearm records you own.'
+
+administer gpc reference discovery:
+  title: 'Administer reference discovery'
+  description: 'Inspect intentionally supported inbound references for Caliber and Component records.'
+
+administer gpc reference merges:
+  title: 'Administer reference merges'
+  description: 'Preview manual Caliber and Component merge candidates.'

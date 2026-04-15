@@ -550,3 +550,35 @@ function gpc_update_10023(): void {
     $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
   }
 }
+
+/**
+ * Add shared-reference governance fields.
+ */
+function gpc_update_10024(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $field_manager = \Drupal::service('entity_field.manager');
+  $connection = \Drupal::database();
+
+  foreach (['gpc_caliber', 'gpc_component'] as $entity_type_id) {
+    $change_list = $update_manager->getChangeList();
+    if (empty($change_list[$entity_type_id]['entity_type']) && empty($change_list[$entity_type_id]['field_storage_definitions'])) {
+      continue;
+    }
+
+    $entity_type = $update_manager->getEntityType($entity_type_id);
+    if ($entity_type === NULL) {
+      continue;
+    }
+
+    $field_storage_definitions = $field_manager->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+    $table = $entity_type->getBaseTable();
+    if ($connection->schema()->tableExists($table)) {
+      $connection->update($table)
+        ->fields(['review_status' => 'approved'])
+        ->isNull('review_status')
+        ->execute();
+    }
+  }
+}

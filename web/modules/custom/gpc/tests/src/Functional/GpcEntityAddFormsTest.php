@@ -50,11 +50,13 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->adminUser = $this->drupalCreateUser([
       'access administration pages',
       'administer gpc calibers',
+      'review gpc calibers',
       'view gpc calibers',
       'create gpc calibers',
       'edit gpc calibers',
       'delete gpc calibers',
       'administer gpc components',
+      'review gpc components',
       'view gpc recipes',
       'create gpc recipes',
       'edit gpc recipes',
@@ -81,7 +83,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($caliberUser);
 
-    $this->drupalGet('/admin/content/gpc/calibers/add');
+    $this->drupalGet('/admin/gpc/calibers/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->optionExists('bullet_diameter[unit]', LengthUnit::MILLIMETER);
     $this->assertSession()->fieldValueEquals('bullet_diameter[unit]', LengthUnit::INCH);
@@ -151,7 +153,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Common rifle caliber.',
     ]);
 
-    $this->drupalGet('/admin/content/gpc/calibers/' . $caliber->id() . '/edit');
+    $this->drupalGet('/admin/gpc/calibers/' . $caliber->id() . '/edit');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldValueEquals('Caliber name', '.308 Winchester');
     $this->assertSession()->fieldValueEquals('bullet_diameter[unit]', LengthUnit::MILLIMETER);
@@ -211,7 +213,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($caliberUser);
 
-    $this->drupalGet('/admin/content/gpc/calibers/add');
+    $this->drupalGet('/admin/gpc/calibers/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -237,10 +239,150 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that any authenticated user can create shared reference records.
+   */
+  public function testAuthenticatedUsersCanCreateSharedReferences(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Add Caliber');
+    $this->assertSession()->linkExists('Add Component');
+
+    $this->drupalGet('/admin/gpc/calibers/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->submitForm([
+      'label' => '6.5 Creedmoor',
+      'machine_name' => '65_creedmoor_contribution',
+      'notes' => 'Shared reference created by a logged-in user.',
+    ], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Created the 6.5 Creedmoor caliber.');
+
+    $caliber = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->loadByProperties([
+      'machine_name' => '65_creedmoor_contribution',
+    ]);
+    $caliber = reset($caliber);
+    $this->assertNotFalse($caliber);
+    $this->assertSame('pending', $caliber->get('review_status')->value);
+    $this->assertSame((int) $user->id(), (int) $caliber->get('submitted_by')->target_id);
+
+    $this->drupalGet('/gpc/calibers/' . $caliber->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('6.5 Creedmoor');
+
+    $this->drupalGet('/admin/gpc/components/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Bullet');
+
+    $this->drupalGet('/admin/gpc/components/add/bullet');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->submitForm([
+      'label' => '62gr OTM',
+      'machine_name' => '62gr_otm_contribution',
+      'upc' => '000123456789',
+      'notes' => 'Shared bullet reference created by a logged-in user.',
+    ], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Created the 62gr OTM component.');
+
+    $component = $this->container->get('entity_type.manager')->getStorage('gpc_component')->loadByProperties([
+      'machine_name' => '62gr_otm_contribution',
+    ]);
+    $component = reset($component);
+    $this->assertNotFalse($component);
+    $this->assertSame('000123456789', $component->get('upc')->value);
+    $this->assertSame('pending', $component->get('review_status')->value);
+    $this->assertSame((int) $user->id(), (int) $component->get('submitted_by')->target_id);
+
+    $this->drupalGet('/gpc/components/' . $component->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('62gr OTM');
+  }
+
+  /**
+   * Tests that reviewers can use the governance queue and mark duplicates.
+   */
+  public function testReviewerCanReviewAndMarkDuplicates(): void {
+    $this->drupalLogout();
+    $creator = $this->drupalCreateUser([]);
+    $reviewer = $this->drupalCreateUser([
+      'view gpc calibers',
+      'view gpc components',
+      'review gpc calibers',
+      'review gpc components',
+      'administer gpc calibers',
+      'administer gpc components',
+    ]);
+
+    $canonical_caliber = $this->createCaliber([
+      'label' => '9mm Luger Review Canonical',
+      'machine_name' => '9mm_luger_review_canonical',
+    ]);
+    $duplicate_caliber = $this->createCaliber([
+      'label' => '9mm Parabellum Review Duplicate',
+      'machine_name' => '9mm_parabellum_review_duplicate',
+      'submitted_by' => $creator->id(),
+    ]);
+
+    $canonical_component = $this->createComponent([
+      'label' => '55gr FMJ Review Canonical',
+      'machine_name' => '55gr_fmj_review_canonical',
+      'component_type' => 'bullet',
+    ]);
+    $duplicate_component = $this->createComponent([
+      'label' => '55gr Full Metal Jacket Review Duplicate',
+      'machine_name' => '55gr_fmj_review_duplicate',
+      'component_type' => 'bullet',
+      'submitted_by' => $creator->id(),
+    ]);
+
+    $this->drupalLogin($reviewer);
+
+    $this->drupalGet('/admin/gpc/calibers/review');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('9mm Parabellum Review Duplicate');
+
+    $this->drupalGet('/admin/gpc/calibers/' . $duplicate_caliber->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Review status');
+    $this->submitForm([
+      'review_status' => 'duplicate',
+      'duplicate_of' => (string) $canonical_caliber->id(),
+      'review_notes' => 'Duplicate canonical record identified during review.',
+    ], 'Save');
+
+    $loaded_caliber = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->load($duplicate_caliber->id());
+    $this->assertNotNull($loaded_caliber);
+    $this->assertSame('duplicate', $loaded_caliber->get('review_status')->value);
+    $this->assertSame((int) $canonical_caliber->id(), (int) $loaded_caliber->get('duplicate_of')->target_id);
+
+    $this->drupalGet('/admin/gpc/components/review');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('55gr Full Metal Jacket Review Duplicate');
+
+    $this->drupalGet('/admin/gpc/components/' . $duplicate_component->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Review status');
+    $this->submitForm([
+      'review_status' => 'duplicate',
+      'duplicate_of' => (string) $canonical_component->id(),
+      'review_notes' => 'Duplicate canonical record identified during review.',
+    ], 'Save');
+
+    $loaded_component = $this->container->get('entity_type.manager')->getStorage('gpc_component')->load($duplicate_component->id());
+    $this->assertNotNull($loaded_component);
+    $this->assertSame('duplicate', $loaded_component->get('review_status')->value);
+    $this->assertSame((int) $canonical_component->id(), (int) $loaded_component->get('duplicate_of')->target_id);
+  }
+
+  /**
    * Tests the component add page exposes the supported bundles.
    */
   public function testComponentAddPage(): void {
-    $this->drupalGet('/admin/content/gpc/components/add');
+    $this->drupalGet('/admin/gpc/components/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('Bullet');
     $this->assertSession()->linkExists('Powder');
@@ -249,10 +391,38 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests the logged-in GPC dashboard navigation.
+   */
+  public function testGpcDashboardNavigation(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([
+      'view gpc firearms',
+      'create gpc firearms',
+      'view gpc recipes',
+      'create gpc recipes',
+      'view gpc batches',
+      'create gpc batches',
+    ]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Use the links below to work with your firearms, recipes, batches, and shared reference records.');
+    $this->assertSession()->linkExists('View Firearms');
+    $this->assertSession()->linkExists('Add Firearms');
+    $this->assertSession()->linkExists('View Recipes');
+    $this->assertSession()->linkExists('Add Recipes');
+    $this->assertSession()->linkExists('View Batches');
+    $this->assertSession()->linkExists('Add Batches');
+    $this->assertSession()->linkExists('Add Caliber');
+    $this->assertSession()->linkExists('Add Component');
+  }
+
+  /**
    * Tests the bullet component add form.
    */
   public function testBulletComponentAddForm(): void {
-    $this->drupalGet('/admin/content/gpc/components/add/bullet');
+    $this->drupalGet('/admin/gpc/components/add/bullet');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Component name');
     $this->assertSession()->fieldExists('Bullet weight');
@@ -304,7 +474,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
    * Tests the brass component add form.
    */
   public function testBrassComponentAddForm(): void {
-    $this->drupalGet('/admin/content/gpc/components/add/brass');
+    $this->drupalGet('/admin/gpc/components/add/brass');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('UPC');
     $this->assertSession()->optionExists('case_length[unit]', LengthUnit::MILLIMETER);

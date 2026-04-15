@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Link;
 use Drupal\gpc\Entity\Caliber;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,6 +44,9 @@ class CaliberListBuilder extends EntityListBuilder {
     return [
       'label' => $this->t('Caliber name'),
       'nickname' => $this->t('Nickname'),
+      'review_status' => $this->t('Review status'),
+      'submitted_by' => $this->t('Submitted by'),
+      'duplicate_of' => $this->t('Duplicate of'),
       'primer_type' => $this->t('Primer type'),
       'bullet_diameter' => $this->t('Bullet diameter'),
       'case_length' => $this->t('Case length'),
@@ -64,6 +68,9 @@ class CaliberListBuilder extends EntityListBuilder {
       ];
     }
     $row['nickname'] = $entity->get('nickname')->value ?? '';
+    $row['review_status'] = Caliber::reviewStatusOptions()[$entity->get('review_status')->value ?? ''] ?? '';
+    $row['submitted_by'] = $this->formatUserReference($entity->get('submitted_by')->target_id ?? NULL);
+    $row['duplicate_of'] = $this->formatDuplicateReference($entity->get('duplicate_of')->target_id ?? NULL, 'gpc_caliber');
     $primer_type = $entity->get('primer_type')->value ?? '';
     $row['primer_type'] = Caliber::primerTypeOptions()[$primer_type] ?? $primer_type;
     $row['bullet_diameter'] = $this->formatMeasurement($entity, 'bullet_diameter');
@@ -85,6 +92,23 @@ class CaliberListBuilder extends EntityListBuilder {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function getEntityListQuery(): QueryInterface {
+    $query = parent::getEntityListQuery();
+    $review_state = \Drupal::request()->query->get('review_state');
+
+    if ($review_state === 'queue') {
+      $query->condition('review_status', 'approved', '<>');
+    }
+    elseif (in_array($review_state, array_keys(Caliber::reviewStatusOptions()), TRUE)) {
+      $query->condition('review_status', $review_state);
+    }
+
+    return $query;
+  }
+
+  /**
    * Formats a physical measurement for table output.
    */
   protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
@@ -99,6 +123,30 @@ class CaliberListBuilder extends EntityListBuilder {
     }
 
     return (string) $measurement;
+  }
+
+  /**
+   * Formats a submitted-by user reference.
+   */
+  protected function formatUserReference(int|string|null $uid): string {
+    if ($uid === NULL || $uid === '') {
+      return '';
+    }
+
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+    return $user?->label() ?? (string) $uid;
+  }
+
+  /**
+   * Formats a duplicate reference.
+   */
+  protected function formatDuplicateReference(int|string|null $entity_id, string $entity_type_id): string {
+    if ($entity_id === NULL || $entity_id === '') {
+      return '';
+    }
+
+    $entity = \Drupal::entityTypeManager()->getStorage($entity_type_id)->load($entity_id);
+    return $entity?->label() ?? (string) $entity_id;
   }
 
 }

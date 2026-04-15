@@ -7,13 +7,13 @@ namespace Drupal\gpc\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\ComponentAccessControlHandler;
 use Drupal\gpc\ComponentListBuilder;
 use Drupal\gpc\Form\ComponentForm;
 use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
@@ -32,7 +32,7 @@ use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
     'plural' => '@count components',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => ComponentAccessControlHandler::class,
     'list_builder' => ComponentListBuilder::class,
     'form' => [
       'add' => ComponentForm::class,
@@ -45,12 +45,14 @@ use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
     ],
   ],
   links: [
-    'collection' => '/admin/content/gpc/components',
-    'add-page' => '/admin/content/gpc/components/add',
-    'add-form' => '/admin/content/gpc/components/add/{component_type}',
-    'edit-form' => '/admin/content/gpc/components/{gpc_component}/edit',
-    'delete-form' => '/admin/content/gpc/components/{gpc_component}/delete',
+    'canonical' => '/gpc/components/{gpc_component}',
+    'collection' => '/admin/gpc/components',
+    'add-page' => '/admin/gpc/components/add',
+    'add-form' => '/admin/gpc/components/add/{component_type}',
+    'edit-form' => '/admin/gpc/components/{gpc_component}/edit',
+    'delete-form' => '/admin/gpc/components/{gpc_component}/delete',
   ],
+  collection_permission: 'view gpc components',
   admin_permission: 'administer gpc components',
   base_table: 'gpc_component',
   entity_keys: [
@@ -81,6 +83,12 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
 
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
+    }
+    if ($this->isNew() && $this->get('submitted_by')->isEmpty() && \Drupal::currentUser()->isAuthenticated()) {
+      $this->set('submitted_by', \Drupal::currentUser()->id());
+    }
+    if ($this->isNew() && $this->get('review_status')->isEmpty()) {
+      $this->set('review_status', \Drupal::currentUser()->hasPermission('review gpc components') || \Drupal::currentUser()->hasPermission('administer gpc components') ? 'approved' : 'pending');
     }
     elseif (($original = $this->getOriginal()) instanceof self) {
       $original_machine_name = $original->get('machine_name')->value ?? NULL;
@@ -196,6 +204,29 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('max_length', 14)
       ->setSetting('is_ascii', TRUE);
 
+    $fields['submitted_by'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Submitted by'))
+      ->setDescription(t('The user who submitted this shared record.'))
+      ->setSetting('target_type', 'user');
+
+    $fields['review_status'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Review status'))
+      ->setDescription(t('Tracks whether the record has been reviewed.'))
+      ->setRequired(TRUE)
+      ->setDefaultValue('pending')
+      ->setSettings([
+        'allowed_values' => static::reviewStatusOptions(),
+      ]);
+
+    $fields['review_notes'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Review notes'))
+      ->setDescription(t('Internal moderation or correction notes.'));
+
+    $fields['duplicate_of'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Duplicate of'))
+      ->setDescription(t('If this record duplicates another component, point to the canonical record.'))
+      ->setSetting('target_type', 'gpc_component');
+
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that this component was created.'));
@@ -234,6 +265,21 @@ class Component extends ContentEntityBase implements EntityChangedInterface {
           'output_unit' => 'in',
         ],
       ]);
+  }
+
+  /**
+   * Returns the allowed review status values.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   The allowed review states.
+   */
+  public static function reviewStatusOptions(): array {
+    return [
+      'pending' => t('Pending review'),
+      'approved' => t('Approved'),
+      'needs_work' => t('Needs correction'),
+      'duplicate' => t('Duplicate'),
+    ];
   }
 
   /**

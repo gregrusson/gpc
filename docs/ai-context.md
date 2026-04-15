@@ -31,7 +31,8 @@ Current focus:
 
 - Drupal 11.
 - Custom module approach.
-- Logged-in user workflows for user-owned records, with shared reference maintenance allowed to stay under admin paths until a broader UI need is explicit.
+- Logged-in user workflows for user-owned records, with shared reference contribution available from the same logged-in dashboard while list/edit/delete remain admin-governed.
+- A simple `/gpc` dashboard is the primary user-facing entry point for Firearms, Recipes, Batches, and shared-reference contribution links.
 - Prefer custom content entities for core domain records.
 - Use Drupal core patterns before introducing custom frameworks or abstractions.
 - Keep business logic inside the module.
@@ -59,6 +60,7 @@ Use it as a stable shared reference entity.
 GPC uses `drupal/physical` for measurement fields only, so caliber measurements are shipped in module code rather than added manually in the UI.
 Caliber identity, naming, aliases, and business rules remain in custom GPC code.
 Existing Caliber rows are updated in place by the module update hook when the physical field policy changes.
+Authenticated users can contribute new caliber records through the logged-in application flow, but Caliber remains globally reusable rather than user-owned.
 
 ## Caliber Unit Policy
 
@@ -92,6 +94,7 @@ Keep bullet diameter, bullet length, and brass case length in Physical-backed fi
 Keep bullet weight as a decimal until the project has a clean grains-based Physical policy.
 Keep ballistic coefficient as a decimal value paired with a G1/G7 model selector.
 Keep UPC as text so leading zeroes survive and search stays reliable.
+Authenticated users can contribute new component records through the logged-in application flow, but Component remains globally reusable rather than user-owned.
 
 Inventory is later and should be a separate user-owned concept.
 
@@ -154,6 +157,8 @@ Do not let the physical package define the domain model.
 Use notes fields for secondary details, context, and anything that does not yet justify a dedicated schema.
 
 Use entity references for real relationships between records.
+Use lightweight governance for shared reference records: review state, review notes, submitter attribution, and a duplicate pointer are enough for v1.
+- The admin-only manual merge helper is limited to confirmed Caliber and Component duplicates and should not be treated as a general moderation system.
 
 Avoid turning everything into taxonomy or reference entities too early.
 
