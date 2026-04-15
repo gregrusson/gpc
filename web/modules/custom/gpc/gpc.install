@@ -351,3 +351,55 @@ function gpc_update_10016(): void {
     );
   }
 }
+
+/**
+ * Ensure the Physical module is enabled before Component field updates run.
+ */
+function gpc_update_10017(): void {
+  $module_handler = \Drupal::service('module_handler');
+  if ($module_handler->moduleExists('physical')) {
+    return;
+  }
+
+  \Drupal::service('module_installer')->install(['physical']);
+}
+
+/**
+ * Apply the Component physical-field update for existing sites.
+ */
+function gpc_update_10018(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_component']['entity_type']) && empty($change_list['gpc_component']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_component');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Apply the Component bullet-field updates for existing sites.
+ */
+function gpc_update_10019(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_component']['entity_type']) && empty($change_list['gpc_component']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_component');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}

@@ -142,9 +142,11 @@ class RecipeForm extends GpcEntityFormBase {
         continue;
       }
 
-      $actual_type = $component->get('component_type')->value ?? NULL;
+      $actual_type = $component->bundle();
       if ($actual_type !== $required_type) {
-        $form_state->setErrorByName($field_name, $this->t('The selected component must be a @type component.', ['@type' => $required_type]));
+        $form_state->setErrorByName($field_name, $this->t('The selected component must be a @type component.', [
+          '@type' => Component::bundleLabel($required_type),
+        ]));
       }
     }
   }

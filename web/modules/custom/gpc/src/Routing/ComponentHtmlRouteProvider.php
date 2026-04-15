@@ -16,6 +16,18 @@ class ComponentHtmlRouteProvider extends AdminHtmlRouteProvider {
   /**
    * {@inheritdoc}
    */
+  protected function getAddPageRoute(EntityTypeInterface $entity_type) {
+    $route = parent::getAddPageRoute($entity_type);
+    if ($route instanceof Route) {
+      $route->setOption('_admin_route', TRUE);
+    }
+
+    return $route;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getCollectionRoute(EntityTypeInterface $entity_type) {
     $route = parent::getCollectionRoute($entity_type);
     if ($route instanceof Route) {

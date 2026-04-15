@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Hook implementations for the GPC module.
+ */
+
+/**
+ * Defines the supported Component bundles.
+ *
+ * @return array<string, array<string, string>>
+ *   Bundle information keyed by bundle ID.
+ */
+function gpc_entity_bundle_info(): array {
+  return [
+    'gpc_component' => [
+      'bullet' => [
+        'label' => t('Bullet'),
+        'description' => t('Projectiles used in loaded cartridges.'),
+      ],
+      'powder' => [
+        'label' => t('Powder'),
+        'description' => t('Propellant components used in a recipe.'),
+      ],
+      'primer' => [
+        'label' => t('Primer'),
+        'description' => t('Primer components used to ignite the powder charge.'),
+      ],
+      'brass' => [
+        'label' => t('Brass'),
+        'description' => t('Case components that hold the assembled cartridge.'),
+      ],
+    ],
+  ];
+}
