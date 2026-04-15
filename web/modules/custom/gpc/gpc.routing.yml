@@ -5,3 +5,17 @@ gpc.dashboard:
     _title: 'GPC'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+gpc.caliber_review_queue:
+  path: '/admin/content/gpc/calibers/review'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcGovernanceReviewRedirectController::caliber'
+  requirements:
+    _permission: 'review gpc calibers'
+
+gpc.component_review_queue:
+  path: '/admin/content/gpc/components/review'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcGovernanceReviewRedirectController::component'
+  requirements:
+    _permission: 'review gpc components'

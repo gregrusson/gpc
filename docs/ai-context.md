@@ -157,6 +157,7 @@ Do not let the physical package define the domain model.
 Use notes fields for secondary details, context, and anything that does not yet justify a dedicated schema.
 
 Use entity references for real relationships between records.
+Use lightweight governance for shared reference records: review state, review notes, submitter attribution, and a duplicate pointer are enough for v1.
 
 Avoid turning everything into taxonomy or reference entities too early.
 

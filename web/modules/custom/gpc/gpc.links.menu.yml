@@ -39,3 +39,17 @@ gpc.component.collection:
   route_name: entity.gpc_component.collection
   parent: system.admin_content
   weight: 11
+
+gpc.caliber.review_queue:
+  title: 'Caliber review'
+  description: 'Review new and questionable caliber submissions.'
+  route_name: gpc.caliber_review_queue
+  parent: system.admin_content
+  weight: 12
+
+gpc.component.review_queue:
+  title: 'Component review'
+  description: 'Review new and questionable component submissions.'
+  route_name: gpc.component_review_queue
+  parent: system.admin_content
+  weight: 13

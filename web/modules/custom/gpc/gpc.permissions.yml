@@ -10,6 +10,10 @@ create gpc calibers:
   title: 'Create calibers'
   description: 'Create new caliber records.'
 
+review gpc calibers:
+  title: 'Review calibers'
+  description: 'Review, correct, and flag shared caliber records.'
+
 edit gpc calibers:
   title: 'Edit calibers'
   description: 'Edit existing caliber records.'
@@ -29,6 +33,10 @@ view gpc components:
 create gpc components:
   title: 'Create components'
   description: 'Create new component records.'
+
+review gpc components:
+  title: 'Review components'
+  description: 'Review, correct, and flag shared component records.'
 
 view gpc recipes:
   title: 'View recipes'

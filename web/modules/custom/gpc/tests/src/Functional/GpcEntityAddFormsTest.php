@@ -50,11 +50,13 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->adminUser = $this->drupalCreateUser([
       'access administration pages',
       'administer gpc calibers',
+      'review gpc calibers',
       'view gpc calibers',
       'create gpc calibers',
       'edit gpc calibers',
       'delete gpc calibers',
       'administer gpc components',
+      'review gpc components',
       'view gpc recipes',
       'create gpc recipes',
       'edit gpc recipes',
@@ -264,6 +266,8 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $caliber = reset($caliber);
     $this->assertNotFalse($caliber);
+    $this->assertSame('pending', $caliber->get('review_status')->value);
+    $this->assertSame((int) $user->id(), (int) $caliber->get('submitted_by')->target_id);
 
     $this->drupalGet('/gpc/calibers/' . $caliber->id());
     $this->assertSession()->statusCodeEquals(200);
@@ -290,10 +294,88 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $component = reset($component);
     $this->assertNotFalse($component);
     $this->assertSame('000123456789', $component->get('upc')->value);
+    $this->assertSame('pending', $component->get('review_status')->value);
+    $this->assertSame((int) $user->id(), (int) $component->get('submitted_by')->target_id);
 
     $this->drupalGet('/gpc/components/' . $component->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('62gr OTM');
+  }
+
+  /**
+   * Tests that reviewers can use the governance queue and mark duplicates.
+   */
+  public function testReviewerCanReviewAndMarkDuplicates(): void {
+    $this->drupalLogout();
+    $creator = $this->drupalCreateUser([]);
+    $reviewer = $this->drupalCreateUser([
+      'view gpc calibers',
+      'view gpc components',
+      'review gpc calibers',
+      'review gpc components',
+      'administer gpc calibers',
+      'administer gpc components',
+    ]);
+
+    $canonical_caliber = $this->createCaliber([
+      'label' => '9mm Luger Review Canonical',
+      'machine_name' => '9mm_luger_review_canonical',
+    ]);
+    $duplicate_caliber = $this->createCaliber([
+      'label' => '9mm Parabellum Review Duplicate',
+      'machine_name' => '9mm_parabellum_review_duplicate',
+      'submitted_by' => $creator->id(),
+    ]);
+
+    $canonical_component = $this->createComponent([
+      'label' => '55gr FMJ Review Canonical',
+      'machine_name' => '55gr_fmj_review_canonical',
+      'component_type' => 'bullet',
+    ]);
+    $duplicate_component = $this->createComponent([
+      'label' => '55gr Full Metal Jacket Review Duplicate',
+      'machine_name' => '55gr_fmj_review_duplicate',
+      'component_type' => 'bullet',
+      'submitted_by' => $creator->id(),
+    ]);
+
+    $this->drupalLogin($reviewer);
+
+    $this->drupalGet('/admin/content/gpc/calibers/review');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('9mm Parabellum Review Duplicate');
+
+    $this->drupalGet('/admin/content/gpc/calibers/' . $duplicate_caliber->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Review status');
+    $this->submitForm([
+      'review_status' => 'duplicate',
+      'duplicate_of' => (string) $canonical_caliber->id(),
+      'review_notes' => 'Duplicate canonical record identified during review.',
+    ], 'Save');
+
+    $loaded_caliber = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->load($duplicate_caliber->id());
+    $this->assertNotNull($loaded_caliber);
+    $this->assertSame('duplicate', $loaded_caliber->get('review_status')->value);
+    $this->assertSame((int) $canonical_caliber->id(), (int) $loaded_caliber->get('duplicate_of')->target_id);
+
+    $this->drupalGet('/admin/content/gpc/components/review');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('55gr Full Metal Jacket Review Duplicate');
+
+    $this->drupalGet('/admin/content/gpc/components/' . $duplicate_component->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Review status');
+    $this->submitForm([
+      'review_status' => 'duplicate',
+      'duplicate_of' => (string) $canonical_component->id(),
+      'review_notes' => 'Duplicate canonical record identified during review.',
+    ], 'Save');
+
+    $loaded_component = $this->container->get('entity_type.manager')->getStorage('gpc_component')->load($duplicate_component->id());
+    $this->assertNotNull($loaded_component);
+    $this->assertSame('duplicate', $loaded_component->get('review_status')->value);
+    $this->assertSame((int) $canonical_component->id(), (int) $loaded_component->get('duplicate_of')->target_id);
   }
 
   /**

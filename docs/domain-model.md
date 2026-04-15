@@ -28,6 +28,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Keep v1 small and explicit.
 - Prefer entity references for real relationships.
 - Keep contributor workflows simple: shared reference records can be created by authenticated users but remain globally reusable rather than user-owned.
+- Add lightweight governance metadata to shared records: submitter attribution, review status, review notes, and a duplicate-of pointer for manual consolidation.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
 - Use `drupal/physical` for Caliber and Component measurements that have units.
@@ -53,3 +54,4 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Inventory is deferred because it is a separate user-owned concept and should not be folded into the component catalog.
 - Owner-based access is the v1 choice because it is the simplest durable rule for user-owned records and keeps admin override available without building sharing now.
 - Shared Caliber and Component records are contributed by authenticated users, then remain globally reusable rather than privately owned.
+- Governance is intentionally lightweight and does not block immediate usability of newly created shared records.

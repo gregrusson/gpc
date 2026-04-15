@@ -4,8 +4,8 @@ This document defines the access model for the current GPC direction.
 
 ## Access Rules
 
-- Caliber is shared reference data. Any authenticated user may create and view new reference records, while edit and delete remain admin-governed.
-- Component is shared reference data. Any authenticated user may create and view new reference records, while edit and delete remain admin-governed.
+- Caliber is shared reference data. Any authenticated user may create it; review and correction are handled through manager/admin permissions, while delete remains admin-governed.
+- Component is shared reference data. Any authenticated user may create it; review and correction are handled through manager/admin permissions, while delete remains admin-governed.
 - Firearm is owned by the creating user and uses owner-based access with admin override.
 - Recipe is owned by the creating user.
 - Batch is owned by the creating user.
@@ -16,7 +16,7 @@ This document defines the access model for the current GPC direction.
 
 - The application should be usable by logged-in users, not only through `/admin`.
 - User-owned entities should have direct logged-in UI paths outside `/admin`.
-- Shared reference entities now have a user-facing contribution path, but their admin collection and destructive actions remain restricted.
+- Shared reference entities now have a user-facing contribution path plus a lightweight review queue, but their admin collection and destructive actions remain restricted.
 - Add and edit flows for owned records should support direct user interaction from the application UI.
 - Firearm uses a normal logged-in UI path and is not treated as admin-only content.
 - Recipe uses a normal logged-in UI path and is not treated as admin-only content.
@@ -39,3 +39,4 @@ This document defines the access model for the current GPC direction.
 - Recipe keeps its code as the main human-facing identifier while still remaining user-owned.
 - Batch keeps its batch code as the main human-facing identifier while still remaining user-owned, with recipe code paired in listings for context.
 - Shared Caliber and Component records are contributed by authenticated users, then remain globally reusable rather than privately owned.
+- Governance is intentionally lightweight: records carry review status, review notes, submitter attribution, and a duplicate pointer for manual consolidation.
