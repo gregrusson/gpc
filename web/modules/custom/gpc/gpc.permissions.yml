@@ -8,11 +8,11 @@ view gpc calibers:
 
 create gpc calibers:
   title: 'Create calibers'
-  description: 'Create new caliber records.'
+  description: 'Create new shared caliber records.'
 
 review gpc calibers:
   title: 'Review calibers'
-  description: 'Review, correct, and flag shared caliber records.'
+  description: 'Review, correct, and flag shared caliber records for correctness, duplicates, and spam.'
 
 edit gpc calibers:
   title: 'Edit calibers'
@@ -32,11 +32,11 @@ view gpc components:
 
 create gpc components:
   title: 'Create components'
-  description: 'Create new component records.'
+  description: 'Create new shared component records.'
 
 review gpc components:
   title: 'Review components'
-  description: 'Review, correct, and flag shared component records.'
+  description: 'Review, correct, and flag shared component records for correctness, duplicates, and spam.'
 
 view gpc recipes:
   title: 'View recipes'
