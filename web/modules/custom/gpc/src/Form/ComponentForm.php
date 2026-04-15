@@ -109,6 +109,39 @@ class ComponentForm extends GpcEntityFormBase {
       '#description' => $this->t('Optional internal notes and context.'),
     ];
 
+    if ($this->currentUser()->hasPermission('review gpc components') || $this->currentUser()->hasPermission('administer gpc components')) {
+      $form['governance'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Review'),
+        '#open' => !$entity->isNew(),
+      ];
+      $form['governance']['review_status'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Review status'),
+        '#default_value' => $entity->get('review_status')->value ?? 'pending',
+        '#options' => Component::reviewStatusOptions(),
+        '#description' => $this->t('Use this to mark the record as approved, needing correction, or duplicate.'),
+      ];
+      $form['governance']['duplicate_of'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Duplicate of'),
+        '#default_value' => $entity->get('duplicate_of')->target_id ?? '',
+        '#options' => $this->buildDuplicateOfOptions('gpc_component'),
+        '#empty_option' => $this->t('- Select -'),
+        '#description' => $this->t('Point to the canonical component if this record is a duplicate.'),
+        '#element_validate' => [
+          [$this, 'validateDuplicateOfElement'],
+        ],
+      ];
+      $form['governance']['review_notes'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Review notes'),
+        '#default_value' => $entity->get('review_notes')->value ?? '',
+        '#rows' => 4,
+        '#description' => $this->t('Internal moderation notes or merge guidance.'),
+      ];
+    }
+
     return $form;
   }
 
@@ -135,6 +168,42 @@ class ComponentForm extends GpcEntityFormBase {
   public static function machineNameExists(string $machine_name): bool {
     $storage = \Drupal::entityTypeManager()->getStorage('gpc_component');
     return (bool) $storage->loadByProperties(['machine_name' => $machine_name]);
+  }
+
+  /**
+   * Validates that a duplicate reference does not point to itself.
+   */
+  public function validateDuplicateOfElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
+    $entity = $this->entity;
+    $value = $form_state->getValue($element['#parents']);
+    if ($value === '' || $value === NULL || $entity->isNew()) {
+      return;
+    }
+
+    if ((int) $value === (int) $entity->id()) {
+      $form_state->setError($element, $this->t('A component cannot be marked as a duplicate of itself.'));
+    }
+  }
+
+  /**
+   * Builds the selectable canonical component options for review workflows.
+   */
+  protected function buildDuplicateOfOptions(string $entity_type_id): array {
+    $options = [];
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+    $entities = $storage->loadMultiple();
+
+    foreach ($entities as $candidate) {
+      if ($candidate->id() === $this->entity->id()) {
+        continue;
+      }
+
+      $options[$candidate->id()] = $candidate->label();
+    }
+
+    asort($options, SORT_NATURAL | SORT_FLAG_CASE);
+
+    return $options;
   }
 
   /**

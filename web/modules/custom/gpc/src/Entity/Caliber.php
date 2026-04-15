@@ -76,6 +76,12 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
     }
+    if ($this->isNew() && $this->get('submitted_by')->isEmpty() && \Drupal::currentUser()->isAuthenticated()) {
+      $this->set('submitted_by', \Drupal::currentUser()->id());
+    }
+    if ($this->isNew() && $this->get('review_status')->isEmpty()) {
+      $this->set('review_status', \Drupal::currentUser()->hasPermission('review gpc calibers') || \Drupal::currentUser()->hasPermission('administer gpc calibers') ? 'approved' : 'pending');
+    }
     elseif (($original = $this->getOriginal()) instanceof self) {
       $original_machine_name = $original->get('machine_name')->value ?? NULL;
       if ($original_machine_name !== NULL) {
@@ -162,6 +168,29 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       ->setLabel(t('Notes'))
       ->setDescription(t('Optional notes for this caliber.'));
 
+    $fields['submitted_by'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Submitted by'))
+      ->setDescription(t('The user who submitted this shared record.'))
+      ->setSetting('target_type', 'user');
+
+    $fields['review_status'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Review status'))
+      ->setDescription(t('Tracks whether the record has been reviewed.'))
+      ->setRequired(TRUE)
+      ->setDefaultValue('pending')
+      ->setSettings([
+        'allowed_values' => static::reviewStatusOptions(),
+      ]);
+
+    $fields['review_notes'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Review notes'))
+      ->setDescription(t('Internal moderation or correction notes.'));
+
+    $fields['duplicate_of'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Duplicate of'))
+      ->setDescription(t('If this record duplicates another caliber, point to the canonical record.'))
+      ->setSetting('target_type', 'gpc_caliber');
+
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that this caliber was created.'));
@@ -191,6 +220,21 @@ class Caliber extends ContentEntityBase implements EntityChangedInterface {
       'large_rifle_magnum' => t('Large rifle magnum'),
       'rimfire' => t('Rimfire'),
       'shotshell_209' => t('Shotshell / 209'),
+    ];
+  }
+
+  /**
+   * Returns the allowed review status values.
+   *
+   * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+   *   The allowed review states.
+   */
+  public static function reviewStatusOptions(): array {
+    return [
+      'pending' => t('Pending review'),
+      'approved' => t('Approved'),
+      'needs_work' => t('Needs correction'),
+      'duplicate' => t('Duplicate'),
     ];
   }
 

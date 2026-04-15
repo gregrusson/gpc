@@ -37,12 +37,14 @@ class ComponentAccessControlHandler extends EntityAccessControlHandler {
     }
 
     $permission = match ($operation) {
-      'update', 'delete' => 'administer gpc components',
+      'update' => 'review gpc components',
+      'delete' => 'administer gpc components',
       default => NULL,
     };
 
     if ($permission !== NULL) {
       return AccessResult::allowedIfHasPermission($account, $permission)
+        ->orIf(AccessResult::allowedIfHasPermission($account, 'administer gpc components'))
         ->addCacheableDependency($entity);
     }
 

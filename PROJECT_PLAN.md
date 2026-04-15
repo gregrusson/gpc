@@ -115,6 +115,7 @@ The application is intended to be usable by logged-in users, not only through `/
 - Do not collapse recipe and batch into one entity just to reduce file count.
 - Do not build sharing or analytics logic until the core records exist and are useful.
 - When uncertain, choose the simpler implementation and document the tradeoff.
+- Use the admin-only manual merge helper only for confirmed Caliber and Component duplicates; it is not a generalized moderation workflow. See [docs/reference-merge-helper.md](docs/reference-merge-helper.md).
 
 ## Working Notes
 

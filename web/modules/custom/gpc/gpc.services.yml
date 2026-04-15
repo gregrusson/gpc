@@ -1,0 +1,69 @@
+parameters:
+  # Explicitly supported inbound reference fields for the admin-only manual merge helper.
+  # Add new source definitions here intentionally; unsupported references are not discovered.
+  gpc.reference_discovery.sources:
+    gpc_caliber:
+      - source_entity_type: gpc_firearm
+        field_name: caliber
+      - source_entity_type: gpc_recipe
+        field_name: caliber
+      - source_entity_type: gpc_caliber
+        field_name: duplicate_of
+    gpc_component:
+      - source_entity_type: gpc_recipe
+        field_name: bullet_component
+      - source_entity_type: gpc_recipe
+        field_name: powder_component
+      - source_entity_type: gpc_recipe
+        field_name: primer_component
+      - source_entity_type: gpc_recipe
+        field_name: brass_component
+      - source_entity_type: gpc_component
+        field_name: duplicate_of
+  # Supported merge targets for the manual merge helper.
+  # Add new targets intentionally as execution support expands.
+  gpc.reference_merge.targets:
+    caliber:
+      entity_type_id: gpc_caliber
+      label: Caliber
+      description: Duplicate or canonical caliber record.
+    component:
+      entity_type_id: gpc_component
+      label: Component
+      description: Duplicate or canonical component record.
+
+services:
+  gpc.reference_discovery_registry:
+    class: Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryRegistry
+    arguments:
+      - '%gpc.reference_discovery.sources%'
+
+  gpc.reference_discovery:
+    class: Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryService
+    arguments:
+      - '@entity_type.manager'
+      - '@gpc.reference_discovery_registry'
+
+  Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryInterface: '@gpc.reference_discovery'
+  Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryRegistryInterface: '@gpc.reference_discovery_registry'
+
+  gpc.reference_merge_registry:
+    class: Drupal\gpc\ReferenceMerge\ReferenceMergeRegistry
+    arguments:
+      - '%gpc.reference_merge.targets%'
+
+  Drupal\gpc\ReferenceMerge\ReferenceMergeRegistry: '@gpc.reference_merge_registry'
+
+  gpc.reference_merge_execution:
+    class: Drupal\gpc\ReferenceMerge\ReferenceMergeExecutionService
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@gpc.reference_discovery'
+      - '@gpc.reference_merge_registry'
+      - '@current_user'
+      - '@logger.factory'
+      - '@datetime.time'
+      - '@uuid'
+
+  Drupal\gpc\ReferenceMerge\ReferenceMergeExecutionInterface: '@gpc.reference_merge_execution'

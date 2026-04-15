@@ -15,6 +15,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Refine Batch to a user-owned recipe-derived record with a required batch code and owner-based access.
 - Keep the user-owned workflow usable outside `/admin`.
 - Use `uid` ownership plus owner-based entity access control with admin override for user-owned entities.
+- Keep the admin-only manual merge helper limited to confirmed Caliber and Component duplicates.
 
 ## Model Refinements
 
@@ -29,6 +30,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep Batch code as the primary Batch identifier and surface recipe code alongside it in lists and forms.
 - Add ownership-aware access controls for user-owned records.
 - Keep Firearm display naming anchored to manufacturer and model instead of a generic title field.
+- Extend manual merge support only when a new reference field is explicitly registered in discovery and merge support.
 
 ## Deferred Work
 

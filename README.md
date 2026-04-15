@@ -23,6 +23,7 @@ Current implementation goals:
 - Clean entity naming, routes, and permissions
 - Minimal but maintainable content entity design
 - Simple references between the core records
+- An admin-only manual merge helper for Caliber and Component duplicates
 
 ## Planned Domain Model
 
@@ -56,6 +57,7 @@ Current implementation goals:
 - Inventory is deferred as a later separate user-owned concept.
 - Caliber structured-field expansion is deferred for now.
 - Sharing is a limited later feature, likely focused on recipe summaries.
+- The manual merge helper only supports explicit, admin-only consolidation of known Caliber and Component duplicates. See [docs/reference-merge-helper.md](docs/reference-merge-helper.md).
 
 ## Local Development with DDEV
 
