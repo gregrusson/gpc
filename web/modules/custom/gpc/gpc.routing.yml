@@ -50,11 +50,31 @@ gpc.reference_merge.form:
   options:
     _admin_route: TRUE
 
+gpc.reference_merge.confirm:
+  path: '/admin/content/gpc/reference-merge/{merge_type}/confirm/{source_entity_id}/{target_entity_id}'
+  defaults:
+    _form: '\Drupal\gpc\Form\ReferenceMergeExecuteForm'
+    _title: 'Confirm reference merge'
+  requirements:
+    _permission: 'administer gpc reference merges'
+  options:
+    _admin_route: TRUE
+
 gpc.reference_merge.preview:
   path: '/admin/content/gpc/reference-merge/{merge_type}/preview/{source_entity_id}/{target_entity_id}'
   defaults:
     _controller: '\Drupal\gpc\Controller\GpcReferenceMergeController::preview'
     _title: 'Reference merge preview'
+  requirements:
+    _permission: 'administer gpc reference merges'
+  options:
+    _admin_route: TRUE
+
+gpc.reference_merge.result:
+  path: '/admin/content/gpc/reference-merge/result/{result_token}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcReferenceMergeController::result'
+    _title: 'Reference merge result'
   requirements:
     _permission: 'administer gpc reference merges'
   options:

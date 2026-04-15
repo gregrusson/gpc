@@ -53,3 +53,17 @@ services:
       - '%gpc.reference_merge.targets%'
 
   Drupal\gpc\ReferenceMerge\ReferenceMergeRegistry: '@gpc.reference_merge_registry'
+
+  gpc.reference_merge_execution:
+    class: Drupal\gpc\ReferenceMerge\ReferenceMergeExecutionService
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@gpc.reference_discovery'
+      - '@gpc.reference_merge_registry'
+      - '@current_user'
+      - '@logger.factory'
+      - '@datetime.time'
+      - '@uuid'
+
+  Drupal\gpc\ReferenceMerge\ReferenceMergeExecutionInterface: '@gpc.reference_merge_execution'

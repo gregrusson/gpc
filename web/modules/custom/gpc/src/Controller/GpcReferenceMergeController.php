@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryInterface;
 use Drupal\gpc\ReferenceMerge\ReferenceMergeRegistry;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,6 +27,7 @@ final class GpcReferenceMergeController extends ControllerBase {
     protected ReferenceDiscoveryInterface $referenceDiscovery,
     protected ReferenceMergeRegistry $referenceMergeRegistry,
     protected EntityTypeManagerInterface $entityTypeManagerService,
+    protected PrivateTempStoreFactory $tempStoreFactory,
   ) {
   }
 
@@ -37,6 +39,7 @@ final class GpcReferenceMergeController extends ControllerBase {
       $container->get('gpc.reference_discovery'),
       $container->get('gpc.reference_merge_registry'),
       $container->get('entity_type.manager'),
+      $container->get('tempstore.private'),
     );
   }
 
@@ -131,6 +134,17 @@ final class GpcReferenceMergeController extends ControllerBase {
           $this->t('Overall references that would be repointed: @count', ['@count' => $report['totals']['overall']]),
           $this->t('Supported source fields registered: @count', ['@count' => count($report['supported_sources'])]),
         ],
+      ],
+      'actions' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['gpc-reference-merge-preview__actions'],
+        ],
+        'confirm' => Link::fromTextAndUrl($this->t('Continue to confirmation'), Url::fromRoute('gpc.reference_merge.confirm', [
+          'merge_type' => $merge_type,
+          'source_entity_id' => $source_entity->id(),
+          'target_entity_id' => $target_entity->id(),
+        ]))->toRenderable(),
       ],
       'entity_type_totals' => $this->buildTotalsList($report['totals']['by_entity_type']),
       'field_totals' => $this->buildTotalsList($report['totals']['by_entity_type_and_field']),
@@ -257,6 +271,103 @@ final class GpcReferenceMergeController extends ControllerBase {
     }
 
     return $build;
+  }
+
+  /**
+   * Shows a stored result after a merge attempt.
+   */
+  public function result(string $result_token): array {
+    $result = $this->tempStoreFactory->get('gpc.reference_merge_results')->get($result_token);
+    if (!is_array($result)) {
+      throw new NotFoundHttpException((string) $this->t('The merge result could not be found.'));
+    }
+
+    $this->tempStoreFactory->get('gpc.reference_merge_results')->delete($result_token);
+
+    return [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['gpc-reference-merge-result'],
+      ],
+      'status' => [
+        '#markup' => '<p><strong>' . $this->t('Merge outcome: @status', ['@status' => $result['status'] ?? 'unknown']) . '</strong></p>',
+      ],
+      'summary' => [
+        '#theme' => 'item_list',
+        '#items' => [
+          $this->t('Entities updated: @count', ['@count' => (int) ($result['updated_entity_count'] ?? 0)]),
+          $this->t('Fields updated: @count', ['@count' => (int) ($result['updated_field_count'] ?? 0)]),
+          $this->t('Skipped references: @count', ['@count' => count($result['skipped_references'] ?? [])]),
+          $this->t('Unsupported references: @count', ['@count' => count($result['unsupported_references'] ?? [])]),
+          $this->t('Failures: @count', ['@count' => count($result['failures'] ?? [])]),
+        ],
+      ],
+      'source' => [
+        '#markup' => '<p>' . $this->t('Source retained: @label (@id)', [
+          '@label' => $result['source']['label'] ?? '',
+          '@id' => $result['source']['entity_id'] ?? '',
+        ]) . '</p>',
+      ],
+      'target' => [
+        '#markup' => '<p>' . $this->t('Target canonical: @label (@id)', [
+          '@label' => $result['target']['label'] ?? '',
+          '@id' => $result['target']['entity_id'] ?? '',
+        ]) . '</p>',
+      ],
+      'annotation' => [
+        '#markup' => !empty($result['source_annotation'])
+          ? '<p>' . $this->t('The source was annotated for audit and retention.') . '</p>'
+          : '<p>' . $this->t('The source was not annotated.') . '</p>',
+      ],
+      'updated_entities' => $this->buildResultList('Updated entities', $result['updated_entities'] ?? [], ['entity_type_id', 'entity_id', 'label', 'fields']),
+      'updated_fields' => $this->buildResultList('Updated fields', $result['updated_fields'] ?? [], ['entity_type_id', 'entity_id', 'label', 'field_name', 'reference_count']),
+      'skipped' => $this->buildResultList('Skipped / unsupported references', $result['skipped_references'] ?? [], ['entity_type_id', 'entity_id', 'label', 'field_name', 'reason']),
+      'failures' => $this->buildResultList('Failures', $result['failures'] ?? [], ['entity_type_id', 'entity_id', 'label', 'field_name', 'message']),
+      '#cache' => [
+        'max-age' => 0,
+      ],
+    ];
+  }
+
+  /**
+   * Builds a simple result table.
+   *
+   * @param array<int, array<string, mixed>> $items
+   *   Structured rows.
+   * @param array<int, string> $keys
+   *   Keys to render.
+   */
+  protected function buildResultList(string $title, array $items, array $keys): array {
+    $rows = [];
+    foreach ($items as $item) {
+      $row = [];
+      foreach ($keys as $key) {
+        $value = $item[$key] ?? '';
+        if (is_array($value)) {
+          $scalar_values = array_filter($value, 'is_scalar');
+          $value = count($scalar_values) === count($value)
+            ? implode(', ', array_map(static fn ($entry) => (string) $entry, $value))
+            : json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+        $row[] = is_scalar($value) ? (string) $value : '';
+      }
+      $rows[] = $row;
+    }
+
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('@title (@count)', [
+        '@title' => $title,
+        '@count' => count($items),
+      ]),
+      '#open' => TRUE,
+      'table' => [
+        '#theme' => 'table',
+        '#header' => $keys,
+        '#rows' => $rows,
+        '#empty' => $this->t('None'),
+      ],
+    ];
   }
 
 }

@@ -189,6 +189,7 @@ class ReferenceMergePreviewTest extends KernelTestBase {
 
     $caliber_markup = (string) $renderer->renderInIsolation($controller->preview('caliber', (string) $caliber_duplicate->id(), (string) $caliber_canonical->id()));
     $this->assertStringContainsString('Manual admin maintenance action.', $caliber_markup);
+    $this->assertStringContainsString('Continue to confirmation', $caliber_markup);
     $this->assertStringContainsString('9mm Para', $caliber_markup);
     $this->assertStringContainsString('9mm Luger', $caliber_markup);
     $this->assertStringContainsString('Reference pistol', $caliber_markup);
@@ -255,6 +256,7 @@ class ReferenceMergePreviewTest extends KernelTestBase {
       $this->container->get('gpc.reference_discovery'),
       $this->container->get('gpc.reference_merge_registry'),
       $this->container->get('entity_type.manager'),
+      $this->container->get('tempstore.private'),
     );
   }
 
