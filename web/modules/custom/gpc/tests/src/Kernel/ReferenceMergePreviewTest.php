@@ -249,6 +249,27 @@ class ReferenceMergePreviewTest extends KernelTestBase {
   }
 
   /**
+   * Tests that IDs from the wrong entity type are rejected by the preview route.
+   */
+  public function testPreviewRejectsMismatchedEntityTypeIds(): void {
+    $controller = $this->createController();
+
+    $component_one = $this->createComponent([
+      'label' => '147gr FMJ',
+      'machine_name' => '147gr_fmj_type_mismatch_1',
+      'component_type' => 'bullet',
+    ]);
+    $component_two = $this->createComponent([
+      'label' => 'Example Powder',
+      'machine_name' => 'example_powder_type_mismatch_2',
+      'component_type' => 'powder',
+    ]);
+
+    $this->expectException(NotFoundHttpException::class);
+    $controller->preview('caliber', (string) $component_two->id(), (string) $component_one->id());
+  }
+
+  /**
    * Creates the merge controller used by the test.
    */
   protected function createController(): GpcReferenceMergeController {
