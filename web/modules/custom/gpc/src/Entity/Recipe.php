@@ -172,17 +172,39 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface, Entity
       ->setDescription(t('Optional brass component used in this recipe. If set, the selected component should have type "brass".'))
       ->setSetting('target_type', 'gpc_component');
 
-    $fields['overall_length'] = BaseFieldDefinition::create('decimal')
+    $fields['overall_length'] = BaseFieldDefinition::create('physical_measurement')
       ->setLabel(t('Overall length'))
-      ->setDescription(t('The cartridge overall length for this recipe.'))
+      ->setDescription(t('The cartridge overall length for this recipe. Enter inches or millimeters.'))
       ->setRequired(TRUE)
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+      ->setSettings([
+        'measurement_type' => 'length',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'default_unit' => 'in',
+          'allow_unit_change' => TRUE,
+          'available_units' => [
+            'in',
+            'mm',
+          ],
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'output_unit' => 'in',
+        ],
+      ]);
 
-    $fields['crimp'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Crimp'))
-      ->setDescription(t('Optional plain-text description of the crimp setting.'))
-      ->setSetting('max_length', 255);
+    $fields['crimp'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Crimped'))
+      ->setDescription(t('Check this box if the recipe is crimped.'))
+      ->setSettings([
+        'on_label' => 'Yes',
+        'off_label' => 'No',
+      ])
+      ->setDefaultValue(FALSE);
 
     $fields['estimated_round_cost'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Estimated round cost'))

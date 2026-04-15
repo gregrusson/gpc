@@ -361,6 +361,9 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Recipe code');
     $this->assertSession()->fieldExists('Nickname');
+    $this->assertSession()->fieldExists('overall_length[number]');
+    $this->assertSession()->fieldValueEquals('overall_length[unit]', LengthUnit::INCH);
+    $this->assertSession()->fieldExists('Crimped');
 
     $this->submitForm([
       'label' => 'Practice Load',
@@ -372,13 +375,37 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'primer_component' => $this->entityAutocompleteValue($primer),
       'brass_component' => $this->entityAutocompleteValue($brass),
       'powder_charge_weight' => '8.200',
-      'overall_length' => '1.255',
+      'overall_length[number]' => '1.255',
+      'overall_length[unit]' => LengthUnit::INCH,
+      'crimp' => 1,
       'notes' => 'Range use.',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the Practice Load recipe.');
     $this->assertSession()->pageTextContains('Practice Load');
     $this->assertSession()->pageTextContains('Range load');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_recipe')->loadByProperties([
+      'machine_name' => 'practice_load',
+    ]);
+    $loaded = reset($loaded);
+    $this->assertNotFalse($loaded);
+    $this->assertSame('1.255000', $loaded->get('overall_length')->number);
+    $this->assertSame('in', $loaded->get('overall_length')->unit);
+    $this->assertSame(1, (int) $loaded->get('crimp')->value);
+  }
+
+  /**
+   * Tests the recipe field storage matches the current model rules.
+   */
+  public function testRecipeFieldStorageMatchesGuidelines(): void {
+    $definitions = $this->container->get('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+
+    $this->assertSame('physical_measurement', $definitions['overall_length']->getType());
+    $this->assertSame('length', $definitions['overall_length']->getSetting('measurement_type'));
+    $this->assertSame('boolean', $definitions['crimp']->getType());
+    $this->assertSame('Yes', (string) $definitions['crimp']->getSetting('on_label'));
+    $this->assertSame('No', (string) $definitions['crimp']->getSetting('off_label'));
   }
 
   /**
@@ -429,6 +456,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalGet('/gpc/recipes/' . $recipe->id() . '/edit');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldValueEquals('overall_length[unit]', LengthUnit::INCH);
 
     $this->submitForm([
       'label' => 'Practice Load v2',
@@ -438,11 +466,19 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'powder_component' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_component')->load($recipe->get('powder_component')->target_id)),
       'primer_component' => $this->entityAutocompleteValue($this->container->get('entity_type.manager')->getStorage('gpc_component')->load($recipe->get('primer_component')->target_id)),
       'powder_charge_weight' => '8.100',
-      'overall_length' => '1.245',
+      'overall_length[number]' => '1.245',
+      'overall_length[unit]' => LengthUnit::INCH,
+      'crimp' => 1,
       'notes' => 'Updated recipe.',
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Updated the Practice Load v2 recipe.');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_recipe')->load($recipe->id());
+    $this->assertNotNull($loaded);
+    $this->assertSame('1.245000', $loaded->get('overall_length')->number);
+    $this->assertSame('in', $loaded->get('overall_length')->unit);
+    $this->assertSame(1, (int) $loaded->get('crimp')->value);
   }
 
   /**
@@ -545,7 +581,8 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'powder_component' => $this->entityAutocompleteValue($powder),
       'primer_component' => $this->entityAutocompleteValue($primer),
       'powder_charge_weight' => '8.200',
-      'overall_length' => '1.255',
+      'overall_length[number]' => '1.255',
+      'overall_length[unit]' => LengthUnit::INCH,
       'notes' => 'Should fail.',
     ], 'Save');
 
@@ -585,7 +622,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'powder_component' => $powder->id(),
       'primer_component' => $primer->id(),
       'powder_charge_weight' => '24.000',
-      'overall_length' => '2.230',
+      'overall_length' => [
+        'number' => '2.230',
+        'unit' => LengthUnit::INCH,
+      ],
     ]);
 
     $this->drupalGet('/admin/content/gpc/batches/add');
@@ -630,6 +670,17 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
    * Creates a recipe entity for test setup.
    */
   protected function createRecipe(array $values): EntityInterface {
+    if (array_key_exists('overall_length', $values) && !is_array($values['overall_length'])) {
+      $values['overall_length'] = [
+        'number' => (string) $values['overall_length'],
+        'unit' => LengthUnit::INCH,
+      ];
+    }
+
+    if (array_key_exists('crimp', $values)) {
+      $values['crimp'] = !empty($values['crimp']);
+    }
+
     $storage = $this->container->get('entity_type.manager')->getStorage('gpc_recipe');
     $entity = $storage->create($values);
     $entity->save();

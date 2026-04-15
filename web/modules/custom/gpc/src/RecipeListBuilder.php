@@ -50,6 +50,7 @@ class RecipeListBuilder extends EntityListBuilder {
       'powder_component' => $this->t('Powder'),
       'powder_charge_weight' => $this->t('Charge'),
       'overall_length' => $this->t('OAL'),
+      'crimp' => $this->t('Crimped'),
       'estimated_round_cost' => $this->t('Cost'),
       'changed' => $this->t('Changed'),
     ] + parent::buildHeader();
@@ -65,7 +66,8 @@ class RecipeListBuilder extends EntityListBuilder {
     $row['bullet_component'] = $entity->get('bullet_component')->first()?->entity?->label() ?? '';
     $row['powder_component'] = $entity->get('powder_component')->first()?->entity?->label() ?? '';
     $row['powder_charge_weight'] = $entity->get('powder_charge_weight')->value ?? '';
-    $row['overall_length'] = $entity->get('overall_length')->value ?? '';
+    $row['overall_length'] = $this->formatMeasurement($entity, 'overall_length');
+    $row['crimp'] = !empty($entity->get('crimp')->value) ? $this->t('Yes') : $this->t('No');
     $row['estimated_round_cost'] = $entity->get('estimated_round_cost')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
@@ -111,6 +113,23 @@ class RecipeListBuilder extends EntityListBuilder {
     }
 
     return $recipe_code . ' (' . $nickname . ')';
+  }
+
+  /**
+   * Formats a physical measurement for table output.
+   */
+  protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || $item->isEmpty()) {
+      return '';
+    }
+
+    $measurement = $item->toMeasurement();
+    if ($measurement->getUnit() !== 'in') {
+      $measurement = $measurement->convert('in');
+    }
+
+    return (string) $measurement;
   }
 
 }

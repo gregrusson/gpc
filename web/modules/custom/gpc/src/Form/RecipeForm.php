@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\gpc\Form;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Component;
 use Drupal\gpc\Entity\Recipe;
+use Drupal\physical\Calculator;
 
 /**
  * Form controller for recipe add/edit forms.
@@ -77,22 +79,18 @@ class RecipeForm extends GpcEntityFormBase {
       '#description' => $this->t('Enter the powder charge weight in grains.'),
     ];
 
-    $form['overall_length'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Overall length'),
-      '#default_value' => $entity->get('overall_length')->value ?? '',
-      '#required' => TRUE,
-      '#step' => 0.001,
-      '#min' => 0,
-      '#description' => $this->t('Enter the cartridge overall length.'),
-    ];
+    $form['overall_length'] = $this->buildLengthMeasurementElement(
+      $entity,
+      'overall_length',
+      $this->t('Overall length'),
+      $this->t('Enter the cartridge overall length in inches or millimeters.')
+    );
 
     $form['crimp'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Crimp'),
-      '#default_value' => $entity->get('crimp')->value ?? '',
-      '#maxlength' => 255,
-      '#description' => $this->t('Optional plain-text description of the crimp setting.'),
+      '#type' => 'checkbox',
+      '#title' => $this->t('Crimped'),
+      '#default_value' => !empty($entity->get('crimp')->value),
+      '#description' => $this->t('Check this box if the recipe is crimped.'),
     ];
 
     $form['estimated_round_cost'] = [
@@ -212,6 +210,56 @@ class RecipeForm extends GpcEntityFormBase {
     $entity->set('nickname', $nickname === '' ? NULL : $nickname);
 
     return $entity;
+  }
+
+  /**
+   * Builds a physical length measurement element for recipe OAL.
+   */
+  protected function buildLengthMeasurementElement(EntityInterface $entity, string $field_name, string|\Stringable $title, string|\Stringable $description): array {
+    $field_item = $entity->get($field_name)->first();
+    $default_value = [
+      'number' => '',
+      'unit' => 'in',
+    ];
+    if ($field_item && !$field_item->isEmpty()) {
+      $default_value = [
+        'number' => $field_item->number,
+        'unit' => $field_item->unit ?: 'in',
+      ];
+    }
+
+    return [
+      '#type' => 'physical_measurement',
+      '#measurement_type' => 'length',
+      '#title' => $title,
+      '#default_value' => $default_value,
+      '#required' => TRUE,
+      '#available_units' => [
+        'in',
+        'mm',
+      ],
+      '#description' => $description,
+      '#element_validate' => [
+        [$this, 'validateLengthMeasurementElement'],
+      ],
+    ];
+  }
+
+  /**
+   * Validates that the recipe overall length is non-negative.
+   */
+  public function validateLengthMeasurementElement(array &$element, FormStateInterface $form_state, array &$complete_form): void {
+    $value = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+    if (!is_array($value) || !isset($value['number']) || $value['number'] === '') {
+      return;
+    }
+
+    if (Calculator::compare($value['number'], '0') < 0) {
+      $form_state->setError($element['number'], $this->t('%title must be higher than or equal to %min.', [
+        '%title' => $element['#title'],
+        '%min' => '0',
+      ]));
+    }
   }
 
 }
