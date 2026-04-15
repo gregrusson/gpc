@@ -237,6 +237,66 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that any authenticated user can create shared reference records.
+   */
+  public function testAuthenticatedUsersCanCreateSharedReferences(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Add Caliber');
+    $this->assertSession()->linkExists('Add Component');
+
+    $this->drupalGet('/admin/content/gpc/calibers/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->submitForm([
+      'label' => '6.5 Creedmoor',
+      'machine_name' => '65_creedmoor_contribution',
+      'notes' => 'Shared reference created by a logged-in user.',
+    ], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Created the 6.5 Creedmoor caliber.');
+
+    $caliber = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->loadByProperties([
+      'machine_name' => '65_creedmoor_contribution',
+    ]);
+    $caliber = reset($caliber);
+    $this->assertNotFalse($caliber);
+
+    $this->drupalGet('/gpc/calibers/' . $caliber->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('6.5 Creedmoor');
+
+    $this->drupalGet('/admin/content/gpc/components/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Bullet');
+
+    $this->drupalGet('/admin/content/gpc/components/add/bullet');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->submitForm([
+      'label' => '62gr OTM',
+      'machine_name' => '62gr_otm_contribution',
+      'upc' => '000123456789',
+      'notes' => 'Shared bullet reference created by a logged-in user.',
+    ], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Created the 62gr OTM component.');
+
+    $component = $this->container->get('entity_type.manager')->getStorage('gpc_component')->loadByProperties([
+      'machine_name' => '62gr_otm_contribution',
+    ]);
+    $component = reset($component);
+    $this->assertNotFalse($component);
+    $this->assertSame('000123456789', $component->get('upc')->value);
+
+    $this->drupalGet('/gpc/components/' . $component->id());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('62gr OTM');
+  }
+
+  /**
    * Tests the component add page exposes the supported bundles.
    */
   public function testComponentAddPage(): void {
@@ -265,15 +325,15 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalGet('/gpc');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->pageTextContains('Use the links below to work with your firearms, recipes, and batches.');
+    $this->assertSession()->pageTextContains('Use the links below to work with your firearms, recipes, batches, and shared reference records.');
     $this->assertSession()->linkExists('View Firearms');
     $this->assertSession()->linkExists('Add Firearms');
     $this->assertSession()->linkExists('View Recipes');
     $this->assertSession()->linkExists('Add Recipes');
     $this->assertSession()->linkExists('View Batches');
     $this->assertSession()->linkExists('Add Batches');
-    $this->assertSession()->pageTextNotContains('Calibers');
-    $this->assertSession()->pageTextNotContains('Components');
+    $this->assertSession()->linkExists('Add Caliber');
+    $this->assertSession()->linkExists('Add Component');
   }
 
   /**

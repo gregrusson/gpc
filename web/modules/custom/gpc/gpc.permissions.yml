@@ -22,6 +22,14 @@ administer gpc components:
   title: 'Administer components'
   description: 'Create, edit, and delete component records.'
 
+view gpc components:
+  title: 'View components'
+  description: 'View shared component records and use them in references.'
+
+create gpc components:
+  title: 'Create components'
+  description: 'Create new component records.'
+
 view gpc recipes:
   title: 'View recipes'
   description: 'View the recipe collection and access owned recipes.'

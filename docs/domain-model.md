@@ -21,12 +21,13 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Firearm: user-owned structured record tied to Caliber, with a display label that should be driven by manufacturer and model where possible.
 - Recipe: user-owned reloading configuration with a required recipe code, optional nickname, notes as secondary detail, physical overall length, and a crimped yes/no flag.
 - Batch: user-owned produced record with a required batch code, recipe reference, production date, quantity produced, and notes.
-- Shared reference maintenance for Caliber and Component remains admin-managed today, while Firearm, Recipe, and Batch use direct logged-in application routes.
+- Shared reference maintenance for Caliber and Component remains admin-managed for list, edit, and delete workflows, while authenticated users can contribute new records through the logged-in application flow.
 
 ## Modeling Notes
 
 - Keep v1 small and explicit.
 - Prefer entity references for real relationships.
+- Keep contributor workflows simple: shared reference records can be created by authenticated users but remain globally reusable rather than user-owned.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
 - Use `drupal/physical` for Caliber and Component measurements that have units.
@@ -51,3 +52,4 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Components are global because they are reusable catalog definitions, not stock on hand.
 - Inventory is deferred because it is a separate user-owned concept and should not be folded into the component catalog.
 - Owner-based access is the v1 choice because it is the simplest durable rule for user-owned records and keeps admin override available without building sharing now.
+- Shared Caliber and Component records are contributed by authenticated users, then remain globally reusable rather than privately owned.

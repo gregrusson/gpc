@@ -28,7 +28,7 @@ class ComponentForm extends GpcEntityFormBase {
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The product or model name shown in admin screens and recipe references.'),
+      '#description' => $this->t('The product or model name shown in lists, references, and shared-record views.'),
     ];
 
     if ($entity->isNew()) {
@@ -124,7 +124,7 @@ class ComponentForm extends GpcEntityFormBase {
       ? $this->t('Created the %label component.', ['%label' => $entity->label()])
       : $this->t('Updated the %label component.', ['%label' => $entity->label()]));
 
-    $form_state->setRedirectUrl($entity->toUrl('collection'));
+    $form_state->setRedirectUrl($entity->toUrl('canonical'));
 
     return $status;
   }

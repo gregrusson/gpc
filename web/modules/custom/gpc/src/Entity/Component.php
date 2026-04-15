@@ -7,13 +7,13 @@ namespace Drupal\gpc\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\ComponentAccessControlHandler;
 use Drupal\gpc\ComponentListBuilder;
 use Drupal\gpc\Form\ComponentForm;
 use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
@@ -32,7 +32,7 @@ use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
     'plural' => '@count components',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => ComponentAccessControlHandler::class,
     'list_builder' => ComponentListBuilder::class,
     'form' => [
       'add' => ComponentForm::class,
@@ -45,6 +45,7 @@ use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
     ],
   ],
   links: [
+    'canonical' => '/gpc/components/{gpc_component}',
     'collection' => '/admin/content/gpc/components',
     'add-page' => '/admin/content/gpc/components/add',
     'add-form' => '/admin/content/gpc/components/add/{component_type}',

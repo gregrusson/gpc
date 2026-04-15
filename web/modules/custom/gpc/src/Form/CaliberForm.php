@@ -27,7 +27,7 @@ class CaliberForm extends GpcEntityFormBase {
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The canonical display name used in lists, references, and lookups.'),
+      '#description' => $this->t('The canonical display name used in lists, references, and shared-record views.'),
     ];
 
     if ($entity->isNew()) {
@@ -44,15 +44,6 @@ class CaliberForm extends GpcEntityFormBase {
         '#description' => $this->t('A unique internal identifier.'),
       ];
     }
-    else {
-      // $form['machine_name'] = [
-      //   '#type' => 'item',
-      //   '#title' => $this->t('Machine name'),
-      //   '#markup' => $entity->get('machine_name')->value ?? '',
-      //   '#description' => $this->t('This value is fixed after creation.'),
-      // ];
-    }
-
     $form['nickname'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Nickname'),
@@ -107,7 +98,7 @@ class CaliberForm extends GpcEntityFormBase {
       ? $this->t('Created the %label caliber.', ['%label' => $entity->label()])
       : $this->t('Updated the %label caliber.', ['%label' => $entity->label()]));
 
-    $form_state->setRedirectUrl($entity->toUrl('collection'));
+    $form_state->setRedirectUrl($entity->toUrl('canonical'));
 
     return $status;
   }
