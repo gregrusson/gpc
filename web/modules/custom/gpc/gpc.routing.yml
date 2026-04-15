@@ -1,0 +1,7 @@
+gpc.dashboard:
+  path: '/gpc'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcDashboardController::build'
+    _title: 'GPC'
+  requirements:
+    _user_is_logged_in: 'TRUE'

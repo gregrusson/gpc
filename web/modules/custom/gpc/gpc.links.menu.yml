@@ -1,3 +1,31 @@
+gpc.dashboard:
+  title: 'GPC'
+  description: 'Firearms, recipes, and batches.'
+  route_name: gpc.dashboard
+  menu_name: main
+  weight: 20
+
+gpc.recipe.collection:
+  title: 'Recipes'
+  description: 'Manage reloading recipe definitions.'
+  route_name: entity.gpc_recipe.collection
+  parent: gpc.dashboard
+  weight: 10
+
+gpc.batch.collection:
+  title: 'Batches'
+  description: 'Manage produced batch records.'
+  route_name: entity.gpc_batch.collection
+  parent: gpc.dashboard
+  weight: 11
+
+gpc.firearm.collection:
+  title: 'Firearms'
+  description: 'Manage firearm records.'
+  route_name: entity.gpc_firearm.collection
+  parent: gpc.dashboard
+  weight: 12
+
 gpc.caliber.collection:
   title: 'Calibers'
   description: 'Manage caliber reference records.'
@@ -11,24 +39,3 @@ gpc.component.collection:
   route_name: entity.gpc_component.collection
   parent: system.admin_content
   weight: 11
-
-gpc.recipe.collection:
-  title: 'Recipes'
-  description: 'Manage reloading recipe definitions.'
-  route_name: entity.gpc_recipe.collection
-  parent: system.admin_content
-  weight: 12
-
-gpc.batch.collection:
-  title: 'Batches'
-  description: 'Manage produced batch records.'
-  route_name: entity.gpc_batch.collection
-  parent: system.admin_content
-  weight: 13
-
-gpc.firearm.collection:
-  title: 'Firearms'
-  description: 'Manage firearm records.'
-  route_name: entity.gpc_firearm.collection
-  parent: system.admin_content
-  weight: 14
