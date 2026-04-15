@@ -30,6 +30,7 @@ This document defines the access model for the current GPC direction.
 - User-owned entities should carry ownership metadata from the start.
 - Access checks should be simple and explicit.
 - Do not introduce sharing logic until the feature is actually needed.
+- Admins and managers should review shared references for correctness, duplicates, and spam rather than trying to introduce a full moderation workflow.
 - The admin-only manual merge helper is limited to Caliber and Component duplicates and is not a generalized moderation workflow.
 
 ## Decision Summary

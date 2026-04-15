@@ -6,9 +6,9 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 
 - Caliber is global shared reference data.
 - Component is global shared reference data.
-- Firearm is user-owned and should only be visible and editable by the creating user.
-- Recipe is user-owned and should only be visible and editable by the creating user.
-- Batch is user-owned and should only be visible and editable by the creating user.
+- Firearm is user-owned and should only be visible and editable by the creating user, with a direct logged-in UI.
+- Recipe is user-owned and should only be visible and editable by the creating user, with a direct logged-in UI.
+- Batch is user-owned and should only be visible and editable by the creating user, with a direct logged-in UI.
 - Firearm must require Caliber.
 - Firearm must not depend on Batch.
 - Generic title fields should be avoided when they are redundant with a more specific identifier.
@@ -30,6 +30,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Prefer entity references for real relationships.
 - Keep contributor workflows simple: shared reference records can be created by authenticated users but remain globally reusable rather than user-owned.
 - Add lightweight governance metadata to shared records: submitter attribution, review status, review notes, and a duplicate-of pointer for the admin-only manual merge helper.
+- Admins and managers are responsible for reviewing shared references for correctness, duplicates, and spam.
 - Use notes fields for secondary detail that does not yet justify a dedicated schema.
 - Give Caliber a specific display-label strategy rather than relying on a generic title field.
 - Use `drupal/physical` for Caliber and Component measurements that have units.

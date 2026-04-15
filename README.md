@@ -4,7 +4,7 @@ Gunners Project Companion is a Drupal 11 application for firearms and reloading 
 
 ## Project Purpose
 
-The goal is to model a small, durable domain for tracking calibers, firearms, reloading components, reloading recipes, and reloading batches. The first version stays small, but it should be usable by logged-in users rather than only through `/admin`. Sharing and analytics are later, limited additions.
+The goal is to model a small, durable domain for tracking calibers, firearms, reloading components, reloading recipes, and reloading batches. The first version stays small, but it should be usable by logged-in users through the `/gpc` dashboard rather than only through `/admin`. Caliber and Component are shared reference records that logged-in users can contribute, while admins and managers govern correctness and duplicates. Sharing and analytics are later, limited additions.
 
 ## Current Scope
 
@@ -48,12 +48,15 @@ Current implementation goals:
 - Caliber is global shared reference data.
 - Component is global shared reference data and stays reusable through fixed bundles for Bullet, Powder, Primer, and Brass.
 - Firearm, Recipe, and Batch are user-owned records.
+- Firearm, Recipe, and Batch have direct logged-in UI paths.
 - User-owned entities should use `uid` plus owner-based entity access control with admin override.
 - Recipe and batch are distinct concepts.
 - Recipe should use `field_recipe_code` plus optional `field_label`.
 - Batch should use `field_batch_code`.
 - Component should keep shared fields like manufacturer, product/model name, and notes straightforward, with bundle-specific fields only where they add immediate value.
 - Notes fields should hold flexible secondary detail.
+- Caliber and Component are shared/global reference records that authenticated users can contribute.
+- Admins and managers govern shared references for correctness, duplicates, and spam.
 - Inventory is deferred as a later separate user-owned concept.
 - Caliber structured-field expansion is deferred for now.
 - Sharing is a limited later feature, likely focused on recipe summaries.
@@ -99,8 +102,8 @@ ddev composer install
 ## Near-Term Roadmap
 
 1. Caliber, Component, Recipe, and Batch are in place.
-2. Add Firearm as the next core content entity.
-3. Tighten user-facing and admin UX plus validation around the existing entities as real data usage exposes gaps.
+2. Tighten user-facing and admin UX plus validation around the existing entities as real data usage exposes gaps.
+3. Keep shared-reference governance and duplicate handling intentional, explicit, and limited.
 4. Add only the next clearly useful relationship or field when a current workflow needs it.
 5. Defer inventory automation, session analytics, and sharing until the core model is proven useful.
 

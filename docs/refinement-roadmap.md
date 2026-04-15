@@ -14,6 +14,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep Recipe overall length on the Physical measurement model and keep crimp as a boolean yes/no flag.
 - Refine Batch to a user-owned recipe-derived record with a required batch code and owner-based access.
 - Keep the user-owned workflow usable outside `/admin`.
+- Keep shared Caliber and Component contribution available to authenticated users while governance remains admin/manager-led.
 - Use `uid` ownership plus owner-based entity access control with admin override for user-owned entities.
 - Keep the admin-only manual merge helper limited to confirmed Caliber and Component duplicates.
 
