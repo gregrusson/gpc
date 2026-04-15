@@ -249,6 +249,34 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests the logged-in GPC dashboard navigation.
+   */
+  public function testGpcDashboardNavigation(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([
+      'view gpc firearms',
+      'create gpc firearms',
+      'view gpc recipes',
+      'create gpc recipes',
+      'view gpc batches',
+      'create gpc batches',
+    ]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Use the links below to work with your firearms, recipes, and batches.');
+    $this->assertSession()->linkExists('View Firearms');
+    $this->assertSession()->linkExists('Add Firearms');
+    $this->assertSession()->linkExists('View Recipes');
+    $this->assertSession()->linkExists('Add Recipes');
+    $this->assertSession()->linkExists('View Batches');
+    $this->assertSession()->linkExists('Add Batches');
+    $this->assertSession()->pageTextNotContains('Calibers');
+    $this->assertSession()->pageTextNotContains('Components');
+  }
+
+  /**
    * Tests the bullet component add form.
    */
   public function testBulletComponentAddForm(): void {
