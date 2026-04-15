@@ -95,7 +95,7 @@ function gpc_update_10004(): void {
     if ($schema->tableExists($base_table)) {
       $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
       if ($row_count > 0) {
-        throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+        throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
       }
 
       $schema->dropTable($base_table);
@@ -173,27 +173,6 @@ function gpc_update_10007(): void {
 }
 
 /**
- * Install the Caliber entity schema for existing sites.
- */
-function gpc_update_10010(): void {
-  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_caliber');
-  if ($entity_type === NULL) {
-    return;
-  }
-
-  $schema = \Drupal::database()->schema();
-  if ($schema->tableExists($entity_type->getBaseTable())) {
-    return;
-  }
-
-  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
-  $update_manager = \Drupal::service('entity.definition_update_manager');
-  $update_manager->installEntityType($entity_type);
-  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
-  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
-}
-
-/**
  * Install the Firearm entity table using the live entity definition.
  */
 function gpc_update_10008(): void {
@@ -239,7 +218,7 @@ function gpc_update_10009(): void {
   if ($schema->tableExists($base_table)) {
     $row_count = (int) $connection->select($base_table, 't')->countQuery()->execute()->fetchField();
     if ($row_count > 0) {
-      throw new \Drupal\Core\Update\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
+      throw new \Drupal\Core\Utility\UpdateException(sprintf('The %s table contains data and cannot be rebuilt automatically. Reinstall or migrate this entity schema manually.', $base_table));
     }
 
     $schema->dropTable($base_table);
@@ -247,4 +226,327 @@ function gpc_update_10009(): void {
 
   $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions('gpc_firearm');
   $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Install the Caliber entity schema for existing sites.
+ */
+function gpc_update_10010(): void {
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('gpc_caliber');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists($entity_type->getBaseTable())) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager */
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $update_manager->installEntityType($entity_type);
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
+  $update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Ensure the Physical module is enabled before Caliber field updates run.
+ */
+function gpc_update_10011(): void {
+  $module_handler = \Drupal::service('module_handler');
+  if ($module_handler->moduleExists('physical')) {
+    return;
+  }
+
+  \Drupal::service('module_installer')->install(['physical']);
+}
+
+/**
+ * Apply the Caliber physical-field update for existing sites.
+ */
+function gpc_update_10012(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_caliber']['entity_type']) && empty($change_list['gpc_caliber']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_caliber');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_caliber');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Add Firearm ownership support for existing sites.
+ */
+function gpc_update_10013(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_firearm']['entity_type']) && empty($change_list['gpc_firearm']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_firearm');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_firearm');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_firearm', 'f')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_firearm')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+/**
+ * Install the Firearm owner field storage on sites that missed the previous update.
+ */
+function gpc_update_10014(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_firearm']['field_storage_definitions']['uid']) && empty($change_list['gpc_firearm']['entity_type'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_firearm');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_firearm');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_firearm', 'f')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_firearm')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+function gpc_update_10016(): void {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_storage_definitions = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions('gpc_firearm');
+
+  if (isset($field_storage_definitions['type'])) {
+    $update_manager->installFieldStorageDefinition(
+      'type',
+      'gpc_firearm',
+      'gpc',
+      $field_storage_definitions['type']
+    );
+  }
+}
+
+/**
+ * Ensure the Physical module is enabled before Component field updates run.
+ */
+function gpc_update_10017(): void {
+  $module_handler = \Drupal::service('module_handler');
+  if ($module_handler->moduleExists('physical')) {
+    return;
+  }
+
+  \Drupal::service('module_installer')->install(['physical']);
+}
+
+/**
+ * Apply the Component physical-field update for existing sites.
+ */
+function gpc_update_10018(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_component']['entity_type']) && empty($change_list['gpc_component']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_component');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Apply the Component bullet-field updates for existing sites.
+ */
+function gpc_update_10019(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_component']['entity_type']) && empty($change_list['gpc_component']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_component');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_component');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+}
+
+/**
+ * Apply the Recipe ownership and label updates for existing sites.
+ */
+function gpc_update_10020(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type']) && empty($change_list['gpc_recipe']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_recipe', 'r')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_recipe')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+/**
+ * Apply the Recipe measurement and crimp-field updates for existing sites.
+ */
+function gpc_update_10021(): void {
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+  $existing_values = [];
+
+  if ($schema->tableExists('gpc_recipe')) {
+    $fields = ['id'];
+    if ($schema->fieldExists('gpc_recipe', 'overall_length')) {
+      $fields[] = 'overall_length';
+    }
+    if ($schema->fieldExists('gpc_recipe', 'crimp')) {
+      $fields[] = 'crimp';
+    }
+
+    if (count($fields) > 1) {
+      $result = $connection->select('gpc_recipe', 'r')
+        ->fields('r', $fields)
+        ->execute();
+
+      foreach ($result as $record) {
+        $existing_values[(int) $record->id] = [
+          'overall_length' => $record->overall_length ?? NULL,
+          'crimp' => $record->crimp ?? NULL,
+        ];
+      }
+    }
+  }
+
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_recipe']['entity_type']) && empty($change_list['gpc_recipe']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_recipe');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_recipe');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  if ($existing_values === []) {
+    return;
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('gpc_recipe');
+  $recipes = $storage->loadMultiple(array_keys($existing_values));
+
+  foreach ($recipes as $recipe) {
+    $values = $existing_values[(int) $recipe->id()] ?? [];
+
+    if (isset($values['overall_length']) && $values['overall_length'] !== '' && $values['overall_length'] !== NULL) {
+      $recipe->set('overall_length', [
+        'number' => (string) $values['overall_length'],
+        'unit' => 'in',
+      ]);
+    }
+
+    $recipe->set('crimp', !empty($values['crimp']) ? 1 : 0);
+    $recipe->save();
+  }
+}
+
+/**
+ * Apply the Batch ownership and label updates for existing sites.
+ */
+function gpc_update_10022(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $change_list = $update_manager->getChangeList();
+
+  if (empty($change_list['gpc_batch']['entity_type']) && empty($change_list['gpc_batch']['field_storage_definitions'])) {
+    return;
+  }
+
+  $entity_type = $update_manager->getEntityType('gpc_batch');
+  if ($entity_type === NULL) {
+    return;
+  }
+
+  $field_storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('gpc_batch');
+  $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+
+  $connection = \Drupal::database();
+  if ((int) $connection->select('gpc_batch', 'b')->countQuery()->execute()->fetchField() > 0) {
+    $connection->update('gpc_batch')
+      ->fields(['uid' => 1])
+      ->isNull('uid')
+      ->execute();
+  }
+}
+
+/**
+ * Apply entity-definition updates for shared and owned record metadata cleanup.
+ */
+function gpc_update_10023(): void {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  foreach (['gpc_caliber', 'gpc_recipe'] as $entity_type_id) {
+    $change_list = $update_manager->getChangeList();
+    if (empty($change_list[$entity_type_id]['entity_type']) && empty($change_list[$entity_type_id]['field_storage_definitions'])) {
+      continue;
+    }
+
+    $entity_type = $update_manager->getEntityType($entity_type_id);
+    if ($entity_type === NULL) {
+      continue;
+    }
+
+    $field_storage_definitions = $field_manager->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions);
+  }
 }

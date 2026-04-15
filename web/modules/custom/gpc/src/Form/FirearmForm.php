@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\gpc\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\gpc\Entity\Firearm;
 
 /**
  * Form controller for firearm add/edit forms.
@@ -20,11 +21,21 @@ class FirearmForm extends GpcEntityFormBase {
 
     $form['label'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Title'),
+      '#title' => $this->t('Firearm name'),
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The human-readable name shown in admin screens.'),
+      '#description' => $this->t('The display name for this firearm. Use manufacturer and model where possible.'),
+    ];
+
+    $form['type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Firearm type'),
+      '#default_value' => $entity->get('type')->value ?? '',
+      '#required' => TRUE,
+      '#options' => Firearm::firearmTypeOptions(),
+      '#empty_option' => $this->t('- Select -'),
+      '#description' => $this->t('The type of firearm.'),
     ];
 
     $form['caliber'] = [
@@ -43,7 +54,7 @@ class FirearmForm extends GpcEntityFormBase {
       '#title' => $this->t('Manufacturer'),
       '#default_value' => $entity->get('manufacturer')->value ?? '',
       '#maxlength' => 255,
-      '#description' => $this->t('Optional manufacturer or brand.'),
+      '#description' => $this->t('Optional manufacturer or brand used in the display name.'),
     ];
 
     $form['model'] = [
@@ -51,7 +62,7 @@ class FirearmForm extends GpcEntityFormBase {
       '#title' => $this->t('Model'),
       '#default_value' => $entity->get('model')->value ?? '',
       '#maxlength' => 255,
-      '#description' => $this->t('Optional model or series name.'),
+      '#description' => $this->t('Optional model or series name used in the display name.'),
     ];
 
     $form['serial_number'] = [

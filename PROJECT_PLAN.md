@@ -2,14 +2,14 @@
 
 ## Project Overview
 
-Gunners Project Companion is a personal logbook and structured data application built on Drupal 11. The primary goal is to model a small but durable domain for firearms and reloading work without turning the site into a generic CMS with scattered content types and ad hoc fields.
+Gunners Project Companion is a structured Drupal 11 application for firearms and reloading work. The primary goal is to model a small but durable domain without turning the site into a generic CMS with scattered content types and ad hoc fields.
 
-The application is intended for personal use first. Selective sharing may exist later, but v1 should be designed around private administrative data entry and retrieval.
+The application is intended to be usable by logged-in users, not only through `/admin`. Selective sharing may exist later, but v1 should still stay small and practical.
 
 ## Goals
 
 - Provide a clean Drupal 11 custom module architecture for core domain records.
-- Keep the first version small, useful, and admin-focused.
+- Keep the first version small and useful.
 - Model the main hobby workflow with structured entities and straightforward relationships.
 - Support future expansion without building future features now.
 - Keep business logic inside custom modules where code is a better fit than configuration.
@@ -26,14 +26,19 @@ The application is intended for personal use first. Selective sharing may exist 
 
 ## Domain Concepts
 
-- Caliber is a shared reference concept used across firearms, recipes, ammo, and shooting sessions.
-- Firearm is a structured record for a specific gun.
-- Component is a reusable reloading component definition, not an inventory lot.
-- Recipe is a reusable configuration.
-- Batch is a produced instance created from a recipe.
+- Caliber is global shared reference data.
+- Firearm is a user-owned structured record for a specific gun.
+- Component is a reusable catalog definition, not inventory, and is modeled with fixed Bullet/Powder/Primer/Brass bundles.
+- Recipe is a user-owned reloading configuration.
+- Batch is a user-owned produced instance created from a recipe.
 - Recipe and batch are distinct concepts and should stay distinct in the model.
 - Notes fields should carry secondary detail that does not yet justify structured fields.
-- Component type is currently a simple list field, which is the simplest good option for v1.
+- User-owned entities should use `uid` plus owner-based entity access control with admin override.
+- Component keeps shared fields simple and adds only narrowly useful bundle-specific fields where they help immediately.
+- Generic title fields should be avoided when they duplicate a more specific identifier.
+- Recipe should use `field_recipe_code` plus optional `field_label`.
+- Batch should use `field_batch_code`.
+- Caliber structured-field expansion is deferred for now.
 
 ## Planned Entities
 
@@ -53,6 +58,15 @@ The application is intended for personal use first. Selective sharing may exist 
 - Shooting Session
 - Session Analytics Summary
 
+## Ownership Model
+
+- Caliber and Component are shared global reference data.
+- Firearm, Recipe, and Batch are owned by the creating user.
+- Firearm must require Caliber and must not depend on Batch.
+- Firearm should not be modeled as a Batch derivative.
+- Recipe should use a required recipe code plus optional label.
+- Batch should use a batch code.
+
 ## Initial Implementation Phases
 
 ### Phase 1: Module foundation
@@ -63,16 +77,16 @@ The application is intended for personal use first. Selective sharing may exist 
 
 ### Phase 2: Core domain records
 
-- Implement Caliber, Component, Recipe, and Batch as custom content entities.
-- Provide add, edit, list, and delete workflows in admin.
+- Implement Caliber, Component, Firearm, Recipe, and Batch as custom content entities.
+- Provide add, edit, list, and delete workflows, with user-facing access for owned records where appropriate.
 - Use internal numeric entity IDs plus separate immutable machine-name fields where helpful.
 - Use simple entity references between the core records.
 - Keep Recipe and Batch distinct.
+- Use `uid` ownership and owner-based entity access control with admin override for user-owned records.
 
 ### Phase 3: Firearm and refinement
 
-- Add Firearm.
-- Tighten the current admin UX and field validation based on actual usage.
+- Tighten the current user-facing and admin UX and field validation based on actual usage.
 
 ### Phase 4: Later operational features
 
@@ -85,7 +99,7 @@ The application is intended for personal use first. Selective sharing may exist 
 
 - Prefer straightforward Drupal patterns first.
 - Use custom content entities for core records with lifecycle and relationships.
-- Keep the admin UX working before worrying about presentation polish.
+- Keep the user-facing and admin UX working before worrying about presentation polish.
 - Use entity references for meaningful relationships.
 - Use notes fields for flexible secondary detail.
 - Keep models narrow and explicit.

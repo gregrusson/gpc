@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Link;
+use Drupal\gpc\Entity\Caliber;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,8 +41,12 @@ class CaliberListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
-      'machine_name' => $this->t('Machine name'),
+      'label' => $this->t('Caliber name'),
+      'nickname' => $this->t('Nickname'),
+      'primer_type' => $this->t('Primer type'),
+      'bullet_diameter' => $this->t('Bullet diameter'),
+      'case_length' => $this->t('Case length'),
+      'max_overall_length' => $this->t('Max overall length'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -50,8 +55,20 @@ class CaliberListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
-    $row['machine_name'] = $entity->get('machine_name')->value ?? '';
+    if ($entity->access('update', NULL, TRUE)->isAllowed()) {
+      $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
+    }
+    else {
+      $row['label']['data'] = [
+        '#plain_text' => (string) $entity->label(),
+      ];
+    }
+    $row['nickname'] = $entity->get('nickname')->value ?? '';
+    $primer_type = $entity->get('primer_type')->value ?? '';
+    $row['primer_type'] = Caliber::primerTypeOptions()[$primer_type] ?? $primer_type;
+    $row['bullet_diameter'] = $this->formatMeasurement($entity, 'bullet_diameter');
+    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
+    $row['max_overall_length'] = $this->formatMeasurement($entity, 'max_overall_length');
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';
@@ -65,6 +82,23 @@ class CaliberListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Calibers');
+  }
+
+  /**
+   * Formats a physical measurement for table output.
+   */
+  protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || $item->isEmpty()) {
+      return '';
+    }
+
+    $measurement = $item->toMeasurement();
+    if ($measurement->getUnit() !== 'in') {
+      $measurement = $measurement->convert('in');
+    }
+
+    return (string) $measurement;
   }
 
 }

@@ -2,9 +2,41 @@ administer gpc calibers:
   title: 'Administer calibers'
   description: 'Create, edit, and delete caliber records.'
 
+view gpc calibers:
+  title: 'View calibers'
+  description: 'View the caliber collection and use calibers in references.'
+
+create gpc calibers:
+  title: 'Create calibers'
+  description: 'Create new caliber records.'
+
+edit gpc calibers:
+  title: 'Edit calibers'
+  description: 'Edit existing caliber records.'
+
+delete gpc calibers:
+  title: 'Delete calibers'
+  description: 'Delete caliber records.'
+
 administer gpc components:
   title: 'Administer components'
   description: 'Create, edit, and delete component records.'
+
+view gpc recipes:
+  title: 'View recipes'
+  description: 'View the recipe collection and access owned recipes.'
+
+create gpc recipes:
+  title: 'Create recipes'
+  description: 'Create new recipe records.'
+
+edit gpc recipes:
+  title: 'Edit recipes'
+  description: 'Edit recipe records you own.'
+
+delete gpc recipes:
+  title: 'Delete recipes'
+  description: 'Delete recipe records you own.'
 
 administer gpc recipes:
   title: 'Administer recipes'
@@ -14,6 +46,38 @@ administer gpc batches:
   title: 'Administer batches'
   description: 'Create, edit, and delete batch records.'
 
+view gpc batches:
+  title: 'View batches'
+  description: 'View the batch collection and access owned batches.'
+
+create gpc batches:
+  title: 'Create batches'
+  description: 'Create new batch records.'
+
+edit gpc batches:
+  title: 'Edit batches'
+  description: 'Edit batch records you own.'
+
+delete gpc batches:
+  title: 'Delete batches'
+  description: 'Delete batch records you own.'
+
 administer gpc firearms:
   title: 'Administer firearms'
   description: 'Create, edit, and delete firearm records.'
+
+view gpc firearms:
+  title: 'View firearms'
+  description: 'View the firearm collection and access owned firearms.'
+
+create gpc firearms:
+  title: 'Create firearms'
+  description: 'Create new firearm records.'
+
+edit gpc firearms:
+  title: 'Edit firearms'
+  description: 'Edit firearm records you own.'
+
+delete gpc firearms:
+  title: 'Delete firearms'
+  description: 'Delete firearm records you own.'

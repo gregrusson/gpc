@@ -7,16 +7,18 @@ namespace Drupal\gpc\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\RecipeAccessControlHandler;
 use Drupal\gpc\Form\RecipeForm;
 use Drupal\gpc\RecipeListBuilder;
 use Drupal\gpc\Routing\RecipeHtmlRouteProvider;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the recipe entity class.
@@ -32,7 +34,7 @@ use Drupal\gpc\Routing\RecipeHtmlRouteProvider;
     'plural' => '@count recipes',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => RecipeAccessControlHandler::class,
     'list_builder' => RecipeListBuilder::class,
     'form' => [
       'add' => RecipeForm::class,
@@ -45,23 +47,27 @@ use Drupal\gpc\Routing\RecipeHtmlRouteProvider;
     ],
   ],
   links: [
-    'collection' => '/admin/content/gpc/recipes',
-    'add-form' => '/admin/content/gpc/recipes/add',
-    'edit-form' => '/admin/content/gpc/recipes/{gpc_recipe}/edit',
-    'delete-form' => '/admin/content/gpc/recipes/{gpc_recipe}/delete',
+    'canonical' => '/gpc/recipes/{gpc_recipe}',
+    'collection' => '/gpc/recipes',
+    'add-form' => '/gpc/recipes/add',
+    'edit-form' => '/gpc/recipes/{gpc_recipe}/edit',
+    'delete-form' => '/gpc/recipes/{gpc_recipe}/delete',
   ],
+  collection_permission: 'view gpc recipes',
   admin_permission: 'administer gpc recipes',
   base_table: 'gpc_recipe',
   entity_keys: [
     'id' => 'id',
     'label' => 'label',
+    'owner' => 'uid',
     'uuid' => 'uuid',
   ],
   translatable: FALSE,
 )]
-class Recipe extends ContentEntityBase implements EntityChangedInterface {
+class Recipe extends ContentEntityBase implements EntityChangedInterface, EntityOwnerInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -70,6 +76,18 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
     parent::preSave($storage);
 
     $request_time = \Drupal::time()->getRequestTime();
+
+    if ($this->isNew() && $this->get('uid')->isEmpty()) {
+      $this->set('uid', \Drupal::currentUser()->id());
+    }
+
+    $recipe_code = trim((string) ($this->get('label')->value ?? ''));
+    if ($recipe_code !== '') {
+      $this->set('label', $recipe_code);
+    }
+
+    $nickname = trim((string) ($this->get('nickname')->value ?? ''));
+    $this->set('nickname', $nickname === '' ? NULL : $nickname);
 
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
@@ -97,8 +115,8 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The human-readable name of the recipe.'))
+      ->setLabel(t('Recipe code'))
+      ->setDescription(t('The primary human-facing identifier for the recipe.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
@@ -108,6 +126,16 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
       ->setRequired(TRUE)
       ->setSetting('max_length', 128)
       ->setSetting('is_ascii', TRUE);
+
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
+    $fields['uid']
+      ->setLabel(t('Owner'))
+      ->setDescription(t('The user who owns this recipe.'));
+
+    $fields['nickname'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Nickname'))
+      ->setDescription(t('Optional nickname or alternate label for this recipe.'))
+      ->setSetting('max_length', 255);
 
     $fields['caliber'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Caliber'))
@@ -145,17 +173,39 @@ class Recipe extends ContentEntityBase implements EntityChangedInterface {
       ->setDescription(t('Optional brass component used in this recipe. If set, the selected component should have type "brass".'))
       ->setSetting('target_type', 'gpc_component');
 
-    $fields['overall_length'] = BaseFieldDefinition::create('decimal')
+    $fields['overall_length'] = BaseFieldDefinition::create('physical_measurement')
       ->setLabel(t('Overall length'))
-      ->setDescription(t('The cartridge overall length for this recipe.'))
+      ->setDescription(t('The cartridge overall length for this recipe. Enter inches or millimeters.'))
       ->setRequired(TRUE)
-      ->setSetting('precision', 10)
-      ->setSetting('scale', 3);
+      ->setSettings([
+        'measurement_type' => 'length',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'default_unit' => 'in',
+          'allow_unit_change' => TRUE,
+          'available_units' => [
+            'in',
+            'mm',
+          ],
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'physical_measurement_default',
+        'settings' => [
+          'output_unit' => 'in',
+        ],
+      ]);
 
-    $fields['crimp'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Crimp'))
-      ->setDescription(t('Optional plain-text description of the crimp setting.'))
-      ->setSetting('max_length', 255);
+    $fields['crimp'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Crimped'))
+      ->setDescription(t('Check this box if the recipe is crimped.'))
+      ->setSettings([
+        'on_label' => 'Yes',
+        'off_label' => 'No',
+      ])
+      ->setDefaultValue(FALSE);
 
     $fields['estimated_round_cost'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Estimated round cost'))

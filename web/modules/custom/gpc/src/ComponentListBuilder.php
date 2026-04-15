@@ -41,10 +41,18 @@ class ComponentListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     return [
-      'label' => $this->t('Title'),
+      'label' => $this->t('Component name'),
       'machine_name' => $this->t('Machine name'),
-      'component_type' => $this->t('Type'),
+      'component_type' => $this->t('Component type'),
       'manufacturer' => $this->t('Manufacturer'),
+      'upc' => $this->t('UPC'),
+      'weight' => $this->t('Bullet weight'),
+      'diameter' => $this->t('Bullet diameter'),
+      'length' => $this->t('Bullet length'),
+      'case_length' => $this->t('Case length'),
+      'sectional_density' => $this->t('Sectional density'),
+      'ballistic_coefficient_value' => $this->t('Ballistic coefficient value'),
+      'ballistic_coefficient_model' => $this->t('Ballistic coefficient model'),
       'changed' => $this->t('Updated'),
     ] + parent::buildHeader();
   }
@@ -53,14 +61,19 @@ class ComponentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $options = Component::componentTypeOptions();
     $row['label']['data'] = Link::fromTextAndUrl((string) $entity->label(), $entity->toUrl('edit-form'))->toRenderable();
     $row['machine_name'] = $entity->get('machine_name')->value ?? '';
-    $component_type = $entity->get('component_type')->value ?? NULL;
-    $row['component_type'] = $component_type && isset($options[$component_type])
-      ? $options[$component_type]
-      : '';
+    $bundle = $entity->bundle();
+    $row['component_type'] = $bundle ? Component::bundleLabel($bundle) : '';
     $row['manufacturer'] = $entity->get('manufacturer')->value ?? '';
+    $row['upc'] = $entity->get('upc')->value ?? '';
+    $row['weight'] = $entity->get('weight')->value ?? '';
+    $row['diameter'] = $this->formatMeasurement($entity, 'diameter');
+    $row['length'] = $this->formatMeasurement($entity, 'length');
+    $row['case_length'] = $this->formatMeasurement($entity, 'case_length');
+    $row['sectional_density'] = $entity->get('sectional_density')->value ?? '';
+    $row['ballistic_coefficient_value'] = $entity->get('ballistic_coefficient_value')->value ?? '';
+    $row['ballistic_coefficient_model'] = $entity->get('ballistic_coefficient_model')->value ?? '';
     $row['changed'] = $entity->getChangedTime()
       ? $this->dateFormatter->format($entity->getChangedTime(), 'short')
       : '';
@@ -74,6 +87,23 @@ class ComponentListBuilder extends EntityListBuilder {
    */
   protected function getTitle() {
     return $this->t('Components');
+  }
+
+  /**
+   * Formats a physical measurement for table output.
+   */
+  protected function formatMeasurement(EntityInterface $entity, string $field_name): string {
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || $item->isEmpty()) {
+      return '';
+    }
+
+    $measurement = $item->toMeasurement();
+    if ($measurement->getUnit() !== 'in') {
+      $measurement = $measurement->convert('in');
+    }
+
+    return (string) $measurement;
   }
 
 }
