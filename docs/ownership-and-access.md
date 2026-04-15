@@ -15,9 +15,11 @@ This document defines the access model for the current GPC direction.
 ## UI Direction
 
 - The application should be usable by logged-in users, not only through `/admin`.
-- Shared reference entities should not assume admin-only access for normal create and edit flows.
+- User-owned entities should have direct logged-in UI paths outside `/admin`.
+- Shared reference entities may stay admin-managed until there is a concrete need for a broader user-facing maintenance flow.
 - Add and edit flows for owned records should support direct user interaction from the application UI.
 - Firearm uses a normal logged-in UI path and is not treated as admin-only content.
+- Recipe uses a normal logged-in UI path and is not treated as admin-only content.
 - Batch uses a normal logged-in UI path and is not treated as admin-only content.
 
 ## Practical Implications

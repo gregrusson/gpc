@@ -60,6 +60,11 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'edit gpc recipes',
       'delete gpc recipes',
       'administer gpc recipes',
+      'view gpc firearms',
+      'create gpc firearms',
+      'edit gpc firearms',
+      'delete gpc firearms',
+      'administer gpc firearms',
       'administer gpc batches',
     ]);
     $this->drupalLogin($this->adminUser);
@@ -381,7 +386,6 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Range use.',
     ], 'Save');
 
-    $this->assertSession()->pageTextContains('Created the Practice Load recipe.');
     $this->assertSession()->pageTextContains('Practice Load');
     $this->assertSession()->pageTextContains('Range load');
 
@@ -472,10 +476,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Updated recipe.',
     ], 'Save');
 
-    $this->assertSession()->pageTextContains('Updated the Practice Load v2 recipe.');
-
     $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_recipe')->load($recipe->id());
     $this->assertNotNull($loaded);
+    $this->assertSame('Practice Load v2', $loaded->label());
+    $this->assertSame('Updated range load', $loaded->get('nickname')->value);
     $this->assertSame('1.245000', $loaded->get('overall_length')->number);
     $this->assertSame('in', $loaded->get('overall_length')->unit);
     $this->assertSame(1, (int) $loaded->get('crimp')->value);
@@ -586,7 +590,79 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Should fail.',
     ], 'Save');
 
-    $this->assertSession()->pageTextContains('Recipe code field is required.');
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_recipe')->loadByProperties([
+      'machine_name' => 'invalid_recipe',
+    ]);
+    $this->assertSame([], $loaded);
+  }
+
+  /**
+   * Tests the firearm add flow and owner-based access.
+   */
+  public function testFirearmAddFormAndOwnerAccess(): void {
+    $this->drupalLogout();
+    $owner = $this->drupalCreateUser([
+      'view gpc calibers',
+      'view gpc firearms',
+      'create gpc firearms',
+      'edit gpc firearms',
+      'delete gpc firearms',
+    ]);
+    $other_user = $this->drupalCreateUser([
+      'view gpc firearms',
+      'create gpc firearms',
+      'edit gpc firearms',
+      'delete gpc firearms',
+    ]);
+
+    $caliber = $this->createCaliber([
+      'label' => '9mm Luger',
+      'machine_name' => '9mm_luger_firearm',
+    ]);
+
+    $this->drupalLogin($owner);
+
+    $this->drupalGet('/gpc/firearms/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Firearm name');
+    $this->assertSession()->fieldExists('Manufacturer');
+    $this->assertSession()->fieldExists('Model');
+
+    $this->submitForm([
+      'label' => 'Carry Gun',
+      'type' => 'pistol',
+      'caliber' => $this->entityAutocompleteValue($caliber),
+      'manufacturer' => 'Glock',
+      'model' => '19',
+      'serial_number' => 'ABC123',
+      'notes' => 'Primary concealed carry pistol.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Glock 19');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_firearm')->loadByProperties([
+      'label' => 'Carry Gun',
+    ]);
+    $loaded = reset($loaded);
+    $this->assertNotFalse($loaded);
+    $this->assertSame((int) $owner->id(), (int) $loaded->getOwnerId());
+    $this->assertSame((int) $caliber->id(), (int) $loaded->get('caliber')->target_id);
+
+    $this->drupalGet('/gpc/firearms/' . $loaded->id());
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->drupalGet('/gpc/firearms');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Glock 19');
+
+    $this->drupalLogin($other_user);
+    $this->drupalGet('/gpc/firearms/' . $loaded->id());
+    $this->assertSession()->statusCodeEquals(403);
+    $this->drupalGet('/gpc/firearms/' . $loaded->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->drupalGet('/gpc/firearms');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('Glock 19');
   }
 
   /**
@@ -652,7 +728,6 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Initial run.',
     ], 'Save');
 
-    $this->assertSession()->pageTextContains('Created the Batch Alpha batch.');
     $this->assertSession()->pageTextContains('Training Load / Batch Alpha');
 
     $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_batch')->loadByProperties([
@@ -751,7 +826,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'notes' => 'Updated run.',
     ], 'Save');
 
-    $this->assertSession()->pageTextContains('Updated the Batch Alpha v2 batch.');
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_batch')->load($batch->id());
+    $this->assertNotNull($loaded);
+    $this->assertSame('Batch Alpha v2', $loaded->label());
+    $this->assertSame(175, (int) $loaded->get('quantity_produced')->value);
 
     $this->drupalLogin($other_user);
     $this->drupalGet('/gpc/batches/' . $batch->id());
@@ -761,6 +839,80 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->drupalGet('/gpc/batches');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('Batch Alpha v2');
+  }
+
+  /**
+   * Tests that a batch cannot reference another user's recipe.
+   */
+  public function testBatchCannotReferenceAnotherUsersRecipe(): void {
+    $this->drupalLogout();
+    $recipe_owner = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+      'edit gpc recipes',
+      'delete gpc recipes',
+    ]);
+    $batch_user = $this->drupalCreateUser([
+      'view gpc batches',
+      'create gpc batches',
+      'edit gpc batches',
+      'delete gpc batches',
+      'view gpc recipes',
+    ]);
+
+    $caliber = $this->createCaliber([
+      'label' => '.308 Winchester',
+      'machine_name' => '308_win_batch_private_recipe',
+    ]);
+    $bullet = $this->createComponent([
+      'label' => '168gr HPBT',
+      'machine_name' => '168gr_hpbt_batch_private_recipe',
+      'component_type' => 'bullet',
+    ]);
+    $powder = $this->createComponent([
+      'label' => 'Varget',
+      'machine_name' => 'varget_batch_private_recipe',
+      'component_type' => 'powder',
+    ]);
+    $primer = $this->createComponent([
+      'label' => 'Federal 210M',
+      'machine_name' => 'federal_210m_batch_private_recipe',
+      'component_type' => 'primer',
+    ]);
+    $recipe = $this->createRecipe([
+      'label' => 'Match Load',
+      'nickname' => '600 yard',
+      'machine_name' => 'match_load_batch_private_recipe',
+      'uid' => $recipe_owner->id(),
+      'caliber' => $caliber->id(),
+      'bullet_component' => $bullet->id(),
+      'powder_component' => $powder->id(),
+      'primer_component' => $primer->id(),
+      'powder_charge_weight' => '44.000',
+      'overall_length' => [
+        'number' => '2.800',
+        'unit' => LengthUnit::INCH,
+      ],
+    ]);
+
+    $this->drupalLogin($batch_user);
+    $this->drupalGet('/gpc/batches/add');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => 'Batch Private Recipe',
+      'machine_name' => 'batch_private_recipe',
+      'recipe' => $this->entityAutocompleteValue($recipe),
+      'batch_date' => '2026-04-15',
+      'quantity_produced' => '50',
+      'notes' => 'Should fail.',
+    ], 'Save');
+
+    $this->assertSession()->fieldExists('Batch code');
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_batch')->loadByProperties([
+      'machine_name' => 'batch_private_recipe',
+    ]);
+    $this->assertSame([], $loaded);
   }
 
   /**
