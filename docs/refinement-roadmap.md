@@ -12,7 +12,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep Firearm user-owned, caliber-required, and usable through the logged-in UI.
 - Refine Recipe to a required recipe code plus optional nickname while keeping owner-based access.
 - Keep Recipe overall length on the Physical measurement model and keep crimp as a boolean yes/no flag.
-- Move Batch to `field_batch_code`.
+- Refine Batch to a user-owned recipe-derived record with a required batch code and owner-based access.
 - Keep the user-owned workflow usable outside `/admin`.
 - Use `uid` ownership plus owner-based entity access control with admin override for user-owned entities.
 
@@ -26,6 +26,7 @@ This roadmap keeps the v1 scope small while aligning the model with the new owne
 - Keep UPC in text storage so leading zeroes survive round-trips and search.
 - Keep Recipe overall length in Physical because it is a measurable dimension.
 - Keep Recipe crimp as a boolean checkbox because it is only a yes/no attribute.
+- Keep Batch code as the primary Batch identifier and surface recipe code alongside it in lists and forms.
 - Add ownership-aware access controls for user-owned records.
 - Keep Firearm display naming anchored to manufacturer and model instead of a generic title field.
 

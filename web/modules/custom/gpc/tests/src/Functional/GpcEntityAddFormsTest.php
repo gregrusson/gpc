@@ -593,6 +593,14 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
    * Tests the batch add form.
    */
   public function testBatchAddForm(): void {
+    $this->drupalLogout();
+    $user = $this->drupalCreateUser([
+      'view gpc batches',
+      'create gpc batches',
+      'edit gpc batches',
+      'delete gpc batches',
+      'view gpc recipes',
+    ]);
     $caliber = $this->createCaliber([
       'label' => '.223 Rem',
       'machine_name' => '223_rem',
@@ -616,7 +624,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'label' => 'Training Load',
       'nickname' => 'Baseline',
       'machine_name' => 'training_load',
-      'uid' => $this->adminUser->id(),
+      'uid' => $user->id(),
       'caliber' => $caliber->id(),
       'bullet_component' => $bullet->id(),
       'powder_component' => $powder->id(),
@@ -628,8 +636,12 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       ],
     ]);
 
-    $this->drupalGet('/admin/content/gpc/batches/add');
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc/batches/add');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Batch code');
+    $this->assertSession()->fieldExists('Recipe');
 
     $this->submitForm([
       'label' => 'Batch Alpha',
@@ -641,7 +653,114 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ], 'Save');
 
     $this->assertSession()->pageTextContains('Created the Batch Alpha batch.');
+    $this->assertSession()->pageTextContains('Training Load / Batch Alpha');
+
+    $loaded = $this->container->get('entity_type.manager')->getStorage('gpc_batch')->loadByProperties([
+      'machine_name' => 'batch_alpha',
+    ]);
+    $loaded = reset($loaded);
+    $this->assertNotFalse($loaded);
+    $this->assertSame((int) $user->id(), (int) $loaded->getOwnerId());
+    $this->assertSame('Batch Alpha', $loaded->label());
+    $this->assertSame((int) $recipe->id(), (int) $loaded->get('recipe')->target_id);
+    $this->assertSame(150, (int) $loaded->get('quantity_produced')->value);
+  }
+
+  /**
+   * Tests that a user can view and edit their own batch and others cannot.
+   */
+  public function testOwnerCanViewAndEditOwnBatch(): void {
+    $this->drupalLogout();
+    $owner = $this->drupalCreateUser([
+      'view gpc batches',
+      'create gpc batches',
+      'edit gpc batches',
+      'delete gpc batches',
+      'view gpc recipes',
+      'create gpc recipes',
+    ]);
+    $other_user = $this->drupalCreateUser([
+      'view gpc batches',
+      'create gpc batches',
+      'edit gpc batches',
+      'delete gpc batches',
+      'view gpc recipes',
+      'create gpc recipes',
+    ]);
+
+    $caliber = $this->createCaliber([
+      'label' => '.223 Rem',
+      'machine_name' => '223_rem_owner',
+    ]);
+    $bullet = $this->createComponent([
+      'label' => '55gr FMJ',
+      'machine_name' => '55gr_fmj_owner',
+      'component_type' => 'bullet',
+    ]);
+    $powder = $this->createComponent([
+      'label' => 'H335',
+      'machine_name' => 'h335_owner',
+      'component_type' => 'powder',
+    ]);
+    $primer = $this->createComponent([
+      'label' => 'CCI 400',
+      'machine_name' => 'cci_400_owner',
+      'component_type' => 'primer',
+    ]);
+    $recipe = $this->createRecipe([
+      'label' => 'Training Load',
+      'machine_name' => 'training_load_owner',
+      'uid' => $owner->id(),
+      'caliber' => $caliber->id(),
+      'bullet_component' => $bullet->id(),
+      'powder_component' => $powder->id(),
+      'primer_component' => $primer->id(),
+      'powder_charge_weight' => '24.000',
+      'overall_length' => [
+        'number' => '2.230',
+        'unit' => LengthUnit::INCH,
+      ],
+    ]);
+    $batch = $this->createBatch([
+      'label' => 'Batch Alpha',
+      'machine_name' => 'batch_alpha_owner',
+      'uid' => $owner->id(),
+      'recipe' => $recipe->id(),
+      'batch_date' => strtotime('2026-04-13 00:00:00'),
+      'quantity_produced' => 150,
+      'notes' => 'Initial run.',
+    ]);
+
+    $this->drupalLogin($owner);
+    $this->drupalGet('/gpc/batches/' . $batch->id());
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Batch Alpha');
+
+    $this->drupalGet('/gpc/batches');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Training Load / Batch Alpha');
+
+    $this->drupalGet('/gpc/batches/' . $batch->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->submitForm([
+      'label' => 'Batch Alpha v2',
+      'recipe' => $this->entityAutocompleteValue($recipe),
+      'batch_date' => '2026-04-14',
+      'quantity_produced' => '175',
+      'notes' => 'Updated run.',
+    ], 'Save');
+
+    $this->assertSession()->pageTextContains('Updated the Batch Alpha v2 batch.');
+
+    $this->drupalLogin($other_user);
+    $this->drupalGet('/gpc/batches/' . $batch->id());
+    $this->assertSession()->statusCodeEquals(403);
+    $this->drupalGet('/gpc/batches/' . $batch->id() . '/edit');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->drupalGet('/gpc/batches');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('Batch Alpha v2');
   }
 
   /**
@@ -682,6 +801,21 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     }
 
     $storage = $this->container->get('entity_type.manager')->getStorage('gpc_recipe');
+    $entity = $storage->create($values);
+    $entity->save();
+
+    return $entity;
+  }
+
+  /**
+   * Creates a batch entity for test setup.
+   */
+  protected function createBatch(array $values): EntityInterface {
+    if (array_key_exists('recipe', $values) && !is_array($values['recipe'])) {
+      $values['recipe'] = $values['recipe'];
+    }
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('gpc_batch');
     $entity = $storage->create($values);
     $entity->save();
 

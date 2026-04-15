@@ -18,6 +18,7 @@ This document defines the access model for the current GPC direction.
 - Shared reference entities should not assume admin-only access for normal create and edit flows.
 - Add and edit flows for owned records should support direct user interaction from the application UI.
 - Firearm uses a normal logged-in UI path and is not treated as admin-only content.
+- Batch uses a normal logged-in UI path and is not treated as admin-only content.
 
 ## Practical Implications
 
@@ -32,3 +33,4 @@ This document defines the access model for the current GPC direction.
 - Inventory is deferred because it is a separate user-owned concept and should not be folded into the component catalog.
 - Owner-based access is the v1 choice because it keeps the rules simple, supports admin override, and avoids premature sharing infrastructure.
 - Recipe keeps its code as the main human-facing identifier while still remaining user-owned.
+- Batch keeps its batch code as the main human-facing identifier while still remaining user-owned, with recipe code paired in listings for context.

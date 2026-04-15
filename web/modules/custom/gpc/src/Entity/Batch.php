@@ -7,16 +7,18 @@ namespace Drupal\gpc\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
-use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\gpc\BatchAccessControlHandler;
 use Drupal\gpc\BatchListBuilder;
 use Drupal\gpc\Form\BatchForm;
 use Drupal\gpc\Routing\BatchHtmlRouteProvider;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the batch entity class.
@@ -32,7 +34,7 @@ use Drupal\gpc\Routing\BatchHtmlRouteProvider;
     'plural' => '@count batches',
   ],
   handlers: [
-    'access' => EntityAccessControlHandler::class,
+    'access' => BatchAccessControlHandler::class,
     'list_builder' => BatchListBuilder::class,
     'form' => [
       'add' => BatchForm::class,
@@ -45,23 +47,27 @@ use Drupal\gpc\Routing\BatchHtmlRouteProvider;
     ],
   ],
   links: [
-    'collection' => '/admin/content/gpc/batches',
-    'add-form' => '/admin/content/gpc/batches/add',
-    'edit-form' => '/admin/content/gpc/batches/{gpc_batch}/edit',
-    'delete-form' => '/admin/content/gpc/batches/{gpc_batch}/delete',
+    'canonical' => '/gpc/batches/{gpc_batch}',
+    'collection' => '/gpc/batches',
+    'add-form' => '/gpc/batches/add',
+    'edit-form' => '/gpc/batches/{gpc_batch}/edit',
+    'delete-form' => '/gpc/batches/{gpc_batch}/delete',
   ],
+  collection_permission: 'view gpc batches',
   admin_permission: 'administer gpc batches',
   base_table: 'gpc_batch',
   entity_keys: [
     'id' => 'id',
     'label' => 'label',
+    'owner' => 'uid',
     'uuid' => 'uuid',
   ],
   translatable: FALSE,
 )]
-class Batch extends ContentEntityBase implements EntityChangedInterface {
+class Batch extends ContentEntityBase implements EntityChangedInterface, EntityOwnerInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -70,6 +76,15 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
     parent::preSave($storage);
 
     $request_time = \Drupal::time()->getRequestTime();
+
+    if ($this->isNew() && $this->get('uid')->isEmpty()) {
+      $this->set('uid', \Drupal::currentUser()->id());
+    }
+
+    $batch_code = trim((string) ($this->get('label')->value ?? ''));
+    if ($batch_code !== '') {
+      $this->set('label', $batch_code);
+    }
 
     if ($this->isNew() && $this->get('created')->isEmpty()) {
       $this->set('created', $request_time);
@@ -97,8 +112,8 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['label'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The human-readable name of the batch.'))
+      ->setLabel(t('Batch code'))
+      ->setDescription(t('The primary human-facing identifier for the batch.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255);
 
@@ -108,6 +123,11 @@ class Batch extends ContentEntityBase implements EntityChangedInterface {
       ->setRequired(TRUE)
       ->setSetting('max_length', 128)
       ->setSetting('is_ascii', TRUE);
+
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
+    $fields['uid']
+      ->setLabel(t('Owner'))
+      ->setDescription(t('The user who owns this batch.'));
 
     $fields['recipe'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Recipe'))
