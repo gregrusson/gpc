@@ -21,11 +21,11 @@ class BatchForm extends GpcEntityFormBase {
 
     $form['label'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Title'),
+      '#title' => $this->t('Batch code'),
       '#default_value' => $entity->label() ?? '',
       '#required' => TRUE,
       '#maxlength' => 255,
-      '#description' => $this->t('The human-readable name shown in admin screens.'),
+      '#description' => $this->t('The primary identifier for this batch. Use a code or number that is easy to scan in lists.'),
     ];
 
     if ($entity->isNew()) {
@@ -39,7 +39,7 @@ class BatchForm extends GpcEntityFormBase {
           'exists' => [static::class, 'machineNameExists'],
           'source' => ['label'],
         ],
-        '#description' => $this->t('A unique internal identifier.'),
+        '#description' => $this->t('A unique internal identifier derived from the batch code.'),
       ];
     }
     else {
@@ -51,7 +51,7 @@ class BatchForm extends GpcEntityFormBase {
       ];
     }
 
-    $form['recipe'] = $this->buildAutocompleteField($entity, 'recipe', $this->t('Recipe'), 'gpc_recipe', TRUE);
+    $form['recipe'] = $this->buildAutocompleteField($entity, 'recipe', $this->t('Recipe'), 'gpc_recipe', TRUE, $this->t('The recipe this batch was produced from.'));
 
     $form['batch_date'] = [
       '#type' => 'date',
@@ -60,7 +60,7 @@ class BatchForm extends GpcEntityFormBase {
         ? date('Y-m-d')
         : ($entity->get('batch_date')->value ? date('Y-m-d', (int) $entity->get('batch_date')->value) : ''),
       '#required' => TRUE,
-      '#description' => $this->t('The date the batch was produced.'),
+      '#description' => $this->t('The date this batch was produced.'),
     ];
 
     $form['quantity_produced'] = [
@@ -70,7 +70,7 @@ class BatchForm extends GpcEntityFormBase {
       '#required' => TRUE,
       '#min' => 1,
       '#step' => 1,
-      '#description' => $this->t('Enter the number of rounds or units produced.'),
+      '#description' => $this->t('Enter the number of rounds or units produced in this batch.'),
     ];
 
     $form['notes'] = [
@@ -90,6 +90,11 @@ class BatchForm extends GpcEntityFormBase {
   public function buildEntity(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\gpc\Entity\Batch $entity */
     $entity = parent::buildEntity($form, $form_state);
+
+    $batch_code = trim((string) ($form_state->getValue('label') ?? ''));
+    if ($batch_code !== '') {
+      $entity->set('label', $batch_code);
+    }
 
     $batch_date = $form_state->getValue('batch_date');
     if (is_string($batch_date) && $batch_date !== '') {
@@ -117,6 +122,18 @@ class BatchForm extends GpcEntityFormBase {
     $form_state->setRedirectUrl($entity->toUrl('collection'));
 
     return $status;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    $batch_code = trim((string) ($form_state->getValue('label') ?? ''));
+    if ($batch_code === '') {
+      $form_state->setErrorByName('label', $this->t('Batch code is required.'));
+    }
   }
 
   /**

@@ -119,7 +119,7 @@ User-owned produced instance created from a recipe.
 
 Batch records what was produced, when it was produced, and how much was produced.
 
-Batch should use `field_batch_code`.
+Batch should use a required batch code and recipe reference, with the label display pairing recipe code and batch code for easy scanning.
 Batch is not inventory and should not deduct stock or consume lots.
 Use `uid` ownership plus owner-based entity access control with admin override.
 

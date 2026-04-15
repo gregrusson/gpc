@@ -46,6 +46,22 @@ administer gpc batches:
   title: 'Administer batches'
   description: 'Create, edit, and delete batch records.'
 
+view gpc batches:
+  title: 'View batches'
+  description: 'View the batch collection and access owned batches.'
+
+create gpc batches:
+  title: 'Create batches'
+  description: 'Create new batch records.'
+
+edit gpc batches:
+  title: 'Edit batches'
+  description: 'Edit batch records you own.'
+
+delete gpc batches:
+  title: 'Delete batches'
+  description: 'Delete batch records you own.'
+
 administer gpc firearms:
   title: 'Administer firearms'
   description: 'Create, edit, and delete firearm records.'
