@@ -21,6 +21,7 @@ Gunners Project Companion is a structured Drupal 11 application for firearms and
 - Firearm: user-owned structured record tied to Caliber, with a display label that should be driven by manufacturer and model where possible.
 - Recipe: user-owned reloading configuration with a required recipe code, optional nickname, notes as secondary detail, physical overall length, and a crimped yes/no flag.
 - Batch: user-owned produced record with a required batch code, recipe reference, production date, quantity produced, and notes.
+- Shared reference maintenance for Caliber and Component remains admin-managed today, while Firearm, Recipe, and Batch use direct logged-in application routes.
 
 ## Modeling Notes
 

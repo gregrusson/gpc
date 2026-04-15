@@ -31,7 +31,7 @@ Current focus:
 
 - Drupal 11.
 - Custom module approach.
-- Logged-in user workflows, not admin-only UI.
+- Logged-in user workflows for user-owned records, with shared reference maintenance allowed to stay under admin paths until a broader UI need is explicit.
 - Prefer custom content entities for core domain records.
 - Use Drupal core patterns before introducing custom frameworks or abstractions.
 - Keep business logic inside the module.

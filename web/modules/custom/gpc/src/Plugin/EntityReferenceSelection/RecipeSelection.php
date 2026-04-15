@@ -9,16 +9,16 @@ use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Component selection handler that searches by label and UPC.
+ * Recipe selection handler that searches by recipe code and nickname.
  */
 #[EntityReferenceSelection(
-  id: 'gpc_component',
-  label: new TranslatableMarkup('GPC component search'),
+  id: 'gpc_recipe',
+  label: new TranslatableMarkup('GPC recipe search'),
   group: 'default',
   weight: 1,
-  entity_types: ['gpc_component'],
+  entity_types: ['gpc_recipe'],
 )]
-class ComponentSelection extends DefaultSelection {
+class RecipeSelection extends DefaultSelection {
 
   /**
    * {@inheritdoc}
@@ -38,7 +38,7 @@ class ComponentSelection extends DefaultSelection {
 
     $or = $query->orConditionGroup()
       ->condition($label_key, $match, $match_operator)
-      ->condition('upc', $match, $match_operator);
+      ->condition('nickname', $match, $match_operator);
     $query->condition($or);
 
     return $query;

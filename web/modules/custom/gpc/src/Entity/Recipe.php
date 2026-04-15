@@ -54,6 +54,7 @@ use Drupal\user\EntityOwnerTrait;
     'delete-form' => '/gpc/recipes/{gpc_recipe}/delete',
   ],
   collection_permission: 'view gpc recipes',
+  admin_permission: 'administer gpc recipes',
   base_table: 'gpc_recipe',
   entity_keys: [
     'id' => 'id',

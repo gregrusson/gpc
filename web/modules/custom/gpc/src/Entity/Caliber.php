@@ -51,6 +51,7 @@ use Drupal\gpc\Form\CaliberForm;
     'delete-form' => '/admin/content/gpc/calibers/{gpc_caliber}/delete',
   ],
   collection_permission: 'view gpc calibers',
+  admin_permission: 'administer gpc calibers',
   base_table: 'gpc_caliber',
   entity_keys: [
     'id' => 'id',

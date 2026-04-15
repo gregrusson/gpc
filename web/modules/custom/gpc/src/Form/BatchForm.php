@@ -6,6 +6,7 @@ namespace Drupal\gpc\Form;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\gpc\Entity\Recipe;
 
 /**
  * Form controller for batch add/edit forms.
@@ -51,7 +52,7 @@ class BatchForm extends GpcEntityFormBase {
       ];
     }
 
-    $form['recipe'] = $this->buildAutocompleteField($entity, 'recipe', $this->t('Recipe'), 'gpc_recipe', TRUE, $this->t('The recipe this batch was produced from.'));
+    $form['recipe'] = $this->buildAutocompleteField($entity, 'recipe', $this->t('Recipe'), 'gpc_recipe', TRUE, $this->t('Select the recipe this batch was produced from. You can search by recipe code or nickname.'));
 
     $form['batch_date'] = [
       '#type' => 'date',
@@ -134,12 +135,31 @@ class BatchForm extends GpcEntityFormBase {
     if ($batch_code === '') {
       $form_state->setErrorByName('label', $this->t('Batch code is required.'));
     }
+
+    $recipe_value = $form_state->getValue('recipe');
+    $target_id = NULL;
+
+    if (is_array($recipe_value)) {
+      $target_id = $recipe_value[0]['target_id'] ?? $recipe_value['target_id'] ?? NULL;
+    }
+    elseif ($recipe_value !== NULL && $recipe_value !== '') {
+      $target_id = $recipe_value;
+    }
+
+    if (!$target_id) {
+      return;
+    }
+
+    $recipe = \Drupal::entityTypeManager()->getStorage('gpc_recipe')->load($target_id);
+    if (!$recipe instanceof Recipe || !$recipe->access('view label', \Drupal::currentUser())) {
+      $form_state->setErrorByName('recipe', $this->t('The selected recipe is not available.'));
+    }
   }
 
   /**
    * Builds one autocomplete field.
    */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required): array {
+  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required, string|\Stringable|null $description = NULL): array {
     $default_value = NULL;
     $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
     if ($target_id) {
@@ -154,9 +174,9 @@ class BatchForm extends GpcEntityFormBase {
       '#required' => $required,
       '#selection_handler' => 'default',
       '#selection_settings' => [],
-      '#description' => $required
+      '#description' => $description ?? ($required
         ? $this->t('Select a referenced entity.')
-        : $this->t('Optional reference.'),
+        : $this->t('Optional reference.')),
     ];
   }
 
