@@ -41,7 +41,7 @@ final class ReferenceMergeAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($admin);
 
-    $this->drupalGet('/admin/content/gpc/reference-merge');
+    $this->drupalGet('/admin/gpc/reference-merge');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Manual admin maintenance only.');
     $this->assertSession()->pageTextContains('Caliber');
@@ -52,10 +52,10 @@ final class ReferenceMergeAccessTest extends BrowserTestBase {
     $anonymous = $this->drupalCreateUser([]);
     $this->drupalLogin($anonymous);
 
-    $this->drupalGet('/admin/content/gpc/reference-merge');
+    $this->drupalGet('/admin/gpc/reference-merge');
     $this->assertSession()->statusCodeEquals(403);
 
-    $this->drupalGet('/admin/content/gpc/reference-merge/caliber');
+    $this->drupalGet('/admin/gpc/reference-merge/caliber');
     $this->assertSession()->statusCodeEquals(403);
   }
 
