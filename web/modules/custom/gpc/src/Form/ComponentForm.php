@@ -7,6 +7,7 @@ namespace Drupal\gpc\Form;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Component;
+use Drupal\gpc\Utility\QuickAddHelper;
 use Drupal\physical\Calculator;
 
 /**
@@ -21,6 +22,11 @@ class ComponentForm extends GpcEntityFormBase {
     $form = parent::form($form, $form_state);
     $entity = $this->entity;
     $bundle = $entity->bundle();
+    $quick_add_target_selector = QuickAddHelper::extractTargetSelector($form_state);
+    if ($quick_add_target_selector !== NULL) {
+      $form += QuickAddHelper::buildQuickAddMetadata($quick_add_target_selector);
+      $form['#attached']['library'][] = QuickAddHelper::QUICK_ADD_LIBRARY;
+    }
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -152,6 +158,11 @@ class ComponentForm extends GpcEntityFormBase {
     $entity = $this->entity;
     $is_new = $entity->isNew();
     $status = $entity->save();
+
+    if (QuickAddHelper::isQuickAddAjaxRequest($form_state)) {
+      $form_state->setResponse(QuickAddHelper::buildQuickAddAjaxResponse($entity, QuickAddHelper::extractTargetSelector($form_state)));
+      return $status;
+    }
 
     $this->messenger()->addStatus($is_new
       ? $this->t('Created the %label component.', ['%label' => $entity->label()])

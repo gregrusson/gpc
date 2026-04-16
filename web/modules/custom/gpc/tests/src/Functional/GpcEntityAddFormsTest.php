@@ -408,6 +408,23 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that component add forms support quick-add modal metadata.
+   */
+  public function testComponentQuickAddModeAttachesTargetMetadata(): void {
+    $this->drupalGet('/admin/gpc/components/add/bullet', [
+      'query' => [
+        'gpc_quick_add' => '1',
+        'gpc_quick_add_target' => '#edit-bullet-component',
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseContains('js/quick-add.js');
+    $current_url = $this->getSession()->getCurrentUrl();
+    $this->assertStringContainsString('gpc_quick_add=1', $current_url);
+    $this->assertStringContainsString('gpc_quick_add_target=%23edit-bullet-component', $current_url);
+  }
+
+  /**
    * Tests the logged-in GPC dashboard navigation.
    */
   public function testGpcDashboardNavigation(): void {
@@ -584,6 +601,35 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSame('1.255000', $loaded->get('overall_length')->number);
     $this->assertSame('in', $loaded->get('overall_length')->unit);
     $this->assertSame(1, (int) $loaded->get('crimp')->value);
+  }
+
+  /**
+   * Tests that the recipe form exposes quick-add actions for references.
+   */
+  public function testRecipeFormIncludesQuickAddActions(): void {
+    $user = $this->drupalCreateUser([
+      'view gpc recipes',
+      'create gpc recipes',
+    ]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc/recipes/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Add caliber');
+    $this->assertSession()->linkExists('Add bullet');
+    $this->assertSession()->linkExists('Add powder');
+    $this->assertSession()->linkExists('Add primer');
+    $this->assertSession()->linkExists('Add brass');
+    $this->assertSession()->responseContains('gpc_quick_add=1');
+    $this->assertSession()->responseContains('gpc_quick_add_target=%23edit-caliber');
+    $this->assertSession()->responseContains('gpc_quick_add_target=%23edit-bullet-component');
+    $this->assertSession()->responseContains('gpc_quick_add_target=%23edit-powder-component');
+    $this->assertSession()->responseContains('gpc_quick_add_target=%23edit-primer-component');
+    $this->assertSession()->responseContains('gpc_quick_add_target=%23edit-brass-component');
+    $this->assertSession()->responseContains('/admin/gpc/components/add/bullet');
+    $this->assertSession()->responseContains('/admin/gpc/components/add/powder');
+    $this->assertSession()->responseContains('/admin/gpc/components/add/primer');
+    $this->assertSession()->responseContains('/admin/gpc/components/add/brass');
   }
 
   /**
