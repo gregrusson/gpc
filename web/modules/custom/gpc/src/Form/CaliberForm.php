@@ -134,7 +134,7 @@ class CaliberForm extends GpcEntityFormBase {
     $status = $entity->save();
 
     if (QuickAddHelper::isQuickAddAjaxRequest($form_state)) {
-      $form_state->setResponse(QuickAddHelper::buildQuickAddAjaxResponse($entity, QuickAddHelper::extractTargetSelector($form_state)));
+      $form_state->setResponse(QuickAddHelper::buildQuickAddAjaxResponse($entity, QuickAddHelper::extractTargetSelector($form_state), $this->t('caliber')));
       return $status;
     }
 
