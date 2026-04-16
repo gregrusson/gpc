@@ -20,6 +20,11 @@
   margin: 0;
 }
 
+.gpc-data-table__table th,
+.gpc-data-table__table td {
+  white-space: nowrap;
+}
+
 .gpc-data-table--compact th,
 .gpc-data-table--compact td {
   padding: 0.6rem 0.75rem;
@@ -29,3 +34,8 @@
   background: rgba(29, 92, 255, 0.03);
 }
 
+@media (max-width: 37.5rem) {
+  .gpc-data-table__caption {
+    padding: var(--gpc-space-3) var(--gpc-space-4);
+  }
+}

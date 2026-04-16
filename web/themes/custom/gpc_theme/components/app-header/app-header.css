@@ -3,7 +3,7 @@
   top: 0;
   z-index: 40;
   border-bottom: 1px solid var(--gpc-color-border);
-  background: color-mix(in srgb, var(--gpc-color-surface) 88%, transparent);
+  background: color-mix(in srgb, var(--gpc-color-surface) 92%, transparent);
   backdrop-filter: blur(14px);
 }
 
@@ -27,8 +27,8 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border-radius: 999px;
   border-color: var(--gpc-color-border);
@@ -100,4 +100,19 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--gpc-space-2);
+}
+
+@media (max-width: 37.5rem) {
+  .gpc-app-header__inner {
+    min-height: 4rem;
+    gap: var(--gpc-space-2);
+  }
+
+  .gpc-app-header__brand {
+    gap: var(--gpc-space-2);
+  }
+
+  .gpc-app-header__subtitle {
+    font-size: 0.8rem;
+  }
 }

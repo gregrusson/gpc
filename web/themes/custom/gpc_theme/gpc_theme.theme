@@ -129,6 +129,13 @@ function gpc_theme_build_drawer_navigation(): array {
     '#attributes' => [
       'class' => ['gpc-drawer-nav'],
     ],
+    '#cache' => [
+      'contexts' => [
+        'route',
+        'url.path',
+        'user.permissions',
+      ],
+    ],
   ];
 
   foreach ($sections as $delta => $section) {

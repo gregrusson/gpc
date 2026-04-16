@@ -21,3 +21,8 @@
   border-color: color-mix(in srgb, var(--gpc-color-primary) 28%, var(--gpc-color-border));
 }
 
+@media (max-width: 37.5rem) {
+  .gpc-surface--padded {
+    padding: var(--gpc-space-4);
+  }
+}

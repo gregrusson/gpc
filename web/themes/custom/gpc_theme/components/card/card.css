@@ -42,3 +42,12 @@
   padding: 0 var(--gpc-space-5) var(--gpc-space-5);
 }
 
+@media (max-width: 37.5rem) {
+  .gpc-card__body {
+    padding: var(--gpc-space-4);
+  }
+
+  .gpc-card__footer {
+    padding: 0 var(--gpc-space-4) var(--gpc-space-4);
+  }
+}

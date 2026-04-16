@@ -15,3 +15,12 @@
   padding: var(--gpc-space-3);
 }
 
+@media (max-width: 37.5rem) {
+  .gpc-form-section {
+    padding: var(--gpc-space-4);
+  }
+
+  .gpc-form-section__content > * + * {
+    margin-top: var(--gpc-space-3);
+  }
+}

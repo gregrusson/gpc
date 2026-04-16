@@ -57,6 +57,7 @@
 
   function setDrawerState(open) {
     root.dataset.drawerOpen = open ? 'true' : 'false';
+    document.body.classList.toggle('is-drawer-open', open);
 
     document.querySelectorAll('[data-drawer]').forEach(function (drawer) {
       drawer.dataset.open = open ? 'true' : 'false';
