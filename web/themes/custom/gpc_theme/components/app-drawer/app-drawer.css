@@ -34,6 +34,7 @@
   background: var(--gpc-color-surface);
   box-shadow: var(--gpc-shadow-md);
   overflow: auto;
+  scrollbar-gutter: stable;
 }
 
 .gpc-app-drawer__header {
@@ -69,6 +70,10 @@
   margin-top: var(--gpc-space-3);
 }
 
+.gpc-app-drawer__content .gpc-menu--drawer {
+  gap: 0.4rem;
+}
+
 @media (max-width: 37.5rem) {
   .gpc-app-drawer {
     width: min(20rem, 86vw);
@@ -78,6 +83,11 @@
     margin: 0;
     min-height: calc(100vh - var(--gpc-header-height));
     border-radius: 0 0 var(--gpc-radius-lg) 0;
+  }
+
+  .gpc-app-drawer__header,
+  .gpc-app-drawer__content {
+    padding: var(--gpc-space-3);
   }
 }
 

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Template\Attribute;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
 
 /**
  * @file
@@ -36,13 +35,24 @@ function gpc_theme_preprocess_html(array &$variables): void {
  * Prepares page template variables.
  */
 function gpc_theme_preprocess_page(array &$variables): void {
-  $site_name = \Drupal::config('system.site')->get('name');
-  $is_gpc_path = gpc_theme_is_gpc_path();
-  $variables['gpc_site_name'] = $site_name ?: 'GPC';
+  $site_config = \Drupal::config('system.site');
+  $variables['site_name'] = (string) $site_config->get('name');
+  $variables['site_slogan'] = (string) $site_config->get('slogan');
   $variables['gpc_drawer_id'] = 'gpc-drawer';
-  $variables['is_gpc_route'] = $is_gpc_path;
-  $variables['page']['drawer'] = gpc_theme_build_drawer_navigation();
-  $variables['has_drawer'] = !empty($variables['page']['drawer']);
+  $variables['gpc_drawer_menu'] = gpc_theme_build_menu_tree('main', ['gpc-menu', 'gpc-menu--drawer']);
+  $variables['gpc_account_menu'] = gpc_theme_build_account_menu();
+  $variables['is_gpc_route'] = gpc_theme_is_gpc_path();
+  $variables['has_drawer'] = !empty($variables['gpc_drawer_menu']['#items']);
+  $variables['has_account_menu'] = !empty($variables['gpc_account_menu']['menu']['#items']);
+
+  $variables['page']['#cache']['tags'] = Cache::mergeTags(
+    $variables['page']['#cache']['tags'] ?? [],
+    ['config:system.site']
+  );
+  $variables['page']['#cache']['contexts'] = Cache::mergeContexts(
+    $variables['page']['#cache']['contexts'] ?? [],
+    ['user']
+  );
 }
 
 /**
@@ -54,129 +64,37 @@ function gpc_theme_is_gpc_path(): bool {
 }
 
 /**
- * Builds the drawer navigation render array.
+ * Builds a rendered menu tree with consistent theme classes.
  */
-function gpc_theme_build_drawer_navigation(): array {
-  $user = \Drupal::currentUser();
-  $sections = [];
+function gpc_theme_build_menu_tree(string $menu_name, array $classes = []): array {
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $tree = $menu_tree->load($menu_name, $parameters);
+  $tree = $menu_tree->transform($tree, [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ]);
 
-  $quick_access_items = [
-    gpc_theme_build_link(t('Home'), '<front>'),
-  ];
-  if ($user->isAuthenticated()) {
-    $quick_access_items[] = gpc_theme_build_link(t('GPC dashboard'), 'gpc.dashboard', [], [], gpc_theme_is_route_active('gpc.dashboard'));
-  }
-
-  $sections[] = [
-    'title' => t('Quick access'),
-    'items' => $quick_access_items,
-  ];
-
-  if ($user->isAuthenticated()) {
-    $sections[] = [
-      'title' => t('Work'),
-      'items' => [
-        gpc_theme_build_link(t('Firearms'), 'entity.gpc_firearm.collection', [], [], gpc_theme_is_route_active('entity.gpc_firearm.collection')),
-        gpc_theme_build_link(t('Recipes'), 'entity.gpc_recipe.collection', [], [], gpc_theme_is_route_active('entity.gpc_recipe.collection')),
-        gpc_theme_build_link(t('Batches'), 'entity.gpc_batch.collection', [], [], gpc_theme_is_route_active('entity.gpc_batch.collection')),
-      ],
-    ];
-
-    $reference_items = [];
-    if ($user->hasPermission('create gpc calibers') || $user->hasPermission('administer gpc calibers') || $user->hasPermission('access administration pages')) {
-      $reference_items[] = gpc_theme_build_link(t('Calibers'), 'entity.gpc_caliber.collection', [], [], gpc_theme_is_route_active('entity.gpc_caliber.collection'));
-    }
-    if ($user->hasPermission('create gpc components') || $user->hasPermission('administer gpc components') || $user->hasPermission('access administration pages')) {
-      $reference_items[] = gpc_theme_build_link(t('Components'), 'entity.gpc_component.collection', [], [], gpc_theme_is_route_active('entity.gpc_component.collection'));
-    }
-
-    if ($reference_items) {
-      $sections[] = [
-        'title' => t('Reference'),
-        'items' => $reference_items,
-      ];
-    }
-
-    $governance_items = [];
-    if ($user->hasPermission('review gpc calibers')) {
-      $governance_items[] = gpc_theme_build_link(t('Caliber review'), 'gpc.caliber_review_queue', [], [], gpc_theme_is_route_active('gpc.caliber_review_queue'));
-    }
-    if ($user->hasPermission('review gpc components')) {
-      $governance_items[] = gpc_theme_build_link(t('Component review'), 'gpc.component_review_queue', [], [], gpc_theme_is_route_active('gpc.component_review_queue'));
-    }
-    if ($user->hasPermission('administer gpc reference merges')) {
-      $governance_items[] = gpc_theme_build_link(t('Reference merge'), 'gpc.reference_merge.landing', [], [], gpc_theme_is_route_active('gpc.reference_merge.landing'));
-    }
-
-    if ($governance_items) {
-      $sections[] = [
-        'title' => t('Governance'),
-        'items' => $governance_items,
-      ];
-    }
-  }
-  else {
-    $sections[] = [
-      'title' => t('Account'),
-      'items' => [
-        gpc_theme_build_link(t('Log in'), 'user.login'),
-      ],
-    ];
-  }
-
-  $build = [
-    '#type' => 'container',
-    '#attributes' => [
-      'class' => ['gpc-drawer-nav'],
-    ],
-    '#cache' => [
-      'contexts' => [
-        'route',
-        'url.path',
-        'user.permissions',
-      ],
-    ],
-  ];
-
-  foreach ($sections as $delta => $section) {
-    $build['section_' . $delta] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['gpc-drawer-nav__section'],
-      ],
-      'title' => [
-        '#markup' => '<h3 class="gpc-drawer-nav__title">' . $section['title'] . '</h3>',
-      ],
-      'items' => [
-        '#theme' => 'item_list',
-        '#attributes' => [
-          'class' => ['gpc-drawer-nav__list'],
-        ],
-        '#items' => $section['items'],
-      ],
-    ];
-  }
+  $build = $menu_tree->build($tree);
+  $build['#attributes']['class'] = array_values(array_unique(array_merge($build['#attributes']['class'] ?? [], $classes)));
 
   return $build;
 }
 
 /**
- * Builds an active-aware link render array.
+ * Builds account menu variables for the header.
  */
-function gpc_theme_build_link(string|\Stringable $title, string $route_name, array $route_parameters = [], array $options = [], bool $is_active = FALSE): array {
-  $options['attributes']['class'] = $options['attributes']['class'] ?? [];
-  $options['attributes']['class'][] = 'gpc-drawer-nav__link';
-  if ($is_active) {
-    $options['attributes']['class'][] = 'is-active';
-    $options['attributes']['aria-current'] = 'page';
-  }
+function gpc_theme_build_account_menu(): array {
+  $account = \Drupal::currentUser();
+  $authenticated = $account->isAuthenticated();
+  $label = $authenticated ? $account->getDisplayName() : t('Account');
+  $subtitle = $authenticated ? t('My account') : t('Log in or register');
 
-  return Link::fromTextAndUrl($title, Url::fromRoute($route_name, $route_parameters, $options))->toRenderable();
-}
-
-/**
- * Determines whether the current route matches a route name.
- */
-function gpc_theme_is_route_active(string $route_name): bool {
-  return \Drupal::routeMatch()->getRouteName() === $route_name;
+  return [
+    'label' => $label,
+    'subtitle' => $subtitle,
+    'authenticated' => $authenticated,
+    'trigger_label' => t('Account menu'),
+    'menu' => gpc_theme_build_menu_tree('account', ['gpc-menu', 'gpc-menu--account']),
+  ];
 }

@@ -36,8 +36,8 @@
 
     document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
       button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-      button.setAttribute('title', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      button.setAttribute('title', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
       button.setAttribute('data-current-theme', theme);
     });
   }
@@ -153,6 +153,11 @@
     var drawerClose = event.target.closest('[data-drawer-close]');
     if (drawerClose) {
       event.preventDefault();
+      setDrawerState(false);
+      return;
+    }
+
+    if (!drawerModeQuery.matches && event.target.closest('[data-drawer][data-open="true"] a')) {
       setDrawerState(false);
       return;
     }

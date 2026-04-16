@@ -10,6 +10,7 @@
 - `web/themes/custom/gpc_theme/js/theme-init.js` applies the theme mode and drawer behavior.
 - `web/themes/custom/gpc_theme/templates/layout/` contains only the document shell and page shell templates.
 - `web/themes/custom/gpc_theme/components/` contains reusable Single Directory Components.
+- Site identity comes from Drupal config, not the theme. The header reads `system.site:name` and `system.site:slogan`, which you manage in `Configuration > System > Basic site settings`.
 
 ## How SDC is used
 
@@ -37,6 +38,7 @@ Created in this first pass:
 - `tabs`
 - `data-table`
 - `empty-state`
+- `account-menu`
 
 ## Dark mode
 
@@ -60,6 +62,27 @@ If you want to keep Gin as admin theme, set it explicitly:
 ddev drush config:set system.theme admin gin -y
 ```
 
+## Menus
+
+- The drawer uses the Drupal `main` menu tree.
+- The account menu uses the Drupal `account` menu tree.
+- Both menus are rendered by preprocess/theme code and passed into SDC components.
+
+Menu links are defined in `web/modules/custom/gpc/gpc.links.menu.yml`, so they can be managed through Drupal config and rendered consistently in the theme.
+
+## Account menu
+
+- Authenticated users see a compact trigger with a user icon, their display name, and a chevron.
+- Anonymous users see a generic account trigger with login and register actions in the menu.
+- The menu uses a native `<details>` element, so it is keyboard accessible without extra JavaScript.
+
+## Admin steps
+
+- Manage the drawer menu under `Structure > Menus > Main navigation`.
+- Manage the account actions under `Structure > Menus > Account`.
+- If you add or remove GPC navigation items, update the menu link definitions in the GPC module so the theme continues to render the correct menu tree.
+- If you want different labels or hierarchy in the drawer, edit the `main` menu structure in Drupal rather than changing Twig templates.
+
 ## What to customize next
 
 - Add GPC-specific navigation into the `drawer` region.
@@ -67,4 +90,3 @@ ddev drush config:set system.theme admin gin -y
 - Create more SDC components for record summaries, filters, navigation items, and KPI cards.
 - Move any repeated GPC dashboard patterns from module controllers into theme components.
 - Add optional component variants only after the basic patterns prove useful.
-

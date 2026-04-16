@@ -6,12 +6,13 @@
 #}
 <div class="gpc-page-shell{% if is_gpc_route %} gpc-page-shell--app{% endif %}">
   {{ include('gpc_theme:app-header', {
-    title: gpc_site_name,
-    subtitle: is_gpc_route ? 'Project workspace' : 'Front-end',
+    site_name: site_name,
+    site_slogan: site_slogan,
     home_url: front_page,
     drawer_id: gpc_drawer_id,
     show_drawer_toggle: has_drawer,
     show_theme_toggle: true,
+    account_menu: gpc_account_menu,
     actions: page.header,
   }, with_context = false) }}
 
@@ -20,7 +21,7 @@
       {{ include('gpc_theme:app-drawer', {
         title: 'Navigation',
         drawer_id: gpc_drawer_id,
-        content: page.drawer,
+        content: gpc_drawer_menu,
       }, with_context = false) }}
       <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
     {% endif %}

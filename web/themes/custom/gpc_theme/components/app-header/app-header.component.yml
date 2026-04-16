@@ -6,18 +6,18 @@ props:
   type: object
   additionalProperties: false
   required:
-    - title
+    - site_name
     - home_url
     - drawer_id
   properties:
-    title:
+    site_name:
       type: string
-      title: Title
-    subtitle:
+      title: Site name
+    site_slogan:
       type:
         - string
         - 'null'
-      title: Subtitle
+      title: Site slogan
     home_url:
       type: string
       title: Home URL
@@ -43,4 +43,10 @@ props:
         - 'null'
       title: Actions region
       description: Optional rendered actions or utility content.
-
+    account_menu:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Account menu
+      description: Rendered account menu component output.

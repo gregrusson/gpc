@@ -235,36 +235,33 @@ h3 {
   display: none;
 }
 
-.gpc-drawer-nav {
-  display: grid;
-  gap: var(--gpc-space-5);
-}
-
-.gpc-drawer-nav__section {
-  display: grid;
-  gap: var(--gpc-space-3);
-}
-
-.gpc-drawer-nav__title {
-  margin: 0;
-  color: var(--gpc-color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.gpc-drawer-nav__list {
+.gpc-menu,
+.gpc-menu .menu {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.gpc-drawer-nav__list li + li {
-  margin-top: 0.35rem;
+.gpc-menu {
+  display: grid;
+  gap: 0.35rem;
 }
 
-.gpc-drawer-nav__link {
+.gpc-menu > .menu-item + .menu-item {
+  margin-top: 0;
+}
+
+.gpc-menu .menu {
+  margin-top: var(--gpc-space-2);
+  margin-left: var(--gpc-space-3);
+  padding-left: var(--gpc-space-3);
+  border-left: 1px solid var(--gpc-color-border);
+}
+
+.gpc-menu--drawer .menu-item > a,
+.gpc-menu--drawer .menu-item > span,
+.gpc-menu--account .menu-item > a,
+.gpc-menu--account .menu-item > span {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -278,10 +275,33 @@ h3 {
   background: transparent;
 }
 
-.gpc-drawer-nav__link:hover,
-.gpc-drawer-nav__link.is-active {
+.gpc-menu--drawer > .menu-item > a,
+.gpc-menu--drawer > .menu-item > span {
+  font-weight: 600;
+}
+
+.gpc-menu--drawer .menu .menu-item > a,
+.gpc-menu--drawer .menu .menu-item > span,
+.gpc-menu--account .menu .menu-item > a,
+.gpc-menu--account .menu .menu-item > span {
+  min-height: 2.5rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+}
+
+.gpc-menu--drawer .menu-item > a:hover,
+.gpc-menu--drawer .menu-item > a.is-active,
+.gpc-menu--drawer .menu-item--active-trail > a,
+.gpc-menu--account .menu-item > a:hover,
+.gpc-menu--account .menu-item > a.is-active,
+.gpc-menu--account .menu-item--active-trail > a {
   background: color-mix(in srgb, var(--gpc-color-primary) 10%, var(--gpc-color-surface));
   border-color: color-mix(in srgb, var(--gpc-color-primary) 18%, var(--gpc-color-border));
+}
+
+.gpc-menu--drawer .menu-item--active-trail > a,
+.gpc-menu--account .menu-item--active-trail > a {
+  color: var(--gpc-color-primary);
 }
 
 .gpc-page-lead,
@@ -795,9 +815,26 @@ dialog::backdrop {
     font-size: clamp(1.45rem, 6vw, 1.8rem);
   }
 
-  .gpc-drawer-nav__link {
+  .gpc-menu .menu {
+    margin-left: var(--gpc-space-2);
+    padding-left: var(--gpc-space-2);
+  }
+
+  .gpc-menu--drawer > .menu-item > a,
+  .gpc-menu--drawer > .menu-item > span,
+  .gpc-menu--account > .menu-item > a,
+  .gpc-menu--account > .menu-item > span {
     min-height: 2.875rem;
-    padding-inline: 0.8rem;
+    padding-inline: 0.85rem;
+  }
+
+  .gpc-menu--drawer .menu .menu-item > a,
+  .gpc-menu--drawer .menu .menu-item > span,
+  .gpc-menu--account .menu .menu-item > a,
+  .gpc-menu--account .menu .menu-item > span {
+    min-height: 2.625rem;
+    padding-inline: 0.75rem;
+    font-size: 0.92rem;
   }
 
   .gpc-card__body,

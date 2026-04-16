@@ -9,7 +9,7 @@ props:
     label:
       type: string
       title: Label
-      default: Theme
+      default: Switch to dark mode
     show_label:
       type: boolean
       title: Show label

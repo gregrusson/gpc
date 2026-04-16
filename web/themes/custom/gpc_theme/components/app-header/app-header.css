@@ -95,6 +95,11 @@
   margin-inline-start: auto;
 }
 
+.gpc-app-header__account {
+  display: inline-flex;
+  align-items: center;
+}
+
 .gpc-app-header__region {
   display: inline-flex;
   align-items: center;
@@ -114,5 +119,9 @@
 
   .gpc-app-header__subtitle {
     font-size: 0.8rem;
+  }
+
+  .gpc-app-header__account {
+    max-width: calc(100vw - 8.5rem);
   }
 }
