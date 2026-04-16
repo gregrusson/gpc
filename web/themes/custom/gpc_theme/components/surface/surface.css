@@ -1,0 +1,23 @@
+.gpc-surface {
+  border: 1px solid var(--gpc-color-border);
+  border-radius: var(--gpc-radius-lg);
+  background: var(--gpc-color-surface);
+}
+
+.gpc-surface--padded {
+  padding: var(--gpc-space-5);
+}
+
+.gpc-surface--elevated {
+  background: var(--gpc-color-surface-elevated);
+  box-shadow: var(--gpc-shadow-md);
+}
+
+.gpc-surface--subdued {
+  background: color-mix(in srgb, var(--gpc-color-surface) 70%, var(--gpc-color-background));
+}
+
+.gpc-surface--accent {
+  border-color: color-mix(in srgb, var(--gpc-color-primary) 28%, var(--gpc-color-border));
+}
+

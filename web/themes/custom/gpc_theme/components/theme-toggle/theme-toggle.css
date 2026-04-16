@@ -1,0 +1,46 @@
+.gpc-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gpc-space-2);
+  min-width: 2.75rem;
+  justify-content: center;
+  padding: 0.7rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--gpc-color-border);
+  background: var(--gpc-color-surface-elevated);
+  color: var(--gpc-color-text);
+  box-shadow: var(--gpc-shadow-sm);
+}
+
+.gpc-theme-toggle__icon {
+  position: relative;
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: currentColor;
+  transition: transform var(--gpc-transition), background-color var(--gpc-transition);
+}
+
+.gpc-theme-toggle__icon::after {
+  content: '';
+  position: absolute;
+  inset: 0.15rem;
+  border-radius: inherit;
+  background: var(--gpc-color-surface-elevated);
+}
+
+:root[data-theme='dark'] .gpc-theme-toggle__icon {
+  background: transparent;
+  box-shadow: inset -0.32rem 0 0 0 currentColor;
+}
+
+:root[data-theme='dark'] .gpc-theme-toggle__icon::after {
+  inset: 0.12rem 0.1rem 0.12rem 0.42rem;
+}
+
+.gpc-theme-toggle__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+

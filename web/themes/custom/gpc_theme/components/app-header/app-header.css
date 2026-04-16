@@ -1,0 +1,103 @@
+.gpc-app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid var(--gpc-color-border);
+  background: color-mix(in srgb, var(--gpc-color-surface) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.gpc-app-header__inner {
+  min-height: var(--gpc-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gpc-space-4);
+}
+
+.gpc-app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gpc-space-3);
+  min-width: 0;
+}
+
+.gpc-app-header__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: 999px;
+  border-color: var(--gpc-color-border);
+  background: var(--gpc-color-surface-elevated);
+}
+
+.gpc-app-header__toggle-icon {
+  position: relative;
+  display: block;
+  width: 1rem;
+  height: 0.1rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.gpc-app-header__toggle-icon::before,
+.gpc-app-header__toggle-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 1rem;
+  height: 0.1rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.gpc-app-header__toggle-icon::before {
+  top: -0.32rem;
+}
+
+.gpc-app-header__toggle-icon::after {
+  top: 0.32rem;
+}
+
+.gpc-app-header__home {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.gpc-app-header__home:hover {
+  text-decoration: none;
+}
+
+.gpc-app-header__title {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.gpc-app-header__subtitle {
+  color: var(--gpc-color-text-muted);
+  font-size: 0.875rem;
+}
+
+.gpc-app-header__actions {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gpc-space-2);
+  margin-inline-start: auto;
+}
+
+.gpc-app-header__region {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gpc-space-2);
+}

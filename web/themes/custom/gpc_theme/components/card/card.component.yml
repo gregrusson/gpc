@@ -1,0 +1,46 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Card
+description: Content card built for compact app layouts.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - content
+  properties:
+    eyebrow:
+      type:
+        - string
+        - 'null'
+      title: Eyebrow
+    title:
+      type:
+        - string
+        - 'null'
+      title: Title
+    content:
+      type:
+        - array
+        - object
+        - string
+        - 'null'
+      title: Content
+    footer:
+      type:
+        - array
+        - object
+        - string
+        - 'null'
+      title: Footer
+    media:
+      type:
+        - array
+        - object
+        - string
+        - 'null'
+      title: Media
+    compact:
+      type: boolean
+      title: Compact
+      default: false
+

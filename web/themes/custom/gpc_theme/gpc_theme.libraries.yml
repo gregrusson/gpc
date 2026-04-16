@@ -1,0 +1,8 @@
+global:
+  css:
+    theme:
+      css/theme.css: {}
+      css/utilities.css: {}
+  js:
+    js/theme-init.js: { header: true, preprocess: false, weight: -100 }
+

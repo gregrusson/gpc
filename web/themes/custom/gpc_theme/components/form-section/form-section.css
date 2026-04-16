@@ -1,0 +1,17 @@
+.gpc-form-section__title {
+  font-weight: 700;
+}
+
+.gpc-form-section__description {
+  margin-bottom: var(--gpc-space-4);
+  color: var(--gpc-color-text-muted);
+}
+
+.gpc-form-section__content > * + * {
+  margin-top: var(--gpc-space-4);
+}
+
+.gpc-form-section--compact {
+  padding: var(--gpc-space-3);
+}
+

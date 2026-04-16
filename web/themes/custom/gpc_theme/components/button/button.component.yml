@@ -1,0 +1,69 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Button
+description: Reusable action button or link.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - label
+  properties:
+    label:
+      type: string
+      title: Label
+    href:
+      type:
+        - string
+        - 'null'
+      title: Href
+    type:
+      type: string
+      title: Type
+      default: button
+      enum:
+        - button
+        - submit
+        - reset
+    variant:
+      type: string
+      title: Variant
+      default: secondary
+      enum:
+        - primary
+        - secondary
+        - subtle
+        - ghost
+        - danger
+        - link
+    size:
+      type: string
+      title: Size
+      default: md
+      enum:
+        - sm
+        - md
+        - lg
+    disabled:
+      type: boolean
+      title: Disabled
+      default: false
+    block:
+      type: boolean
+      title: Block
+      default: false
+    aria_label:
+      type:
+        - string
+        - 'null'
+      title: Aria label
+    target:
+      type:
+        - string
+        - 'null'
+      title: Target
+    rel:
+      type:
+        - string
+        - 'null'
+      title: Rel
+

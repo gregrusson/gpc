@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: App drawer
+description: Slide-out navigation drawer used by the app shell.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - drawer_id
+    - content
+  properties:
+    title:
+      type: string
+      title: Title
+      default: Navigation
+    drawer_id:
+      type: string
+      title: Drawer ID
+    content:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Content
+      description: Rendered drawer content.
+
