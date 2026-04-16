@@ -31,20 +31,13 @@
   font-weight: 600;
 }
 
-.gpc-theme-toggle__icon--moon {
-  display: inline-flex;
-}
-
-.gpc-theme-toggle[data-current-theme='light'] .gpc-theme-toggle__icon--sun,
-.gpc-theme-toggle[data-current-theme='dark'] .gpc-theme-toggle__icon--moon {
-  display: none;
-}
-
 .gpc-theme-toggle[data-current-theme='light'] .gpc-theme-toggle__icon--moon {
+  display: inline-flex;
   color: var(--gpc-color-primary);
 }
 
 .gpc-theme-toggle[data-current-theme='dark'] .gpc-theme-toggle__icon--sun {
+  display: inline-flex;
   color: var(--gpc-color-warning);
 }
 

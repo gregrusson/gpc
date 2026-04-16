@@ -247,6 +247,10 @@ h3 {
   gap: 0.35rem;
 }
 
+.gpc-menu__item {
+  min-width: 0;
+}
+
 .gpc-menu > .menu-item + .menu-item {
   margin-top: 0;
 }
@@ -258,8 +262,15 @@ h3 {
   border-left: 1px solid var(--gpc-color-border);
 }
 
-.gpc-menu--drawer .menu-item > a,
-.gpc-menu--drawer .menu-item > span,
+.gpc-menu--drawer {
+  gap: 0.45rem;
+}
+
+.gpc-menu--drawer .gpc-menu--subtree {
+  gap: 0.25rem;
+}
+
+.gpc-menu--drawer .gpc-menu__link,
 .gpc-menu--account .menu-item > a,
 .gpc-menu--account .menu-item > span {
   display: flex;
@@ -275,23 +286,41 @@ h3 {
   background: transparent;
 }
 
-.gpc-menu--drawer > .menu-item > a,
-.gpc-menu--drawer > .menu-item > span {
-  font-weight: 600;
+.gpc-menu--drawer .gpc-menu__link {
+  position: relative;
+  overflow: hidden;
 }
 
-.gpc-menu--drawer .menu .menu-item > a,
-.gpc-menu--drawer .menu .menu-item > span,
+.gpc-menu--drawer > .gpc-menu__item > .gpc-menu__link {
+  font-weight: 600;
+  background: color-mix(in srgb, var(--gpc-color-surface-elevated) 88%, transparent);
+  border-color: color-mix(in srgb, var(--gpc-color-border) 72%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--gpc-color-surface-elevated) 65%, transparent);
+}
+
+.gpc-menu--drawer > .gpc-menu__item > .gpc-menu__link::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.2rem;
+  border-radius: 999px;
+  background: transparent;
+  transition: background-color var(--gpc-transition);
+}
+
+.gpc-menu--drawer .menu .gpc-menu__item > .gpc-menu__link,
 .gpc-menu--account .menu .menu-item > a,
 .gpc-menu--account .menu .menu-item > span {
   min-height: 2.5rem;
   padding: 0.65rem 0.8rem;
   font-size: 0.95rem;
+  color: var(--gpc-color-text-muted);
 }
 
-.gpc-menu--drawer .menu-item > a:hover,
-.gpc-menu--drawer .menu-item > a.is-active,
-.gpc-menu--drawer .menu-item--active-trail > a,
+.gpc-menu--drawer .gpc-menu__link:hover,
+.gpc-menu--drawer .gpc-menu__link:focus-visible,
+.gpc-menu--drawer .gpc-menu__link.is-active,
+.gpc-menu--drawer .menu-item--active-trail > .gpc-menu__link,
 .gpc-menu--account .menu-item > a:hover,
 .gpc-menu--account .menu-item > a.is-active,
 .gpc-menu--account .menu-item--active-trail > a {
@@ -299,9 +328,23 @@ h3 {
   border-color: color-mix(in srgb, var(--gpc-color-primary) 18%, var(--gpc-color-border));
 }
 
-.gpc-menu--drawer .menu-item--active-trail > a,
+.gpc-menu--drawer .gpc-menu__link:hover {
+  text-decoration: none;
+}
+
+.gpc-menu--drawer > .menu-item--active-trail > .gpc-menu__link::before {
+  background: var(--gpc-color-primary);
+}
+
+.gpc-menu--drawer .menu-item--active-trail > .gpc-menu__link,
 .gpc-menu--account .menu-item--active-trail > a {
   color: var(--gpc-color-primary);
+}
+
+.gpc-menu--drawer .gpc-menu__item--level-1 > .gpc-menu__link,
+.gpc-menu--drawer .gpc-menu__item--level-2 > .gpc-menu__link,
+.gpc-menu--drawer .gpc-menu__item--level-3 > .gpc-menu__link {
+  border-radius: var(--gpc-radius-sm);
 }
 
 .gpc-page-lead,
@@ -433,11 +476,11 @@ legend,
 
 details,
 .details {
-  border: 1px solid var(--gpc-color-border);
-  border-radius: var(--gpc-radius-lg);
+  /*border: 1px solid var(--gpc-color-border);*/
+  /*border-radius: var(--gpc-radius-lg);*/
   background: var(--gpc-color-surface);
   padding: var(--gpc-space-4);
-  box-shadow: var(--gpc-shadow-sm);
+  /*box-shadow: var(--gpc-shadow-sm);*/
 }
 
 details[open],
@@ -820,16 +863,14 @@ dialog::backdrop {
     padding-left: var(--gpc-space-2);
   }
 
-  .gpc-menu--drawer > .menu-item > a,
-  .gpc-menu--drawer > .menu-item > span,
+  .gpc-menu--drawer > .gpc-menu__item > .gpc-menu__link,
   .gpc-menu--account > .menu-item > a,
   .gpc-menu--account > .menu-item > span {
     min-height: 2.875rem;
     padding-inline: 0.85rem;
   }
 
-  .gpc-menu--drawer .menu .menu-item > a,
-  .gpc-menu--drawer .menu .menu-item > span,
+  .gpc-menu--drawer .menu .gpc-menu__item > .gpc-menu__link,
   .gpc-menu--account .menu .menu-item > a,
   .gpc-menu--account .menu .menu-item > span {
     min-height: 2.625rem;
