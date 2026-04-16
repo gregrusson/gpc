@@ -65,10 +65,10 @@ class RecipeForm extends GpcEntityFormBase {
     ];
 
     $form['caliber'] = $this->buildAutocompleteField($entity, 'caliber', $this->t('Caliber'), 'gpc_caliber', TRUE, NULL, 'entity.gpc_caliber.add_form', [], $this->t('Add caliber'));
-    $form['bullet_component'] = $this->buildAutocompleteField($entity, 'bullet_component', $this->t('Bullet component'), 'gpc_component', TRUE, $this->t('Expected type: bullet.'), 'entity.gpc_component.add_form', ['component_type' => 'bullet'], $this->t('Add bullet'));
-    $form['powder_component'] = $this->buildAutocompleteField($entity, 'powder_component', $this->t('Powder component'), 'gpc_component', TRUE, $this->t('Expected type: powder.'), 'entity.gpc_component.add_form', ['component_type' => 'powder'], $this->t('Add powder'));
-    $form['primer_component'] = $this->buildAutocompleteField($entity, 'primer_component', $this->t('Primer component'), 'gpc_component', TRUE, $this->t('Expected type: primer.'), 'entity.gpc_component.add_form', ['component_type' => 'primer'], $this->t('Add primer'));
-    $form['brass_component'] = $this->buildAutocompleteField($entity, 'brass_component', $this->t('Brass component'), 'gpc_component', FALSE, $this->t('Expected type: brass if set.'), 'entity.gpc_component.add_form', ['component_type' => 'brass'], $this->t('Add brass'));
+    $form['bullet_component'] = $this->buildAutocompleteField($entity, 'bullet_component', $this->t('Bullet component'), 'gpc_component', TRUE, $this->t('Expected type: bullet.'), 'entity.gpc_component.add_form', ['component_type' => 'bullet'], $this->t('Add bullet'), 'bullet');
+    $form['powder_component'] = $this->buildAutocompleteField($entity, 'powder_component', $this->t('Powder component'), 'gpc_component', TRUE, $this->t('Expected type: powder.'), 'entity.gpc_component.add_form', ['component_type' => 'powder'], $this->t('Add powder'), 'powder');
+    $form['primer_component'] = $this->buildAutocompleteField($entity, 'primer_component', $this->t('Primer component'), 'gpc_component', TRUE, $this->t('Expected type: primer.'), 'entity.gpc_component.add_form', ['component_type' => 'primer'], $this->t('Add primer'), 'primer');
+    $form['brass_component'] = $this->buildAutocompleteField($entity, 'brass_component', $this->t('Brass component'), 'gpc_component', FALSE, $this->t('Expected type: brass if set.'), 'entity.gpc_component.add_form', ['component_type' => 'brass'], $this->t('Add brass'), 'brass');
 
     $form['powder_charge_weight'] = [
       '#type' => 'number',
@@ -164,9 +164,9 @@ class RecipeForm extends GpcEntityFormBase {
   }
 
   /**
-   * Builds one autocomplete field.
+   * Builds one autocomplete field, optionally with a quick-add action.
    */
-  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required, string|\Stringable|null $description = NULL, ?string $quick_add_route_name = NULL, array $quick_add_route_parameters = [], string|\Stringable|null $quick_add_link_text = NULL): array {
+  protected function buildAutocompleteField(EntityInterface $entity, string $field_name, string|\Stringable $title, string $target_type, bool $required, string|\Stringable|null $description = NULL, ?string $quick_add_route_name = NULL, array $quick_add_route_parameters = [], string|\Stringable|null $quick_add_link_text = NULL, ?string $quick_add_bundle = NULL): array {
     $default_value = NULL;
     $target_id = $entity->get($field_name)->first()?->target_id ?? NULL;
     if ($target_id) {
@@ -187,13 +187,19 @@ class RecipeForm extends GpcEntityFormBase {
     ];
 
     if ($quick_add_route_name !== NULL) {
-      $element['#suffix'] = QuickAddHelper::buildQuickAddLink(
+      $quick_add_link = QuickAddHelper::buildQuickAddLinkIfAllowed(
+        $target_type,
+        $quick_add_bundle,
         $quick_add_route_name,
         $quick_add_route_parameters,
         $quick_add_link_text ?? $this->t('Add item'),
         QuickAddHelper::buildTargetSelector($field_name),
+        $this->currentUser(),
       );
-      $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      if ($quick_add_link !== '') {
+        $element['#suffix'] = $quick_add_link;
+        $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      }
     }
 
     return $element;

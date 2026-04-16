@@ -49,13 +49,19 @@ class FirearmForm extends GpcEntityFormBase {
       '#selection_settings' => [],
       '#description' => $this->t('Select the caliber associated with this firearm.'),
     ];
-    $form['caliber']['#suffix'] = QuickAddHelper::buildQuickAddLink(
+    $quick_add_link = QuickAddHelper::buildQuickAddLinkIfAllowed(
+      'gpc_caliber',
+      NULL,
       'entity.gpc_caliber.add_form',
       [],
       $this->t('Add caliber'),
       QuickAddHelper::buildTargetSelector('caliber'),
+      $this->currentUser(),
     );
-    $form['caliber']['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    if ($quick_add_link !== '') {
+      $form['caliber']['#suffix'] = $quick_add_link;
+      $form['caliber']['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    }
 
     $form['manufacturer'] = [
       '#type' => 'textfield',

@@ -115,6 +115,10 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
   /**
    * Tests that caliber add form quick-add mode carries its modal metadata.
+   *
+   * The actual modal close-and-populate behavior still needs a browser-level
+   * manual QA pass; this suite keeps coverage focused on the server-side
+   * route and response wiring.
    */
   public function testCaliberQuickAddModeAttachesTargetMetadata(): void {
     $this->drupalGet('/admin/gpc/calibers/add', [
