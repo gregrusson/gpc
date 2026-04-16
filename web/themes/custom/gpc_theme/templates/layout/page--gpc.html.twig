@@ -25,11 +25,11 @@
       <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
     {% endif %}
 
-    <main id="main-content" class="gpc-main" role="main" tabindex="-1">
+    <main id="main-content" class="gpc-main" role="main" tabindex="-1"{% if title %} aria-labelledby="page-title"{% endif %}>
       {{ title_prefix }}
       {% if title %}
         <header class="gpc-page-head">
-          <h1 class="gpc-page-title">{{ title }}</h1>
+          <h1 class="gpc-page-title" id="page-title">{{ title }}</h1>
         </header>
       {% endif %}
       {{ title_suffix }}

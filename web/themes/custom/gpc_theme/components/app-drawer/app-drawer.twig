@@ -4,11 +4,21 @@
   data-drawer
   data-open="false"
   role="navigation"
-  aria-label="{{ title|default('Navigation') }}"
+  aria-labelledby="{{ drawer_id }}-title"
+  aria-hidden="true"
 >
   <div class="gpc-app-drawer__panel">
     <div class="gpc-app-drawer__header">
-      <h2 class="gpc-app-drawer__title">{{ title|default('Navigation') }}</h2>
+      <h2 class="gpc-app-drawer__title" id="{{ drawer_id }}-title">{{ title|default('Navigation') }}</h2>
+      <button
+        class="gpc-app-drawer__close"
+        type="button"
+        data-drawer-close
+        data-drawer-target="{{ drawer_id }}"
+        aria-label="{{ 'Close navigation'|t }}"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
     </div>
 
     <div class="gpc-app-drawer__content">
@@ -16,4 +26,3 @@
     </div>
   </div>
 </aside>
-

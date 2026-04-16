@@ -3,7 +3,7 @@
     <div class="gpc-data-table__caption">{{ caption }}</div>
   {% endif %}
 
-  <div class="gpc-data-table__scroll">
+  <div class="gpc-data-table__scroll" role="region" tabindex="0" aria-label="{{ caption|default('Data table') }}">
     <table class="gpc-data-table__table">
       <thead>
         <tr>
@@ -30,4 +30,3 @@
     </table>
   </div>
 </div>
-

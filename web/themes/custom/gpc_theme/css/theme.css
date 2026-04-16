@@ -121,7 +121,8 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [role='button']:focus-visible {
-  outline: 2px solid transparent;
+  outline: 2px solid var(--gpc-color-focus-ring);
+  outline-offset: 2px;
   box-shadow: 0 0 0 3px var(--gpc-color-focus-ring);
 }
 
@@ -379,6 +380,11 @@ label,
   font-weight: 600;
 }
 
+.form-item__label {
+  display: block;
+  line-height: 1.35;
+}
+
 fieldset,
 .fieldset {
   border: 1px solid var(--gpc-color-border);
@@ -402,6 +408,7 @@ legend,
 .form-item__description {
   color: var(--gpc-color-text-muted);
   font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 details,
@@ -646,6 +653,28 @@ dialog::backdrop {
   -webkit-overflow-scrolling: touch;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .gpc-app-drawer,
+  .skip-link,
+  button,
+  .button,
+  input[type='submit'],
+  input[type='button'],
+  input[type='reset'],
+  .gpc-theme-toggle,
+  .gpc-app-header__toggle {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+
 @media (min-width: 48rem) {
   .gpc-main {
     padding: var(--gpc-space-5) var(--gpc-space-5) var(--gpc-space-7);
@@ -661,6 +690,10 @@ dialog::backdrop {
 
   .gpc-main {
     padding-left: 0;
+  }
+
+  .gpc-app-header__toggle {
+    display: none;
   }
 }
 

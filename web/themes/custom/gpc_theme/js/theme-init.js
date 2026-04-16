@@ -4,6 +4,8 @@
   var storageKey = 'gpc-theme';
   var root = document.documentElement;
   var media = window.matchMedia('(prefers-color-scheme: dark)');
+  var drawerModeQuery = window.matchMedia('(min-width: 64rem)');
+  var drawerOpenTrigger = null;
 
   function getStoredTheme() {
     try {
@@ -34,6 +36,8 @@
 
     document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
       button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      button.setAttribute('title', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
       button.setAttribute('data-current-theme', theme);
     });
   }
@@ -56,20 +60,34 @@
   }
 
   function setDrawerState(open) {
+    var mobileDrawer = !drawerModeQuery.matches;
     root.dataset.drawerOpen = open ? 'true' : 'false';
-    document.body.classList.toggle('is-drawer-open', open);
+    if (document.body) {
+      document.body.classList.toggle('is-drawer-open', open && mobileDrawer);
+    }
 
     document.querySelectorAll('[data-drawer]').forEach(function (drawer) {
       drawer.dataset.open = open ? 'true' : 'false';
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     document.querySelectorAll('[data-drawer-toggle]').forEach(function (button) {
       button.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    if (!open && drawerOpenTrigger) {
+      drawerOpenTrigger.focus();
+      drawerOpenTrigger = null;
+    }
+  }
+
+  function syncDrawerMode() {
+    setDrawerState(drawerModeQuery.matches);
   }
 
   function toggleDrawer(event, trigger) {
     event.preventDefault();
+    drawerOpenTrigger = trigger;
     var drawerId = trigger.getAttribute('data-drawer-target');
     var drawer = drawerId ? document.getElementById(drawerId) : null;
     var isOpen = root.dataset.drawerOpen === 'true';
@@ -79,16 +97,31 @@
     }
 
     setDrawerState(!isOpen);
+    if (!isOpen && drawer) {
+      var focusTarget = drawer.querySelector('[data-drawer-close], a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])');
+      if (focusTarget) {
+        window.setTimeout(function () {
+          focusTarget.focus();
+        }, 0);
+      }
+    }
   }
 
   syncTheme();
-  setDrawerState(false);
+  syncDrawerMode();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       syncTheme();
-      setDrawerState(root.dataset.drawerOpen === 'true');
+      syncDrawerMode();
     }, { once: true });
+  }
+
+  if (typeof drawerModeQuery.addEventListener === 'function') {
+    drawerModeQuery.addEventListener('change', syncDrawerMode);
+  }
+  else if (typeof drawerModeQuery.addListener === 'function') {
+    drawerModeQuery.addListener(syncDrawerMode);
   }
 
   var onMediaChange = function () {
@@ -117,14 +150,46 @@
       return;
     }
 
+    var drawerClose = event.target.closest('[data-drawer-close]');
+    if (drawerClose) {
+      event.preventDefault();
+      setDrawerState(false);
+      return;
+    }
+
     if (event.target.closest('[data-drawer-backdrop]')) {
       setDrawerState(false);
     }
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && root.dataset.drawerOpen === 'true') {
+    if (!drawerModeQuery.matches && event.key === 'Escape' && root.dataset.drawerOpen === 'true') {
       setDrawerState(false);
+      return;
+    }
+
+    if (!drawerModeQuery.matches && event.key === 'Tab' && root.dataset.drawerOpen === 'true') {
+      var drawer = document.querySelector('[data-drawer][data-open="true"]');
+      if (!drawer) {
+        return;
+      }
+
+      var focusable = drawer.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) {
+        return;
+      }
+
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+      else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   });
 }());
