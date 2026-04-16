@@ -1,0 +1,17 @@
+name: GPC Theme
+type: theme
+base theme: false
+description: 'Front-end theme for Gunners Project Companion.'
+core_version_requirement: ^11
+libraries:
+  - gpc_theme/global
+enforce_prop_schemas: true
+regions:
+  header: Header
+  drawer: Drawer
+  pre_content: Pre-content
+  highlighted: Highlighted
+  help: Help
+  content: Content
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'

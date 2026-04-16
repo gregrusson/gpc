@@ -1,0 +1,41 @@
+<header class="gpc-app-header" role="banner">
+  <div class="gpc-app-header__inner u-container">
+    <div class="gpc-app-header__brand">
+      {% if show_drawer_toggle %}
+        <button
+          class="gpc-app-header__toggle"
+          type="button"
+          data-drawer-toggle
+          data-drawer-target="{{ drawer_id }}"
+          aria-controls="{{ drawer_id }}"
+          aria-expanded="false"
+          aria-label="{{ drawer_label|default('Toggle navigation') }}"
+        >
+          <span class="gpc-app-header__toggle-icon" aria-hidden="true"></span>
+        </button>
+      {% endif %}
+
+      <a class="gpc-app-header__home" href="{{ home_url }}">
+        <span class="gpc-app-header__title">{{ title }}</span>
+        {% if subtitle %}
+          <span class="gpc-app-header__subtitle">{{ subtitle }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <div class="gpc-app-header__actions">
+      {% if actions %}
+        <div class="gpc-app-header__region">
+          {{ actions }}
+        </div>
+      {% endif %}
+
+      {% if show_theme_toggle %}
+        {{ include('gpc_theme:theme-toggle', {
+          show_label: false
+        }, with_context = false) }}
+      {% endif %}
+    </div>
+  </div>
+</header>
+

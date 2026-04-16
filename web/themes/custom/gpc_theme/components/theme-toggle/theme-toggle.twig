@@ -1,0 +1,13 @@
+<button
+  class="gpc-theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="{{ label|default('Toggle theme') }}"
+  aria-pressed="false"
+  title="{{ label|default('Toggle theme') }}"
+>
+  <span class="gpc-theme-toggle__icon" aria-hidden="true"></span>
+  {% if show_label %}
+    <span class="gpc-theme-toggle__label">{{ label|default('Theme') }}</span>
+  {% endif %}
+</button>

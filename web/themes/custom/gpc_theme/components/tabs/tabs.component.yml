@@ -1,0 +1,53 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Tabs
+description: App-style tab navigation.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - items
+  properties:
+    label:
+      type: string
+      title: Label
+      default: Tabs
+    items:
+      type: array
+      title: Items
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - label
+        properties:
+          label:
+            type: string
+            title: Label
+          href:
+            type:
+              - string
+              - 'null'
+            title: Href
+          active:
+            type: boolean
+            title: Active
+            default: false
+          count:
+            type:
+              - integer
+              - 'null'
+            title: Count
+          aria_label:
+            type:
+              - string
+              - 'null'
+            title: Aria label
+    orientation:
+      type: string
+      title: Orientation
+      default: horizontal
+      enum:
+        - horizontal
+        - vertical
+

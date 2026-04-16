@@ -1,0 +1,62 @@
+{#
+/**
+ * @file
+ * App-focused page shell for /gpc routes.
+ */
+#}
+<div class="gpc-page-shell gpc-page-shell--app gpc-page-shell--gpc">
+  {{ include('gpc_theme:app-header', {
+    title: gpc_site_name,
+    subtitle: 'Project workspace',
+    home_url: front_page,
+    drawer_id: gpc_drawer_id,
+    show_drawer_toggle: has_drawer,
+    show_theme_toggle: true,
+    actions: page.header,
+  }, with_context = false) }}
+
+  <div class="gpc-page-shell__body{% if has_drawer %} gpc-page-shell__body--with-drawer{% endif %}">
+    {% if has_drawer %}
+      {{ include('gpc_theme:app-drawer', {
+        title: 'Navigation',
+        drawer_id: gpc_drawer_id,
+        content: page.drawer,
+      }, with_context = false) }}
+      <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
+    {% endif %}
+
+    <main id="main-content" class="gpc-main" role="main" tabindex="-1">
+      {{ title_prefix }}
+      {% if title %}
+        <header class="gpc-page-head">
+          <h1 class="gpc-page-title">{{ title }}</h1>
+        </header>
+      {% endif %}
+      {{ title_suffix }}
+
+      {% if page.pre_content %}
+        <div class="gpc-page-region gpc-page-region--pre-content">
+          {{ page.pre_content }}
+        </div>
+      {% endif %}
+
+      {% if page.highlighted %}
+        <div class="gpc-page-region gpc-page-region--highlighted">
+          {{ page.highlighted }}
+        </div>
+      {% endif %}
+
+      {% if page.help %}
+        <div class="gpc-page-region gpc-page-region--help help">
+          {{ page.help }}
+        </div>
+      {% endif %}
+
+      <section class="gpc-page-region gpc-page-region--content">
+        <div class="gpc-content-grid">
+          {{ page.content }}
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

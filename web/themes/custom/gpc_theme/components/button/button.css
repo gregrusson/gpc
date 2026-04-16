@@ -1,0 +1,60 @@
+.gpc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gpc-space-2);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.7rem 1rem;
+  text-decoration: none;
+  box-shadow: var(--gpc-shadow-sm);
+}
+
+.gpc-button--block {
+  width: 100%;
+}
+
+.gpc-button--sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.gpc-button--lg {
+  padding: 0.85rem 1.2rem;
+  font-size: 1rem;
+}
+
+.gpc-button--primary {
+  background: var(--gpc-color-primary);
+  border-color: var(--gpc-color-primary);
+  color: var(--gpc-color-primary-contrast);
+}
+
+.gpc-button--secondary {
+  background: var(--gpc-color-surface-elevated);
+  border-color: var(--gpc-color-border);
+  color: var(--gpc-color-text);
+}
+
+.gpc-button--subtle,
+.gpc-button--ghost {
+  background: transparent;
+  border-color: var(--gpc-color-border);
+  color: var(--gpc-color-text);
+  box-shadow: none;
+}
+
+.gpc-button--danger {
+  background: var(--gpc-color-danger);
+  border-color: var(--gpc-color-danger);
+  color: #fff;
+}
+
+.gpc-button--link {
+  background: transparent;
+  border-color: transparent;
+  color: var(--gpc-color-primary);
+  box-shadow: none;
+  padding-inline: 0;
+}
+

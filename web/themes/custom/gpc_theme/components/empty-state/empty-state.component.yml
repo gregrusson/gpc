@@ -1,0 +1,39 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Empty state
+description: Clean placeholder for empty lists and views.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - title
+  properties:
+    title:
+      type: string
+      title: Title
+    description:
+      type:
+        - string
+        - 'null'
+      title: Description
+    primary_action_label:
+      type:
+        - string
+        - 'null'
+      title: Primary action label
+    primary_action_href:
+      type:
+        - string
+        - 'null'
+      title: Primary action href
+    secondary_action_label:
+      type:
+        - string
+        - 'null'
+      title: Secondary action label
+    secondary_action_href:
+      type:
+        - string
+        - 'null'
+      title: Secondary action href
+

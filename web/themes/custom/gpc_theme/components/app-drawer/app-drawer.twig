@@ -1,0 +1,19 @@
+<aside
+  id="{{ drawer_id }}"
+  class="gpc-app-drawer"
+  data-drawer
+  data-open="false"
+  role="navigation"
+  aria-label="{{ title|default('Navigation') }}"
+>
+  <div class="gpc-app-drawer__panel">
+    <div class="gpc-app-drawer__header">
+      <h2 class="gpc-app-drawer__title">{{ title|default('Navigation') }}</h2>
+    </div>
+
+    <div class="gpc-app-drawer__content">
+      {{ content }}
+    </div>
+  </div>
+</aside>
+

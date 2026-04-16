@@ -1,0 +1,10 @@
+<fieldset class="gpc-form-section{% if compact %} gpc-form-section--compact{% endif %}"{% if id %} id="{{ id }}"{% endif %}>
+  <legend class="gpc-form-section__title">{{ title }}</legend>
+  {% if description %}
+    <div class="gpc-form-section__description">{{ description }}</div>
+  {% endif %}
+  <div class="gpc-form-section__content">
+    {{ content }}
+  </div>
+</fieldset>
+

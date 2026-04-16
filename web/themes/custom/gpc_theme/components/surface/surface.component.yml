@@ -1,0 +1,43 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Surface
+description: Generic surface wrapper with optional elevation and padding.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - content
+  properties:
+    tag:
+      type: string
+      title: Tag
+      default: div
+      enum:
+        - div
+        - section
+        - article
+        - aside
+    content:
+      type:
+        - array
+        - object
+        - string
+        - 'null'
+      title: Content
+    tone:
+      type: string
+      title: Tone
+      default: default
+      enum:
+        - default
+        - subdued
+        - accent
+    elevated:
+      type: boolean
+      title: Elevated
+      default: false
+    padded:
+      type: boolean
+      title: Padded
+      default: true
+

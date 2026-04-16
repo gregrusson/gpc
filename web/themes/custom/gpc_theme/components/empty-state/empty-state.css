@@ -1,0 +1,26 @@
+.gpc-empty-state {
+  display: grid;
+  place-items: center;
+  padding: var(--gpc-space-7) var(--gpc-space-4);
+  border: 1px dashed var(--gpc-color-border);
+  border-radius: var(--gpc-radius-lg);
+  background: color-mix(in srgb, var(--gpc-color-surface) 82%, var(--gpc-color-background));
+}
+
+.gpc-empty-state__content {
+  max-width: 32rem;
+  text-align: center;
+}
+
+.gpc-empty-state__description {
+  color: var(--gpc-color-text-muted);
+}
+
+.gpc-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gpc-space-3);
+  margin-top: var(--gpc-space-4);
+}
+

@@ -1,0 +1,29 @@
+<nav class="gpc-tabs gpc-tabs--{{ orientation|default('horizontal') }}" aria-label="{{ label|default('Tabs') }}">
+  <ul class="gpc-tabs__list" role="list">
+    {% for item in items %}
+      <li class="gpc-tabs__item">
+        {% if item.href %}
+          <a
+            class="gpc-tabs__link{% if item.active %} is-active{% endif %}"
+            href="{{ item.href }}"
+            {% if item.aria_label %}aria-label="{{ item.aria_label }}"{% endif %}
+            {% if item.active %}aria-current="page"{% endif %}
+          >
+            <span>{{ item.label }}</span>
+            {% if item.count is not null %}
+              <span class="gpc-tabs__count">{{ item.count }}</span>
+            {% endif %}
+          </a>
+        {% else %}
+          <span class="gpc-tabs__link{% if item.active %} is-active{% endif %}">
+            <span>{{ item.label }}</span>
+            {% if item.count is not null %}
+              <span class="gpc-tabs__count">{{ item.count }}</span>
+            {% endif %}
+          </span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
