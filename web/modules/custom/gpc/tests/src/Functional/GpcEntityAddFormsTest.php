@@ -114,6 +114,23 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that caliber add form quick-add mode carries its modal metadata.
+   */
+  public function testCaliberQuickAddModeAttachesTargetMetadata(): void {
+    $this->drupalGet('/admin/gpc/calibers/add', [
+      'query' => [
+        'gpc_quick_add' => '1',
+        'gpc_quick_add_target' => '#edit-caliber',
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseContains('js/quick-add.js');
+    $current_url = $this->getSession()->getCurrentUrl();
+    $this->assertStringContainsString('gpc_quick_add=1', $current_url);
+    $this->assertStringContainsString('gpc_quick_add_target=%23edit-caliber', $current_url);
+  }
+
+  /**
    * Tests the caliber edit form.
    */
   public function testCaliberEditForm(): void {
