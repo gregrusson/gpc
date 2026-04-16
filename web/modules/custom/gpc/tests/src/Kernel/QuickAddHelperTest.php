@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\gpc\Kernel;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\gpc\Utility\QuickAddHelper;
-use Drupal\user\Entity\User;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\user\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -39,6 +44,7 @@ class QuickAddHelperTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
+    $this->installEntitySchema('gpc_component');
     $this->installEntitySchema('user');
     $this->installEntitySchema('gpc_caliber');
   }
@@ -113,6 +119,50 @@ class QuickAddHelperTest extends KernelTestBase {
       '#edit-bullet-component',
       $anonymous,
     ));
+  }
+
+  /**
+   * Ensures the quick-add form submit action is AJAX-enabled only in modal mode.
+   */
+  public function testQuickAddModeAddsAjaxSubmitHandler(): void {
+    $request = Request::create('/admin/gpc/calibers/add', 'GET', [
+      QuickAddHelper::QUICK_ADD_QUERY_KEY => '1',
+      QuickAddHelper::TARGET_SELECTOR_KEY => '#edit-caliber',
+    ]);
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $this->container->get('request_stack')->push($request);
+
+    $entity = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->create([
+      'label' => '',
+      'machine_name' => 'quick_add_form_test',
+    ]);
+    $form = $this->container->get('entity.form_builder')->getForm($entity, 'add');
+
+    $this->assertSame('::ajaxSubmit', $form['actions']['submit']['#ajax']['callback']);
+  }
+
+  /**
+   * Ensures the quick-add AJAX submit callback returns the saved response.
+   */
+  public function testQuickAddAjaxSubmitReturnsExistingResponse(): void {
+    $entity = $this->container->get('entity_type.manager')->getStorage('gpc_caliber')->create([
+      'label' => 'Quick Add Caliber',
+      'machine_name' => 'quick_add_ajax_submit',
+    ]);
+    $form_object = $this->container->get('entity_type.manager')->getFormObject('gpc_caliber', 'add');
+    $form_object->setEntity($entity);
+
+    $response = new AjaxResponse();
+    $form_state = new FormState();
+    $form_state->setResponse($response);
+
+    $form = [
+      '#attributes' => [
+        'data-drupal-selector' => 'edit-gpc-caliber-add-form',
+      ],
+    ];
+
+    $this->assertSame($response, $form_object->ajaxSubmit($form, $form_state));
   }
 
 }
