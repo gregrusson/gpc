@@ -1,0 +1,6 @@
+quick_add:
+  js:
+    js/quick-add.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.ajax

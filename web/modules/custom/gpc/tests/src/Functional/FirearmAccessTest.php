@@ -69,6 +69,7 @@ class FirearmAccessTest extends BrowserTestBase {
 
     $this->submitForm([
       'label' => 'Glock 19',
+      'type' => 'pistol',
       'caliber' => $this->entityAutocompleteValue($this->caliber),
       'manufacturer' => 'Glock',
       'model' => '19',
@@ -85,6 +86,26 @@ class FirearmAccessTest extends BrowserTestBase {
     $firearm = reset($stored);
     $this->assertSame((int) $user->id(), (int) $firearm->getOwnerId());
     $this->assertSame((int) $this->caliber->id(), (int) $firearm->get('caliber')->target_id);
+  }
+
+  /**
+   * Tests that the firearm form exposes a quick-add action for caliber.
+   */
+  public function testFirearmFormIncludesCaliberQuickAddAction(): void {
+    $user = $this->drupalCreateUser([
+      'view gpc firearms',
+      'create gpc firearms',
+      'create gpc calibers',
+      'view gpc calibers',
+    ]);
+    $this->drupalLogin($user);
+
+    $this->drupalGet('/gpc/firearms/add');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('Add caliber');
+    $this->assertSession()->responseContains('gpc_quick_add=1');
+    $this->assertSession()->responseContains('data-dialog-type="modal"');
+    $this->assertSession()->responseContains('use-ajax');
   }
 
   /**
@@ -139,6 +160,7 @@ class FirearmAccessTest extends BrowserTestBase {
 
     $this->submitForm([
       'label' => 'Glock 19 MOS',
+      'type' => 'pistol',
       'caliber' => $this->entityAutocompleteValue($this->caliber),
       'manufacturer' => 'Glock',
       'model' => '19 MOS',
