@@ -44,6 +44,22 @@ function gpc_theme_preprocess_page(array &$variables): void {
   $variables['is_gpc_route'] = gpc_theme_is_gpc_path();
   $variables['has_drawer'] = !empty($variables['gpc_drawer_menu']['#items']);
   $variables['has_account_menu'] = !empty($variables['gpc_account_menu']['menu']['#items']);
+  $variables['gpc_breadcrumbs'] = gpc_theme_extract_page_blocks($variables['page'], 'pre_content', [
+    'gpc_theme_breadcrumbs',
+  ]);
+  $variables['gpc_page_actions'] = gpc_theme_extract_page_blocks($variables['page'], 'highlighted', [
+    'gpc_theme_primary_admin_actions',
+  ]);
+  $variables['gpc_local_tasks_primary'] = gpc_theme_extract_page_blocks($variables['page'], 'content', [
+    'gpc_theme_primary_local_tasks',
+  ]);
+  $variables['gpc_local_tasks_secondary'] = gpc_theme_extract_page_blocks($variables['page'], 'content', [
+    'gpc_theme_secondary_local_tasks',
+  ]);
+  gpc_theme_extract_page_blocks($variables['page'], 'content', [
+    'gpc_theme_page_title',
+  ]);
+  $variables['has_page_meta'] = !empty($variables['gpc_breadcrumbs']) || !empty($variables['gpc_page_actions']) || !empty($variables['gpc_local_tasks_primary']) || !empty($variables['gpc_local_tasks_secondary']) || !empty($variables['title']);
 
   $variables['page']['#cache']['tags'] = Cache::mergeTags(
     $variables['page']['#cache']['tags'] ?? [],
@@ -100,4 +116,25 @@ function gpc_theme_build_account_menu(): array {
     'trigger_label' => t('Account menu'),
     'menu' => gpc_theme_build_menu_tree('account', ['gpc-menu', 'gpc-menu--account']),
   ];
+}
+
+/**
+ * Extracts placed block render arrays from a region so the page shell can place them.
+ */
+function gpc_theme_extract_page_blocks(array &$page, string $region, array $keys): array {
+  if (empty($page[$region]) || !is_array($page[$region])) {
+    return [];
+  }
+
+  $build = [];
+  foreach ($keys as $key) {
+    if (!array_key_exists($key, $page[$region])) {
+      continue;
+    }
+
+    $build[$key] = $page[$region][$key];
+    unset($page[$region][$key]);
+  }
+
+  return $build;
 }

@@ -223,8 +223,25 @@ h3 {
   padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-7);
 }
 
+.gpc-page-meta {
+  display: grid;
+  gap: var(--gpc-space-3);
+  margin-bottom: var(--gpc-space-5);
+}
+
+.gpc-page-meta__breadcrumbs,
+.gpc-page-meta__actions,
+.gpc-local-tasks {
+  min-width: 0;
+}
+
+.gpc-page-head {
+  display: grid;
+  gap: var(--gpc-space-2);
+}
+
 .gpc-page-title {
-  margin-bottom: var(--gpc-space-4);
+  margin: 0;
 }
 
 .gpc-page-region + .gpc-page-region {
@@ -350,6 +367,97 @@ h3 {
 .gpc-page-lead,
 .help {
   color: var(--gpc-color-text-muted);
+}
+
+.breadcrumb {
+  color: var(--gpc-color-text-muted);
+  font-size: 0.9rem;
+}
+
+.breadcrumb ol,
+.breadcrumb ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb li + li::before {
+  content: '/';
+  color: var(--gpc-color-text-muted);
+  opacity: 0.7;
+}
+
+.breadcrumb a {
+  color: var(--gpc-color-text-muted);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover,
+.breadcrumb a:focus-visible {
+  color: var(--gpc-color-text);
+  text-decoration: none;
+}
+
+.breadcrumb .breadcrumb__item--current,
+.breadcrumb [aria-current='page'] {
+  color: var(--gpc-color-text);
+  font-weight: 600;
+}
+
+.action-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gpc-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.action-links li,
+.action-links-item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.action-links a,
+.action-links .button,
+.action-links-item a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.625rem;
+  padding: 0.65rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--gpc-color-primary) 22%, var(--gpc-color-border));
+  border-radius: var(--gpc-radius-md);
+  background: color-mix(in srgb, var(--gpc-color-primary) 8%, var(--gpc-color-surface));
+  color: var(--gpc-color-text);
+  text-decoration: none;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.action-links a:hover,
+.action-links a:focus-visible,
+.action-links .button:hover,
+.action-links .button:focus-visible,
+.action-links-item a:hover,
+.action-links-item a:focus-visible {
+  text-decoration: none;
+  background: color-mix(in srgb, var(--gpc-color-primary) 12%, var(--gpc-color-surface-elevated));
+  border-color: color-mix(in srgb, var(--gpc-color-primary) 30%, var(--gpc-color-border));
 }
 
 .region {
@@ -530,9 +638,24 @@ thead th {
 .tabs.primary,
 .tabs.secondary {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--gpc-space-2);
-  margin: 0 0 var(--gpc-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs li,
+.tabs__tab {
+  flex: 0 0 auto;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -543,22 +666,48 @@ thead th {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  padding: 0.6rem 0.9rem;
+  min-height: 2.5rem;
+  border-radius: var(--gpc-radius-md);
+  border: 1px solid var(--gpc-color-border);
+  padding: 0.6rem 0.85rem;
   background: transparent;
   color: var(--gpc-color-text-muted);
+  text-decoration: none;
   box-shadow: none;
+  white-space: nowrap;
 }
 
 .tabs a.is-active,
 .tabs button.is-active,
 .tabs__link.is-active,
+.tabs li.is-active a,
+.tabs li.is-active button,
+.tabs__tab.is-active .tabs__link,
 .tabs a:hover,
 .tabs button:hover {
-  border-color: var(--gpc-color-border);
+  text-decoration: none;
   background: var(--gpc-color-surface-elevated);
   color: var(--gpc-color-text);
+}
+
+.tabs a.is-active,
+.tabs button.is-active,
+.tabs__link.is-active,
+.tabs li.is-active a,
+.tabs li.is-active button,
+.tabs__tab.is-active .tabs__link {
+  border-color: color-mix(in srgb, var(--gpc-color-primary) 20%, var(--gpc-color-border));
+  background: color-mix(in srgb, var(--gpc-color-primary) 10%, var(--gpc-color-surface));
+  color: var(--gpc-color-primary);
+}
+
+.tabs.secondary a,
+.tabs.secondary button,
+.gpc-local-tasks__secondary .tabs a,
+.gpc-local-tasks__secondary .tabs button {
+  min-height: 2.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.92rem;
 }
 
 .messages {
@@ -706,14 +855,32 @@ dialog::backdrop {
 }
 
 .gpc-local-tasks {
-  margin-bottom: var(--gpc-space-4);
+  display: grid;
+  gap: var(--gpc-space-2);
 }
 
-.gpc-local-tasks .tabs {
-  overflow-x: auto;
-  flex-wrap: nowrap;
-  padding-bottom: 0.15rem;
-  -webkit-overflow-scrolling: touch;
+.gpc-local-tasks__primary,
+.gpc-local-tasks__secondary {
+  min-width: 0;
+}
+
+.gpc-local-tasks__primary .tabs {
+  padding: 0.25rem;
+  border: 1px solid var(--gpc-color-border);
+  border-radius: calc(var(--gpc-radius-lg) + 0.1rem);
+  background: color-mix(in srgb, var(--gpc-color-surface-elevated) 92%, transparent);
+}
+
+.gpc-local-tasks__secondary .tabs {
+  padding-top: 0.1rem;
+}
+
+.gpc-local-tasks__secondary .tabs a.is-active,
+.gpc-local-tasks__secondary .tabs button.is-active,
+.gpc-local-tasks__secondary .tabs li.is-active a,
+.gpc-local-tasks__secondary .tabs li.is-active button {
+  background: var(--gpc-color-surface-elevated);
+  color: var(--gpc-color-text);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -845,6 +1012,11 @@ dialog::backdrop {
     padding-inline: var(--gpc-space-3);
   }
 
+  .gpc-page-meta {
+    gap: var(--gpc-space-2);
+    margin-bottom: var(--gpc-space-4);
+  }
+
   .gpc-app-header__actions {
     gap: var(--gpc-space-1);
   }
@@ -854,8 +1026,19 @@ dialog::backdrop {
   }
 
   .gpc-page-title {
-    margin-bottom: var(--gpc-space-3);
     font-size: clamp(1.45rem, 6vw, 1.8rem);
+  }
+
+  .breadcrumb {
+    font-size: 0.85rem;
+  }
+
+  .action-links a,
+  .action-links .button,
+  .action-links-item a {
+    min-height: 2.5rem;
+    padding-inline: 0.85rem;
+    font-size: 0.95rem;
   }
 
   .gpc-menu .menu {

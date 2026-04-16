@@ -28,12 +28,47 @@
 
     <main id="main-content" class="gpc-main" role="main" tabindex="-1"{% if title %} aria-labelledby="page-title"{% endif %}>
       {{ title_prefix }}
-      {% if title %}
-        <header class="gpc-page-head">
-          <h1 class="gpc-page-title" id="page-title">{{ title }}</h1>
-        </header>
+      {% if has_page_meta %}
+        <section class="gpc-page-meta" aria-label="{{ 'Page information and controls'|t }}">
+          {% if gpc_breadcrumbs %}
+            <div class="gpc-page-meta__breadcrumbs">
+              {{ gpc_breadcrumbs }}
+            </div>
+          {% endif %}
+
+          {% if gpc_page_actions %}
+            <div class="gpc-page-meta__actions">
+              {{ gpc_page_actions }}
+            </div>
+          {% endif %}
+
+          {% if title %}
+            <header class="gpc-page-head">
+              <h1 class="gpc-page-title" id="page-title">{{ title }}</h1>
+              {{ title_suffix }}
+            </header>
+          {% else %}
+            {{ title_suffix }}
+          {% endif %}
+
+          {% if gpc_local_tasks_primary or gpc_local_tasks_secondary %}
+            <div class="gpc-local-tasks" aria-label="{{ 'Page sections'|t }}">
+              {% if gpc_local_tasks_primary %}
+                <div class="gpc-local-tasks__primary">
+                  {{ gpc_local_tasks_primary }}
+                </div>
+              {% endif %}
+              {% if gpc_local_tasks_secondary %}
+                <div class="gpc-local-tasks__secondary">
+                  {{ gpc_local_tasks_secondary }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </section>
+      {% else %}
+        {{ title_suffix }}
       {% endif %}
-      {{ title_suffix }}
 
       {% if page.pre_content %}
         <div class="gpc-page-region gpc-page-region--pre-content">
