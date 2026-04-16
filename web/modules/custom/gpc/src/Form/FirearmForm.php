@@ -6,6 +6,7 @@ namespace Drupal\gpc\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\gpc\Entity\Firearm;
+use Drupal\gpc\Utility\QuickAddHelper;
 
 /**
  * Form controller for firearm add/edit forms.
@@ -48,6 +49,13 @@ class FirearmForm extends GpcEntityFormBase {
       '#selection_settings' => [],
       '#description' => $this->t('Select the caliber associated with this firearm.'),
     ];
+    $form['caliber']['#suffix'] = QuickAddHelper::buildQuickAddLink(
+      'entity.gpc_caliber.add_form',
+      [],
+      $this->t('Add caliber'),
+      QuickAddHelper::buildTargetSelector('caliber'),
+    );
+    $form['caliber']['#attached']['library'][] = 'core/drupal.dialog.ajax';
 
     $form['manufacturer'] = [
       '#type' => 'textfield',
