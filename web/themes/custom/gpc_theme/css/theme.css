@@ -226,7 +226,7 @@ h3 {
 }
 
 .gpc-main {
-  width: min(100%, var(--gpc-body-max-width));
+  width: min(98%, var(--gpc-body-max-width));
   margin-inline: auto;
   padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-7);
 }
@@ -589,7 +589,7 @@ h3 {
 }
 
 /* Action buttons: generic Drupal classes and native button inputs use one system. */
-.gpc-page-shell button:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop),
+.gpc-page-shell button:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):not(.gpc-theme-toggle),
 .gpc-page-shell .button,
 .gpc-page-shell input[type='submit'],
 .gpc-page-shell input[type='button'],

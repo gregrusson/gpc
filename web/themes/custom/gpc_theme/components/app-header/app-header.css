@@ -15,6 +15,10 @@
   gap: var(--gpc-space-4);
 }
 
+.gpc-app-header__inner.u-container {
+  width: auto;
+}
+
 .gpc-app-header__brand {
   display: inline-flex;
   align-items: center;
