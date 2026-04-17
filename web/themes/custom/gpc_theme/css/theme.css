@@ -259,7 +259,8 @@ h3 {
 
 .block-system-breadcrumb-block,
 .block-local-actions-block,
-.block-local-tasks-block {
+.block-local-tasks-block,
+#block-gpc-theme-breadcrumbs {
   margin-bottom: var(--gpc-space-4);
 }
 
@@ -599,8 +600,8 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--gpc-button-min-height);
   padding: var(--gpc-button-padding-y) var(--gpc-button-padding-x);
+  margin-block-end: var(--gpc-space-4);
   border: 1px solid transparent;
   border-radius: var(--gpc-button-radius);
   background: var(--gpc-color-surface-elevated);
