@@ -224,7 +224,7 @@ h3 {
 
 .gpc-page-meta {
   display: grid;
-  gap: var(--gpc-space-3);
+  gap: var(--gpc-space-4);
   margin-bottom: var(--gpc-space-5);
 }
 
@@ -337,14 +337,18 @@ h3 {
 
 .gpc-page-meta__pre-content {
   display: grid;
-  gap: var(--gpc-space-2);
+  gap: var(--gpc-space-4);
   min-width: 0;
+}
+
+.gpc-page-meta__pre-content > * + * {
+  margin-top: var(--gpc-space-4);
 }
 
 .block-system-breadcrumb-block,
 .block-local-actions-block,
 .block-local-tasks-block {
-  margin-bottom: var(--gpc-space-3);
+  margin-bottom: var(--gpc-space-4);
 }
 
 .block-system-breadcrumb-block:last-child,
@@ -354,7 +358,7 @@ h3 {
 }
 
 .block-local-tasks-block .tabs {
-  margin-top: var(--gpc-space-1);
+  margin-top: var(--gpc-space-2);
 }
 
 .block-system-breadcrumb-block nav,
@@ -644,6 +648,48 @@ h3 {
   border-color: color-mix(in srgb, var(--gpc-color-primary) 30%, var(--gpc-color-border));
 }
 
+.gpc-page-shell .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gpc-space-2);
+  margin-top: var(--gpc-space-4);
+}
+
+.gpc-page-shell .form-actions .button,
+.gpc-page-shell .form-actions button,
+.gpc-page-shell .form-actions input[type='submit'],
+.gpc-page-shell .form-actions input[type='button'],
+.gpc-page-shell .form-actions input[type='reset'] {
+  margin: 0;
+}
+
+.gpc-page-shell .form-item .button,
+.gpc-page-shell .form-item .button--action,
+.gpc-page-shell .container-inline .button {
+  margin-top: var(--gpc-space-2);
+}
+
+.gpc-page-shell .description + .button,
+.gpc-page-shell .description + button,
+.gpc-page-shell .form-item__description + .button,
+.gpc-page-shell .form-item__description + button,
+.gpc-page-shell .description + .container-inline,
+.gpc-page-shell .form-item__description + .container-inline,
+.gpc-page-shell .fieldset-wrapper .button,
+.gpc-page-shell .fieldset-wrapper button,
+.gpc-page-shell .field-multiple-table + .button,
+.gpc-page-shell .field-multiple-table + button {
+  margin-top: var(--gpc-space-3);
+}
+
+.gpc-page-shell .button + .description,
+.gpc-page-shell button + .description,
+.gpc-page-shell .button + .form-item__description,
+.gpc-page-shell button + .form-item__description {
+  margin-top: var(--gpc-space-2);
+}
+
 .gpc-page-shell .region {
   margin-block-end: var(--gpc-space-4);
 }
@@ -706,6 +752,93 @@ h3 {
 .gpc-page-shell .button--secondary {
   border-color: var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
+}
+
+.gpc-page-shell .dropbutton-wrapper {
+  display: inline-flex;
+  margin-block: var(--gpc-space-1);
+  margin-inline: 0;
+  box-shadow: none;
+}
+
+.gpc-page-shell .dropbutton-widget {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--gpc-color-border);
+  border-radius: var(--gpc-radius-md);
+  background: var(--gpc-color-surface-elevated);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.gpc-page-shell .dropbutton {
+  display: flex;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gpc-page-shell .dropbutton__item {
+  margin: 0;
+}
+
+.gpc-page-shell .dropbutton__item:first-of-type > *,
+.gpc-page-shell .dropbutton-action > *,
+.gpc-page-shell .dropbutton-wrapper .dropbutton .dropbutton-action > *,
+.gpc-page-shell .dropbutton-wrapper .dropbutton .dropbutton__item > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.125rem;
+  padding: 0.35rem 0.7rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--gpc-color-text);
+  box-shadow: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.gpc-page-shell .dropbutton__toggle,
+.gpc-page-shell .dropbutton-toggle button,
+.gpc-page-shell .dropbutton-wrapper .dropbutton-toggle button {
+  width: 1.9rem;
+  min-height: 2.125rem;
+  border: 0 !important;
+  border-inline-start: 1px solid var(--gpc-color-border) !important;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--gpc-color-primary) 6%, var(--gpc-color-surface-elevated));
+  box-shadow: none;
+}
+
+.gpc-page-shell .dropbutton__toggle::before,
+.gpc-page-shell .dropbutton-toggle button::before {
+  width: 0.75rem;
+  height: 0.5rem;
+  background-size: contain;
+  opacity: 0.8;
+}
+
+.gpc-page-shell .dropbutton__toggle:hover,
+.gpc-page-shell .dropbutton__toggle:focus-visible,
+.gpc-page-shell .dropbutton-toggle button:hover,
+.gpc-page-shell .dropbutton-toggle button:focus-visible,
+.gpc-page-shell .dropbutton-wrapper .dropbutton .dropbutton-action > *:hover,
+.gpc-page-shell .dropbutton-wrapper .dropbutton .dropbutton-action > *:focus-visible {
+  background: color-mix(in srgb, var(--gpc-color-primary) 10%, var(--gpc-color-surface-elevated));
+}
+
+.gpc-page-shell .dropbutton--multiple.open .dropbutton-widget,
+.gpc-page-shell .dropbutton-wrapper.open .dropbutton-widget {
+  border-radius: var(--gpc-radius-md) var(--gpc-radius-md) 0 0;
+}
+
+.gpc-page-shell .dropbutton--multiple .dropbutton__item:first-of-type {
+  margin-inline-end: 0;
 }
 
 .gpc-page-shell input,
@@ -1220,7 +1353,7 @@ h3 {
   }
 
   .gpc-page-meta {
-    gap: var(--gpc-space-2);
+    gap: var(--gpc-space-3);
     margin-bottom: var(--gpc-space-4);
   }
 

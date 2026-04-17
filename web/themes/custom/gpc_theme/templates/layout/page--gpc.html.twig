@@ -18,11 +18,10 @@
 
   <div class="gpc-page-shell__body{% if has_drawer %} gpc-page-shell__body--with-drawer{% endif %}">
     {% if has_drawer %}
-      {{ include('gpc_theme:app-drawer', {
-        title: 'Navigation',
-        drawer_id: gpc_drawer_id,
-        content: gpc_drawer_menu,
-      }, with_context = false) }}
+  {{ include('gpc_theme:app-drawer', {
+    drawer_id: gpc_drawer_id,
+    content: gpc_drawer_menu,
+  }, with_context = false) }}
       <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
     {% endif %}
 

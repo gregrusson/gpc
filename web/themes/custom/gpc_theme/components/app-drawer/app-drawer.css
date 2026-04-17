@@ -42,13 +42,8 @@
   border-bottom: 1px solid var(--gpc-color-border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--gpc-space-3);
-}
-
-.gpc-app-drawer__title {
-  margin: 0;
-  font-size: 1rem;
+  justify-content: flex-end;
+  gap: var(--gpc-space-2);
 }
 
 .gpc-app-drawer__close {
