@@ -1,0 +1,76 @@
+{#
+/**
+ * @file
+ * Default page shell for the GPC theme.
+ */
+#}
+<div class="gpc-page-shell{% if is_gpc_route %} gpc-page-shell--app{% endif %}">
+  {{ include('gpc_theme:app-header', {
+    site_name: site_name,
+    site_slogan: site_slogan,
+    home_url: front_page,
+    drawer_id: gpc_drawer_id,
+    show_drawer_toggle: has_drawer,
+    show_theme_toggle: true,
+    account_menu: gpc_account_menu,
+    actions: page.header,
+  }, with_context = false) }}
+
+  <div class="gpc-page-shell__body{% if has_drawer %} gpc-page-shell__body--with-drawer{% endif %}">
+    {% if has_drawer %}
+  {{ include('gpc_theme:app-drawer', {
+    drawer_id: gpc_drawer_id,
+    content: gpc_drawer_menu,
+  }, with_context = false) }}
+      <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
+    {% endif %}
+
+    <main id="main-content" class="gpc-main" role="main" tabindex="-1"{% if title %} aria-labelledby="page-title"{% endif %}>
+      {{ title_prefix }}
+      {% if page.pre_content or title %}
+        <section class="gpc-page-meta" aria-label="{{ 'Page information and controls'|t }}">
+          {% if page.pre_content %}
+            <div class="gpc-page-meta__pre-content">
+              {{ page.pre_content }}
+            </div>
+          {% endif %}
+
+          {% if title %}
+            <header class="gpc-page-head">
+              <h1 class="gpc-page-title" id="page-title">{{ title }}</h1>
+              {{ title_suffix }}
+            </header>
+          {% else %}
+            {{ title_suffix }}
+          {% endif %}
+        </section>
+      {% else %}
+        {{ title_suffix }}
+      {% endif %}
+
+      {% if page.pre_content %}
+        <div class="gpc-page-region gpc-page-region--pre-content">
+          {{ page.pre_content }}
+        </div>
+      {% endif %}
+
+      {% if page.highlighted %}
+        <div class="gpc-page-region gpc-page-region--highlighted">
+          {{ page.highlighted }}
+        </div>
+      {% endif %}
+
+      {% if page.help %}
+        <div class="gpc-page-region gpc-page-region--help help">
+          {{ page.help }}
+        </div>
+      {% endif %}
+
+      <section class="gpc-page-region gpc-page-region--content">
+        <div class="gpc-content-grid">
+          {{ page.content }}
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

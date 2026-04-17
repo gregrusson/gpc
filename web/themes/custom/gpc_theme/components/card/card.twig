@@ -1,0 +1,28 @@
+<article class="gpc-card{% if compact %} gpc-card--compact{% endif %}">
+  {% if media %}
+    <div class="gpc-card__media">
+      {{ media }}
+    </div>
+  {% endif %}
+
+  <div class="gpc-card__body">
+    {% if eyebrow %}
+      <div class="gpc-card__eyebrow">{{ eyebrow }}</div>
+    {% endif %}
+
+    {% if title %}
+      <h3 class="gpc-card__title">{{ title }}</h3>
+    {% endif %}
+
+    <div class="gpc-card__content">
+      {{ content }}
+    </div>
+  </div>
+
+  {% if footer %}
+    <div class="gpc-card__footer">
+      {{ footer }}
+    </div>
+  {% endif %}
+</article>
+

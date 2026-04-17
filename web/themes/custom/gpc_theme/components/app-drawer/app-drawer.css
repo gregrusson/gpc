@@ -1,0 +1,111 @@
+.gpc-app-drawer {
+  position: fixed;
+  inset: var(--gpc-header-height) auto 0 0;
+  width: var(--gpc-drawer-width);
+  max-width: calc(100vw - 2rem);
+  transform: translateX(-110%);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    transform var(--gpc-transition),
+    opacity var(--gpc-transition),
+    visibility 0s linear var(--gpc-transition);
+  z-index: 35;
+  pointer-events: none;
+  overscroll-behavior: contain;
+}
+
+.gpc-app-drawer[data-open='true'] {
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    transform var(--gpc-transition),
+    opacity var(--gpc-transition),
+    visibility 0s;
+}
+
+.gpc-app-drawer__panel {
+  height: 100%;
+  margin: var(--gpc-space-4);
+  border: 1px solid var(--gpc-color-border);
+  border-radius: var(--gpc-radius-lg);
+  background: var(--gpc-color-surface);
+  box-shadow: var(--gpc-shadow-md);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.gpc-app-drawer__header {
+  padding: var(--gpc-space-4);
+  border-bottom: 1px solid var(--gpc-color-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gpc-space-2);
+}
+
+.gpc-app-drawer__close {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: var(--gpc-radius-md);
+  border: 1px solid var(--gpc-color-border);
+  background: var(--gpc-color-surface-elevated);
+  color: var(--gpc-color-text);
+  box-shadow: var(--gpc-shadow-sm);
+  cursor: pointer;
+}
+
+.gpc-app-drawer__content {
+  padding: var(--gpc-space-4);
+}
+
+.gpc-app-drawer__content > * + * {
+  margin-top: var(--gpc-space-3);
+}
+
+.gpc-app-drawer__content .gpc-menu--drawer {
+  gap: 0.4rem;
+}
+
+@media (max-width: 37.5rem) {
+  .gpc-app-drawer {
+    width: min(20rem, 86vw);
+  }
+
+  .gpc-app-drawer__panel {
+    margin: 0;
+    min-height: calc(100vh - var(--gpc-header-height));
+    border-radius: 0 0 var(--gpc-radius-lg) 0;
+  }
+
+  .gpc-app-drawer__header,
+  .gpc-app-drawer__content {
+    padding: var(--gpc-space-3);
+  }
+}
+
+@media (min-width: 64rem) {
+  .gpc-app-drawer {
+    position: sticky;
+    inset: auto;
+    transform: none;
+    visibility: visible;
+    opacity: 1;
+    width: var(--gpc-drawer-width);
+    max-width: none;
+    pointer-events: auto;
+    align-self: start;
+  }
+
+  .gpc-app-drawer__panel {
+    margin: var(--gpc-space-4);
+    min-height: calc(100vh - var(--gpc-header-height) - var(--gpc-space-4));
+  }
+
+  .gpc-app-drawer__close {
+    display: none;
+  }
+}

@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Form section
+description: Grouped form section with title and helper text.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - title
+    - content
+  properties:
+    id:
+      type:
+        - string
+        - 'null'
+      title: ID
+    title:
+      type: string
+      title: Title
+    description:
+      type:
+        - string
+        - 'null'
+      title: Description
+    content:
+      type:
+        - array
+        - object
+        - string
+        - 'null'
+      title: Content
+    compact:
+      type: boolean
+      title: Compact
+      default: false
+

@@ -1,0 +1,29 @@
+<section class="gpc-empty-state" aria-label="{{ title }}">
+  <div class="gpc-empty-state__content">
+    <h3 class="gpc-empty-state__title">{{ title }}</h3>
+    {% if description %}
+      <p class="gpc-empty-state__description">{{ description }}</p>
+    {% endif %}
+
+    {% if primary_action_label or secondary_action_label %}
+      <div class="gpc-empty-state__actions">
+        {% if primary_action_label and primary_action_href %}
+          {{ include('gpc_theme:button', {
+            label: primary_action_label,
+            href: primary_action_href,
+            variant: 'primary'
+          }, with_context = false) }}
+        {% endif %}
+
+        {% if secondary_action_label and secondary_action_href %}
+          {{ include('gpc_theme:button', {
+            label: secondary_action_label,
+            href: secondary_action_href,
+            variant: 'secondary'
+          }, with_context = false) }}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+

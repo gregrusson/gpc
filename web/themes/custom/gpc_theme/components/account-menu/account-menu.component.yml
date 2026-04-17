@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Account menu
+description: Expandable account menu with profile trigger and account actions.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - label
+    - menu
+  properties:
+    label:
+      type: string
+      title: Label
+    subtitle:
+      type:
+        - string
+        - 'null'
+      title: Subtitle
+    menu:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Menu
+      description: Rendered Drupal account menu tree.
+    authenticated:
+      type: boolean
+      title: Authenticated
+      default: false
+    trigger_label:
+      type:
+        - string
+        - 'null'
+      title: Trigger label
+

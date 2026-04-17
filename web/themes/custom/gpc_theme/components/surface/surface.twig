@@ -1,0 +1,5 @@
+{% set tag = tag|default('div') %}
+<{{ tag }} class="gpc-surface gpc-surface--{{ tone|default('default') }}{% if elevated %} gpc-surface--elevated{% endif %}{% if padded %} gpc-surface--padded{% endif %}">
+  {{ content }}
+</{{ tag }}>
+

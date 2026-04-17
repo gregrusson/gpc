@@ -1,0 +1,30 @@
+<details class="gpc-account-menu{% if authenticated %} gpc-account-menu--authenticated{% else %} gpc-account-menu--anonymous{% endif %}">
+  <summary class="gpc-account-menu__trigger">
+    <span class="gpc-account-menu__avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" class="gpc-account-menu__avatar-icon">
+        <path d="M20 21a8 8 0 0 0-16 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      </svg>
+    </span>
+
+    <span class="gpc-account-menu__text">
+      <span class="gpc-account-menu__label">{{ label }}</span>
+      {% if subtitle %}
+        <span class="gpc-account-menu__subtitle">{{ subtitle }}</span>
+      {% endif %}
+    </span>
+
+    <span class="gpc-account-menu__chevron" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" class="gpc-account-menu__chevron-icon">
+        <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </summary>
+
+  <div class="gpc-account-menu__panel">
+    <nav class="gpc-account-menu__nav" aria-label="{{ trigger_label|default('Account menu') }}">
+      {{ menu }}
+    </nav>
+  </div>
+</details>
+

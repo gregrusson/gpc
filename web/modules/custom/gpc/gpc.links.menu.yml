@@ -67,3 +67,27 @@ gpc.reference_merge:
   route_name: gpc.reference_merge.landing
   parent: gpc.admin
   weight: 14
+
+gpc.account.page:
+  route_name: user.page
+  title: 'My account'
+  menu_name: account
+  weight: 0
+
+gpc.account.login:
+  route_name: user.login
+  title: 'Log in'
+  menu_name: account
+  weight: 10
+
+gpc.account.register:
+  route_name: user.register
+  title: 'Register'
+  menu_name: account
+  weight: 20
+
+gpc.account.logout:
+  route_name: user.logout
+  title: 'Log out'
+  menu_name: account
+  weight: 30

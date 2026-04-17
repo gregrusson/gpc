@@ -1,0 +1,32 @@
+<div class="gpc-data-table{% if compact %} gpc-data-table--compact{% endif %}{% if striped %} gpc-data-table--striped{% endif %}">
+  {% if caption %}
+    <div class="gpc-data-table__caption">{{ caption }}</div>
+  {% endif %}
+
+  <div class="gpc-data-table__scroll" role="region" tabindex="0" aria-label="{{ caption|default('Data table') }}">
+    <table class="gpc-data-table__table">
+      <thead>
+        <tr>
+          {% for header in headers %}
+            <th{% if header.scope %} scope="{{ header.scope }}"{% endif %}>{{ header.label }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if rows %}
+          {% for row in rows %}
+            <tr>
+              {% for cell in row %}
+                <td>{{ cell }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="{{ headers|length }}">{{ empty_message|default('No records found.') }}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>

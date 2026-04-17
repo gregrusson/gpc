@@ -1,0 +1,59 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Data table
+description: Responsive data table wrapper with schema-checked rows.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - headers
+    - rows
+  properties:
+    caption:
+      type:
+        - string
+        - 'null'
+      title: Caption
+    headers:
+      type: array
+      title: Headers
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - label
+        properties:
+          label:
+            type: string
+            title: Label
+          scope:
+            type:
+              - string
+              - 'null'
+            title: Scope
+    rows:
+      type: array
+      title: Rows
+      items:
+        type: array
+        title: Cells
+        items:
+          type:
+            - array
+            - object
+            - string
+            - integer
+            - 'null'
+    empty_message:
+      type: string
+      title: Empty message
+      default: No records found.
+    striped:
+      type: boolean
+      title: Striped
+      default: false
+    compact:
+      type: boolean
+      title: Compact
+      default: false
+

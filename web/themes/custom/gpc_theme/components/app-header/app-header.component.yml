@@ -1,0 +1,52 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: App header
+description: Primary application header with branding, drawer toggle, and actions.
+status: stable
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - site_name
+    - home_url
+    - drawer_id
+  properties:
+    site_name:
+      type: string
+      title: Site name
+    site_slogan:
+      type:
+        - string
+        - 'null'
+      title: Site slogan
+    home_url:
+      type: string
+      title: Home URL
+    drawer_id:
+      type: string
+      title: Drawer ID
+    drawer_label:
+      type: string
+      title: Drawer label
+      default: Toggle navigation
+    show_drawer_toggle:
+      type: boolean
+      title: Show drawer toggle
+      default: true
+    show_theme_toggle:
+      type: boolean
+      title: Show theme toggle
+      default: true
+    actions:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Actions region
+      description: Optional rendered actions or utility content.
+    account_menu:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Account menu
+      description: Rendered account menu component output.

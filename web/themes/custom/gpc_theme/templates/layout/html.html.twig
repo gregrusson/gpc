@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Basic HTML document shell for the GPC theme.
+ */
+#}
+{% set body_classes = [
+  logged_in ? 'user-logged-in',
+  not root_path ? 'path-frontpage' : 'path-' ~ root_path|clean_class,
+  node_type ? 'page-node-type-' ~ node_type|clean_class,
+  db_offline ? 'db-offline',
+  'gpc-site-shell',
+] %}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+<head>
+  <head-placeholder token="{{ placeholder_token }}"></head-placeholder>
+  <title>{{ head_title|safe_join(' | ') }}</title>
+  <meta name="color-scheme" content="light dark">
+  <css-placeholder token="{{ placeholder_token }}"></css-placeholder>
+  <js-placeholder token="{{ placeholder_token }}"></js-placeholder>
+  <script>
+    (function () {
+      var key = 'gpc-theme';
+      var root = document.documentElement;
+      var stored = null;
+
+      try {
+        stored = window.localStorage.getItem(key);
+      } catch (error) {
+        stored = null;
+      }
+
+      var theme = stored === 'light' || stored === 'dark'
+        ? stored
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+      root.dataset.theme = theme;
+      root.dataset.themeSource = stored === 'light' || stored === 'dark' ? 'manual' : 'system';
+      root.style.colorScheme = theme;
+    }());
+  </script>
+</head>
+<body{{ attributes.addClass(body_classes) }}>
+{{ page_top }}
+{{ page }}
+{{ page_bottom }}
+<js-bottom-placeholder token="{{ placeholder_token }}"></js-bottom-placeholder>
+</body>
+</html>

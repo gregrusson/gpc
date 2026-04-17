@@ -1,0 +1,27 @@
+<aside
+  id="{{ drawer_id }}"
+  class="gpc-app-drawer"
+  data-drawer
+  data-open="false"
+  role="navigation"
+  aria-label="{{ 'Main navigation'|t }}"
+  aria-hidden="true"
+>
+  <div class="gpc-app-drawer__panel">
+    <div class="gpc-app-drawer__header">
+      <button
+        class="gpc-app-drawer__close"
+        type="button"
+        data-drawer-close
+        data-drawer-target="{{ drawer_id }}"
+        aria-label="{{ 'Close navigation'|t }}"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <div class="gpc-app-drawer__content">
+      {{ content }}
+    </div>
+  </div>
+</aside>
