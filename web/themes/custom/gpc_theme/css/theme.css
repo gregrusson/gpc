@@ -31,6 +31,11 @@
   --gpc-body-max-width: 80rem;
   --gpc-transition: 160ms ease;
   --gpc-font-sans: 'IBM Plex Sans', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --gpc-button-radius: var(--gpc-radius-md);
+  --gpc-button-min-height: 2.75rem;
+  --gpc-button-padding-y: 0.75rem;
+  --gpc-button-padding-x: 1rem;
+  --gpc-button-font-weight: 600;
 }
 
 :root[data-theme='dark'] {
@@ -664,59 +669,26 @@ h3 {
   margin: 0;
 }
 
-.gpc-page-shell .form-item .button,
-.gpc-page-shell .form-item .button--action,
-.gpc-page-shell .container-inline .button {
-  margin-top: var(--gpc-space-2);
-}
-
-.gpc-page-shell .description + .button,
-.gpc-page-shell .description + button,
-.gpc-page-shell .form-item__description + .button,
-.gpc-page-shell .form-item__description + button,
-.gpc-page-shell .description + .container-inline,
-.gpc-page-shell .form-item__description + .container-inline,
-.gpc-page-shell .fieldset-wrapper .button,
-.gpc-page-shell .fieldset-wrapper button,
-.gpc-page-shell .field-multiple-table + .button,
-.gpc-page-shell .field-multiple-table + button {
-  margin-top: var(--gpc-space-3);
-}
-
-.gpc-page-shell .button + .description,
-.gpc-page-shell button + .description,
-.gpc-page-shell .button + .form-item__description,
-.gpc-page-shell button + .form-item__description {
-  margin-top: var(--gpc-space-2);
-}
-
-.gpc-page-shell .region {
-  margin-block-end: var(--gpc-space-4);
-}
-
-.gpc-page-shell .region > * + * {
-  margin-top: var(--gpc-space-4);
-}
-
-.gpc-page-shell button,
-.gpc-page-shell input,
-.gpc-page-shell select,
-.gpc-page-shell textarea {
-  font: inherit;
-}
-
+/* Action buttons: generic Drupal classes and native button inputs use one system. */
 .gpc-page-shell button,
 .gpc-page-shell .button,
 .gpc-page-shell input[type='submit'],
 .gpc-page-shell input[type='button'],
 .gpc-page-shell input[type='reset'] {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--gpc-button-min-height);
+  padding: var(--gpc-button-padding-y) var(--gpc-button-padding-x);
   border: 1px solid transparent;
-  border-radius: var(--gpc-radius-md);
+  border-radius: var(--gpc-button-radius);
   background: var(--gpc-color-surface-elevated);
   color: var(--gpc-color-text);
-  min-height: 2.75rem;
-  padding: 0.75rem 1rem;
   box-shadow: var(--gpc-shadow-sm);
+  font-weight: var(--gpc-button-font-weight);
+  line-height: 1.1;
+  white-space: nowrap;
   transition:
     background-color var(--gpc-transition),
     border-color var(--gpc-transition),
@@ -741,17 +713,133 @@ h3 {
   transform: none;
 }
 
-.gpc-page-shell .button,
+.gpc-page-shell .button--primary,
 .gpc-page-shell button.button--primary,
 .gpc-page-shell input.button--primary,
-.gpc-page-shell input[type='submit'] {
+.gpc-page-shell input[type='submit']:not(.button--secondary):not(.button--danger) {
+  border-color: var(--gpc-color-primary);
   background: var(--gpc-color-primary);
   color: var(--gpc-color-primary-contrast);
 }
 
-.gpc-page-shell .button--secondary {
+.gpc-page-shell .button--primary:hover,
+.gpc-page-shell .button--primary:focus-visible,
+.gpc-page-shell button.button--primary:hover,
+.gpc-page-shell button.button--primary:focus-visible,
+.gpc-page-shell input.button--primary:hover,
+.gpc-page-shell input.button--primary:focus-visible,
+.gpc-page-shell input[type='submit']:not(.button--secondary):not(.button--danger):hover,
+.gpc-page-shell input[type='submit']:not(.button--secondary):not(.button--danger):focus-visible {
+  border-color: color-mix(in srgb, var(--gpc-color-primary) 85%, black);
+  background: color-mix(in srgb, var(--gpc-color-primary) 88%, black);
+  color: var(--gpc-color-primary-contrast);
+}
+
+.gpc-page-shell .button,
+.gpc-page-shell .button--secondary,
+.gpc-page-shell button.button--secondary,
+.gpc-page-shell input.button--secondary,
+.gpc-page-shell input[type='button'],
+.gpc-page-shell input[type='reset'] {
   border-color: var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
+  color: var(--gpc-color-text);
+}
+
+.gpc-page-shell .button:hover,
+.gpc-page-shell .button:focus-visible,
+.gpc-page-shell .button--secondary:hover,
+.gpc-page-shell .button--secondary:focus-visible,
+.gpc-page-shell button.button--secondary:hover,
+.gpc-page-shell button.button--secondary:focus-visible,
+.gpc-page-shell input.button--secondary:hover,
+.gpc-page-shell input.button--secondary:focus-visible,
+.gpc-page-shell input[type='button']:hover,
+.gpc-page-shell input[type='button']:focus-visible,
+.gpc-page-shell input[type='reset']:hover,
+.gpc-page-shell input[type='reset']:focus-visible {
+  border-color: color-mix(in srgb, var(--gpc-color-primary) 22%, var(--gpc-color-border));
+  background: color-mix(in srgb, var(--gpc-color-primary) 8%, var(--gpc-color-surface-elevated));
+  color: var(--gpc-color-text);
+}
+
+.gpc-page-shell .button--danger,
+.gpc-page-shell button.button--danger,
+.gpc-page-shell input.button--danger {
+  border-color: var(--gpc-color-danger);
+  background: var(--gpc-color-danger);
+  color: #fff;
+}
+
+.gpc-page-shell .button--danger:hover,
+.gpc-page-shell .button--danger:focus-visible,
+.gpc-page-shell button.button--danger:hover,
+.gpc-page-shell button.button--danger:focus-visible,
+.gpc-page-shell input.button--danger:hover,
+.gpc-page-shell input.button--danger:focus-visible {
+  border-color: color-mix(in srgb, var(--gpc-color-danger) 84%, black);
+  background: color-mix(in srgb, var(--gpc-color-danger) 88%, black);
+  color: #fff;
+}
+
+/* Inline utility buttons inside forms need extra breathing room from labels/help text. */
+.gpc-page-shell .form-item .button,
+.gpc-page-shell .form-item .button--action,
+.gpc-page-shell .form-item button,
+.gpc-page-shell .form-item input[type='submit'],
+.gpc-page-shell .form-item input[type='button'],
+.gpc-page-shell .form-item input[type='reset'],
+.gpc-page-shell .container-inline .button,
+.gpc-page-shell .container-inline button,
+.gpc-page-shell .container-inline input[type='submit'],
+.gpc-page-shell .container-inline input[type='button'],
+.gpc-page-shell .container-inline input[type='reset'] {
+  margin-top: var(--gpc-space-2);
+}
+
+.gpc-page-shell .description + .button,
+.gpc-page-shell .description + button,
+.gpc-page-shell .description + input[type='submit'],
+.gpc-page-shell .description + input[type='button'],
+.gpc-page-shell .form-item__description + .button,
+.gpc-page-shell .form-item__description + button,
+.gpc-page-shell .form-item__description + input[type='submit'],
+.gpc-page-shell .form-item__description + input[type='button'],
+.gpc-page-shell .description + .container-inline,
+.gpc-page-shell .form-item__description + .container-inline,
+.gpc-page-shell .fieldset-wrapper .button,
+.gpc-page-shell .fieldset-wrapper button,
+.gpc-page-shell .fieldset-wrapper input[type='submit'],
+.gpc-page-shell .fieldset-wrapper input[type='button'],
+.gpc-page-shell .field-multiple-table + .button,
+.gpc-page-shell .field-multiple-table + button,
+.gpc-page-shell .field-multiple-table + input[type='submit'],
+.gpc-page-shell .field-multiple-table + input[type='button'] {
+  margin-top: var(--gpc-space-3);
+}
+
+.gpc-page-shell .button + .description,
+.gpc-page-shell button + .description,
+.gpc-page-shell input[type='submit'] + .description,
+.gpc-page-shell input[type='button'] + .description,
+.gpc-page-shell .button + .form-item__description,
+.gpc-page-shell button + .form-item__description,
+.gpc-page-shell input[type='submit'] + .form-item__description,
+.gpc-page-shell input[type='button'] + .form-item__description,
+.gpc-page-shell .button + .form-item,
+.gpc-page-shell button + .form-item,
+.gpc-page-shell input[type='submit'] + .form-item,
+.gpc-page-shell input[type='button'] + .form-item,
+.gpc-page-shell .container-inline + .form-item {
+  margin-top: var(--gpc-space-2);
+}
+
+.gpc-page-shell .region {
+  margin-block-end: var(--gpc-space-4);
+}
+
+.gpc-page-shell .region > * + * {
+  margin-top: var(--gpc-space-4);
 }
 
 .gpc-page-shell .dropbutton-wrapper {
@@ -841,9 +929,23 @@ h3 {
   margin-inline-end: 0;
 }
 
-.gpc-page-shell input,
+/* Form controls: only text-like inputs get full-width field treatment. */
+.gpc-page-shell input:not([type]),
+.gpc-page-shell input[type='text'],
+.gpc-page-shell input[type='search'],
+.gpc-page-shell input[type='email'],
+.gpc-page-shell input[type='password'],
+.gpc-page-shell input[type='url'],
+.gpc-page-shell input[type='tel'],
+.gpc-page-shell input[type='number'],
+.gpc-page-shell input[type='date'],
+.gpc-page-shell input[type='datetime-local'],
+.gpc-page-shell input[type='month'],
+.gpc-page-shell input[type='time'],
+.gpc-page-shell input[type='week'],
 .gpc-page-shell select,
 .gpc-page-shell textarea {
+  font: inherit;
   width: 100%;
   border: 1px solid var(--gpc-color-border);
   border-radius: var(--gpc-radius-md);
