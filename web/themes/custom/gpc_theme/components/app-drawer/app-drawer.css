@@ -50,11 +50,12 @@
   width: 2.5rem;
   height: 2.5rem;
   padding: 0;
-  border-radius: 999px;
+  border-radius: var(--gpc-radius-md);
   border: 1px solid var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
   color: var(--gpc-color-text);
-  box-shadow: none;
+  box-shadow: var(--gpc-shadow-sm);
+  cursor: pointer;
 }
 
 .gpc-app-drawer__content {

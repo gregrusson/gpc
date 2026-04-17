@@ -248,6 +248,8 @@ h3 {
   margin-top: var(--gpc-space-4);
 }
 
+.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] :is(ol, ul, li),
+.gpc-page-meta__pre-content .breadcrumb :is(ol, ul, li),
 .gpc-page-meta__pre-content :is(.block-system-breadcrumb-block, .block-local-actions-block, .block-local-tasks-block) :is(ul, ol),
 .gpc-page-meta__pre-content :is(.block-system-breadcrumb-block, .block-local-actions-block, .block-local-tasks-block) li {
   margin: 0;
@@ -414,6 +416,7 @@ h3 {
 }
 
 /* Drupal page chrome */
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'],
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'],
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb {
   min-width: 0;
@@ -422,6 +425,8 @@ h3 {
   line-height: 1.35;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] > ol,
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] > ul,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] > ol,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] > ul,
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb ol,
@@ -439,6 +444,7 @@ h3 {
   list-style: none;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] li,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] li,
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb li,
 .gpc-page-shell .breadcrumb__item,
@@ -451,6 +457,7 @@ h3 {
   padding: 0;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] li + li::before,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] li + li::before,
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb li + li::before,
 .gpc-page-shell .breadcrumb__item + .breadcrumb__item::before,
@@ -460,6 +467,7 @@ h3 {
   opacity: 0.7;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] a,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] a,
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb a,
 .gpc-page-shell .breadcrumb__link,
@@ -469,6 +477,8 @@ h3 {
   text-underline-offset: 0.15em;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] a:hover,
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] a:focus-visible,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] a:hover,
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] a:focus-visible,
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb a:hover,
@@ -481,6 +491,7 @@ h3 {
   text-decoration: none;
 }
 
+.gpc-page-shell nav[aria-labelledby='system-breadcrumb'] [aria-current='page'],
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'] [aria-current='page'],
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb [aria-current='page'],
 .gpc-page-shell .breadcrumb__item--current,
@@ -577,7 +588,7 @@ h3 {
 }
 
 /* Action buttons: generic Drupal classes and native button inputs use one system. */
-.gpc-page-shell button,
+.gpc-page-shell button:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop),
 .gpc-page-shell .button,
 .gpc-page-shell input[type='submit'],
 .gpc-page-shell input[type='button'],
@@ -607,7 +618,7 @@ h3 {
     transform var(--gpc-transition);
 }
 
-.gpc-page-shell button:hover,
+.gpc-page-shell button:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):hover,
 .gpc-page-shell .button:hover,
 .gpc-page-shell input[type='submit']:hover,
 .gpc-page-shell input[type='button']:hover,
@@ -615,7 +626,7 @@ h3 {
   transform: translateY(-1px);
 }
 
-.gpc-page-shell button[disabled],
+.gpc-page-shell button:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop)[disabled],
 .gpc-page-shell .button.is-disabled,
 .gpc-page-shell input[disabled] {
   cursor: not-allowed;
@@ -624,7 +635,7 @@ h3 {
 }
 
 .gpc-page-shell .button--primary,
-.gpc-page-shell button.button--primary,
+.gpc-page-shell button.button--primary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop),
 .gpc-page-shell input.button--primary,
 .gpc-page-shell input[type='submit']:not(.button--secondary):not(.button--danger) {
   border-color: var(--gpc-color-primary);
@@ -634,8 +645,8 @@ h3 {
 
 .gpc-page-shell .button--primary:hover,
 .gpc-page-shell .button--primary:focus-visible,
-.gpc-page-shell button.button--primary:hover,
-.gpc-page-shell button.button--primary:focus-visible,
+.gpc-page-shell button.button--primary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):hover,
+.gpc-page-shell button.button--primary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):focus-visible,
 .gpc-page-shell input.button--primary:hover,
 .gpc-page-shell input.button--primary:focus-visible,
 .gpc-page-shell input[type='submit']:not(.button--secondary):not(.button--danger):hover,
@@ -647,7 +658,7 @@ h3 {
 
 .gpc-page-shell .button,
 .gpc-page-shell .button--secondary,
-.gpc-page-shell button.button--secondary,
+.gpc-page-shell button.button--secondary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop),
 .gpc-page-shell input.button--secondary,
 .gpc-page-shell input[type='button'],
 .gpc-page-shell input[type='reset'] {
@@ -660,8 +671,8 @@ h3 {
 .gpc-page-shell .button:focus-visible,
 .gpc-page-shell .button--secondary:hover,
 .gpc-page-shell .button--secondary:focus-visible,
-.gpc-page-shell button.button--secondary:hover,
-.gpc-page-shell button.button--secondary:focus-visible,
+.gpc-page-shell button.button--secondary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):hover,
+.gpc-page-shell button.button--secondary:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):focus-visible,
 .gpc-page-shell input.button--secondary:hover,
 .gpc-page-shell input.button--secondary:focus-visible,
 .gpc-page-shell input[type='button']:hover,
@@ -674,7 +685,7 @@ h3 {
 }
 
 .gpc-page-shell .button--danger,
-.gpc-page-shell button.button--danger,
+.gpc-page-shell button.button--danger:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop),
 .gpc-page-shell input.button--danger {
   border-color: var(--gpc-color-danger);
   background: var(--gpc-color-danger);
@@ -683,8 +694,8 @@ h3 {
 
 .gpc-page-shell .button--danger:hover,
 .gpc-page-shell .button--danger:focus-visible,
-.gpc-page-shell button.button--danger:hover,
-.gpc-page-shell button.button--danger:focus-visible,
+.gpc-page-shell button.button--danger:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):hover,
+.gpc-page-shell button.button--danger:not(.gpc-app-header__toggle):not(.gpc-app-drawer__close):not(.gpc-drawer-backdrop):focus-visible,
 .gpc-page-shell input.button--danger:hover,
 .gpc-page-shell input.button--danger:focus-visible {
   border-color: color-mix(in srgb, var(--gpc-color-danger) 84%, black);
@@ -750,6 +761,25 @@ h3 {
 
 .gpc-page-shell .region > * + * {
   margin-top: var(--gpc-space-4);
+}
+
+.gpc-page-shell .gpc-drawer-backdrop,
+.gpc-page-shell .gpc-app-header__toggle,
+.gpc-page-shell .gpc-app-drawer__close {
+  appearance: none;
+  font: inherit;
+  text-decoration: none;
+}
+
+.gpc-page-shell .gpc-drawer-backdrop {
+  display: none;
+  width: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .gpc-page-shell .dropbutton-wrapper {

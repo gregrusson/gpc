@@ -6,6 +6,7 @@
   var media = window.matchMedia('(prefers-color-scheme: dark)');
   var drawerModeQuery = window.matchMedia('(min-width: 64rem)');
   var drawerOpenTrigger = null;
+  var mobileDrawerOpen = false;
 
   function getStoredTheme() {
     try {
@@ -59,44 +60,58 @@
     applyTheme(nextTheme, 'manual');
   }
 
-  function setDrawerState(open) {
-    var mobileDrawer = !drawerModeQuery.matches;
-    root.dataset.drawerOpen = open ? 'true' : 'false';
+  function isDesktopDrawer() {
+    return drawerModeQuery.matches;
+  }
+
+  function applyDrawerState() {
+    var desktopDrawer = isDesktopDrawer();
+    var open = desktopDrawer || mobileDrawerOpen;
+
+    root.dataset.drawerMode = desktopDrawer ? 'desktop' : 'mobile';
+    root.dataset.drawerOpen = mobileDrawerOpen ? 'true' : 'false';
+
     if (document.body) {
-      document.body.classList.toggle('is-drawer-open', open && mobileDrawer);
+      document.body.classList.toggle('is-drawer-open', !desktopDrawer && mobileDrawerOpen);
     }
 
     document.querySelectorAll('[data-drawer]').forEach(function (drawer) {
       drawer.dataset.open = open ? 'true' : 'false';
+      drawer.dataset.mode = desktopDrawer ? 'desktop' : 'mobile';
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     document.querySelectorAll('[data-drawer-toggle]').forEach(function (button) {
-      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      button.setAttribute('aria-expanded', !desktopDrawer && mobileDrawerOpen ? 'true' : 'false');
     });
 
-    if (!open && drawerOpenTrigger) {
+    if (!desktopDrawer && !mobileDrawerOpen && drawerOpenTrigger) {
       drawerOpenTrigger.focus();
       drawerOpenTrigger = null;
     }
   }
 
   function syncDrawerMode() {
-    setDrawerState(drawerModeQuery.matches);
+    if (isDesktopDrawer()) {
+      mobileDrawerOpen = false;
+    }
+
+    applyDrawerState();
   }
 
   function toggleDrawer(event, trigger) {
     event.preventDefault();
+    if (isDesktopDrawer()) {
+      return;
+    }
+
     drawerOpenTrigger = trigger;
     var drawerId = trigger.getAttribute('data-drawer-target');
     var drawer = drawerId ? document.getElementById(drawerId) : null;
-    var isOpen = root.dataset.drawerOpen === 'true';
+    var isOpen = mobileDrawerOpen;
 
-    if (drawer) {
-      drawer.dataset.open = isOpen ? 'false' : 'true';
-    }
-
-    setDrawerState(!isOpen);
+    mobileDrawerOpen = !isOpen;
+    applyDrawerState();
     if (!isOpen && drawer) {
       var focusTarget = drawer.querySelector('[data-drawer-close], a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])');
       if (focusTarget) {
@@ -153,27 +168,31 @@
     var drawerClose = event.target.closest('[data-drawer-close]');
     if (drawerClose) {
       event.preventDefault();
-      setDrawerState(false);
+      mobileDrawerOpen = false;
+      applyDrawerState();
       return;
     }
 
-    if (!drawerModeQuery.matches && event.target.closest('[data-drawer][data-open="true"] a')) {
-      setDrawerState(false);
+    if (!isDesktopDrawer() && event.target.closest('[data-drawer][data-open="true"] a')) {
+      mobileDrawerOpen = false;
+      applyDrawerState();
       return;
     }
 
-    if (event.target.closest('[data-drawer-backdrop]')) {
-      setDrawerState(false);
+    if (!isDesktopDrawer() && event.target.closest('[data-drawer-backdrop]')) {
+      mobileDrawerOpen = false;
+      applyDrawerState();
     }
   });
 
   document.addEventListener('keydown', function (event) {
-    if (!drawerModeQuery.matches && event.key === 'Escape' && root.dataset.drawerOpen === 'true') {
-      setDrawerState(false);
+    if (!isDesktopDrawer() && event.key === 'Escape' && mobileDrawerOpen) {
+      mobileDrawerOpen = false;
+      applyDrawerState();
       return;
     }
 
-    if (!drawerModeQuery.matches && event.key === 'Tab' && root.dataset.drawerOpen === 'true') {
+    if (!isDesktopDrawer() && event.key === 'Tab' && mobileDrawerOpen) {
       var drawer = document.querySelector('[data-drawer][data-open="true"]');
       if (!drawer) {
         return;
