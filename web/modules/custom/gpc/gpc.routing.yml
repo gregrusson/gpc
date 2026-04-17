@@ -1,8 +1,15 @@
 gpc.dashboard:
-  path: '/gpc'
+  path: '/dashboard'
   defaults:
     _controller: '\Drupal\gpc\Controller\GpcDashboardController::build'
     _title: 'GPC'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.dashboard.legacy:
+  path: '/gpc'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::dashboard'
   requirements:
     _user_is_logged_in: 'TRUE'
 
@@ -93,3 +100,133 @@ gpc.reference_merge.result:
     _permission: 'administer gpc reference merges'
   options:
     _admin_route: TRUE
+
+gpc.firearm.collection.legacy:
+  path: '/gpc/firearms'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::firearmCollection'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.firearm.add.legacy:
+  path: '/gpc/firearms/add'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::firearmAdd'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.firearm.canonical.legacy:
+  path: '/gpc/firearms/{gpc_firearm}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::firearmCanonical'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_firearm: '\d+'
+
+gpc.firearm.edit.legacy:
+  path: '/gpc/firearms/{gpc_firearm}/edit'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::firearmEdit'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_firearm: '\d+'
+
+gpc.firearm.delete.legacy:
+  path: '/gpc/firearms/{gpc_firearm}/delete'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::firearmDelete'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_firearm: '\d+'
+
+gpc.recipe.collection.legacy:
+  path: '/gpc/recipes'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::recipeCollection'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.recipe.add.legacy:
+  path: '/gpc/recipes/add'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::recipeAdd'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.recipe.canonical.legacy:
+  path: '/gpc/recipes/{gpc_recipe}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::recipeCanonical'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_recipe: '\d+'
+
+gpc.recipe.edit.legacy:
+  path: '/gpc/recipes/{gpc_recipe}/edit'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::recipeEdit'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_recipe: '\d+'
+
+gpc.recipe.delete.legacy:
+  path: '/gpc/recipes/{gpc_recipe}/delete'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::recipeDelete'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_recipe: '\d+'
+
+gpc.batch.collection.legacy:
+  path: '/gpc/batches'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::batchCollection'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.batch.add.legacy:
+  path: '/gpc/batches/add'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::batchAdd'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+gpc.batch.canonical.legacy:
+  path: '/gpc/batches/{gpc_batch}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::batchCanonical'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_batch: '\d+'
+
+gpc.batch.edit.legacy:
+  path: '/gpc/batches/{gpc_batch}/edit'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::batchEdit'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_batch: '\d+'
+
+gpc.batch.delete.legacy:
+  path: '/gpc/batches/{gpc_batch}/delete'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::batchDelete'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_batch: '\d+'
+
+gpc.caliber.canonical.legacy:
+  path: '/gpc/calibers/{gpc_caliber}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::caliberCanonical'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_caliber: '\d+'
+
+gpc.component.canonical.legacy:
+  path: '/gpc/components/{gpc_component}'
+  defaults:
+    _controller: '\Drupal\gpc\Controller\GpcLegacyPathRedirectController::componentCanonical'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    gpc_component: '\d+'

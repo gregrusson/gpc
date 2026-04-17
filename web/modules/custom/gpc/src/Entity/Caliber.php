@@ -45,7 +45,7 @@ use Drupal\gpc\Form\CaliberForm;
     ],
   ],
   links: [
-    'canonical' => '/gpc/calibers/{gpc_caliber}',
+    'canonical' => '/calibers/{gpc_caliber}',
     'collection' => '/admin/gpc/calibers',
     'add-form' => '/admin/gpc/calibers/add',
     'edit-form' => '/admin/gpc/calibers/{gpc_caliber}/edit',

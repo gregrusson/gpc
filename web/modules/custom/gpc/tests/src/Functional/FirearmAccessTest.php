@@ -64,7 +64,7 @@ class FirearmAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc/firearms/add');
+    $this->drupalGet('/firearms/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -100,7 +100,7 @@ class FirearmAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc/firearms/add');
+    $this->drupalGet('/firearms/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('Add caliber');
     $this->assertSession()->responseContains('gpc_quick_add=1');
@@ -118,7 +118,7 @@ class FirearmAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc/firearms/add');
+    $this->drupalGet('/firearms/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -151,11 +151,11 @@ class FirearmAccessTest extends BrowserTestBase {
 
     $this->drupalLogin($owner);
 
-    $this->drupalGet('/gpc/firearms/' . $firearm->id());
+    $this->drupalGet('/firearms/' . $firearm->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Glock 19');
 
-    $this->drupalGet('/gpc/firearms/' . $firearm->id() . '/edit');
+    $this->drupalGet('/firearms/' . $firearm->id() . '/edit');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -203,13 +203,13 @@ class FirearmAccessTest extends BrowserTestBase {
 
     $this->drupalLogin($other_user);
 
-    $this->drupalGet('/gpc/firearms/' . $firearm->id());
+    $this->drupalGet('/firearms/' . $firearm->id());
     $this->assertSession()->statusCodeEquals(403);
 
-    $this->drupalGet('/gpc/firearms/' . $firearm->id() . '/edit');
+    $this->drupalGet('/firearms/' . $firearm->id() . '/edit');
     $this->assertSession()->statusCodeEquals(403);
 
-    $this->drupalGet('/gpc/firearms');
+    $this->drupalGet('/firearms');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('Smith & Wesson M&P 9');
   }

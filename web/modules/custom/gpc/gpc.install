@@ -582,3 +582,13 @@ function gpc_update_10024(): void {
     }
   }
 }
+
+/**
+ * Move the public front page to the dashboard path.
+ */
+function gpc_update_10025(): void {
+  \Drupal::configFactory()
+    ->getEditable('system.site')
+    ->set('page.front', '/dashboard')
+    ->save();
+}

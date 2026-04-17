@@ -1,9 +1,9 @@
 gpc.dashboard:
-  title: 'GPC'
+  title: 'Dashboard'
   description: 'Firearms, recipes, batches, and shared reference contributions.'
   route_name: gpc.dashboard
   menu_name: main
-  weight: 20
+  weight: 05
 
 gpc.admin:
   title: 'GPC'
@@ -16,22 +16,22 @@ gpc.recipe.collection:
   title: 'Recipes'
   description: 'Manage reloading recipe definitions.'
   route_name: entity.gpc_recipe.collection
-  parent: gpc.dashboard
-  weight: 10
+  menu_name: main
+  weight: 11
 
 gpc.batch.collection:
   title: 'Batches'
   description: 'Manage produced batch records.'
   route_name: entity.gpc_batch.collection
-  parent: gpc.dashboard
-  weight: 11
+  menu_name: main
+  weight: 12
 
 gpc.firearm.collection:
   title: 'Firearms'
   description: 'Manage firearm records.'
   route_name: entity.gpc_firearm.collection
-  parent: gpc.dashboard
-  weight: 12
+  menu_name: main
+  weight: 10
 
 gpc.caliber.collection:
   title: 'Calibers'

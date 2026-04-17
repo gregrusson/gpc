@@ -267,7 +267,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $user = $this->drupalCreateUser([]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc');
+    $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('Add Caliber');
     $this->assertSession()->linkExists('Add Component');
@@ -290,7 +290,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSame('pending', $caliber->get('review_status')->value);
     $this->assertSame((int) $user->id(), (int) $caliber->get('submitted_by')->target_id);
 
-    $this->drupalGet('/gpc/calibers/' . $caliber->id());
+    $this->drupalGet('/calibers/' . $caliber->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('6.5 Creedmoor');
 
@@ -318,7 +318,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSame('pending', $component->get('review_status')->value);
     $this->assertSame((int) $user->id(), (int) $component->get('submitted_by')->target_id);
 
-    $this->drupalGet('/gpc/components/' . $component->id());
+    $this->drupalGet('/components/' . $component->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('62gr OTM');
   }
@@ -443,7 +443,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc');
+    $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Use the links below to work with your firearms, recipes, batches, and shared reference records.');
     $this->assertSession()->linkExists('View Firearms');
@@ -570,7 +570,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'component_type' => 'brass',
     ]);
 
-    $this->drupalGet('/gpc/recipes/add');
+    $this->drupalGet('/recipes/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Recipe code');
     $this->assertSession()->fieldExists('Nickname');
@@ -617,7 +617,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc/recipes/add');
+    $this->drupalGet('/recipes/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('Add caliber');
     $this->assertSession()->linkExists('Add bullet');
@@ -691,11 +691,11 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalLogin($owner);
 
-    $this->drupalGet('/gpc/recipes/' . $recipe->id());
+    $this->drupalGet('/recipes/' . $recipe->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Practice Load');
 
-    $this->drupalGet('/gpc/recipes/' . $recipe->id() . '/edit');
+    $this->drupalGet('/recipes/' . $recipe->id() . '/edit');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldValueEquals('overall_length[unit]', LengthUnit::INCH);
 
@@ -769,13 +769,13 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalLogin($other_user);
 
-    $this->drupalGet('/gpc/recipes/' . $recipe->id());
+    $this->drupalGet('/recipes/' . $recipe->id());
     $this->assertSession()->statusCodeEquals(403);
 
-    $this->drupalGet('/gpc/recipes/' . $recipe->id() . '/edit');
+    $this->drupalGet('/recipes/' . $recipe->id() . '/edit');
     $this->assertSession()->statusCodeEquals(403);
 
-    $this->drupalGet('/gpc/recipes');
+    $this->drupalGet('/recipes');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('Owner Load');
   }
@@ -811,7 +811,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
       'component_type' => 'primer',
     ]);
 
-    $this->drupalGet('/gpc/recipes/add');
+    $this->drupalGet('/recipes/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -859,7 +859,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalLogin($owner);
 
-    $this->drupalGet('/gpc/firearms/add');
+    $this->drupalGet('/firearms/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Firearm name');
     $this->assertSession()->fieldExists('Manufacturer');
@@ -885,19 +885,19 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSame((int) $owner->id(), (int) $loaded->getOwnerId());
     $this->assertSame((int) $caliber->id(), (int) $loaded->get('caliber')->target_id);
 
-    $this->drupalGet('/gpc/firearms/' . $loaded->id());
+    $this->drupalGet('/firearms/' . $loaded->id());
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalGet('/gpc/firearms');
+    $this->drupalGet('/firearms');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Glock 19');
 
     $this->drupalLogin($other_user);
-    $this->drupalGet('/gpc/firearms/' . $loaded->id());
+    $this->drupalGet('/firearms/' . $loaded->id());
     $this->assertSession()->statusCodeEquals(403);
-    $this->drupalGet('/gpc/firearms/' . $loaded->id() . '/edit');
+    $this->drupalGet('/firearms/' . $loaded->id() . '/edit');
     $this->assertSession()->statusCodeEquals(403);
-    $this->drupalGet('/gpc/firearms');
+    $this->drupalGet('/firearms');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('Glock 19');
   }
@@ -951,7 +951,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
 
     $this->drupalLogin($user);
 
-    $this->drupalGet('/gpc/batches/add');
+    $this->drupalGet('/batches/add');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->fieldExists('Batch code');
     $this->assertSession()->fieldExists('Recipe');
@@ -1044,15 +1044,15 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
 
     $this->drupalLogin($owner);
-    $this->drupalGet('/gpc/batches/' . $batch->id());
+    $this->drupalGet('/batches/' . $batch->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Batch Alpha');
 
-    $this->drupalGet('/gpc/batches');
+    $this->drupalGet('/batches');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Training Load / Batch Alpha');
 
-    $this->drupalGet('/gpc/batches/' . $batch->id() . '/edit');
+    $this->drupalGet('/batches/' . $batch->id() . '/edit');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
@@ -1069,11 +1069,11 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     $this->assertSame(175, (int) $loaded->get('quantity_produced')->value);
 
     $this->drupalLogin($other_user);
-    $this->drupalGet('/gpc/batches/' . $batch->id());
+    $this->drupalGet('/batches/' . $batch->id());
     $this->assertSession()->statusCodeEquals(403);
-    $this->drupalGet('/gpc/batches/' . $batch->id() . '/edit');
+    $this->drupalGet('/batches/' . $batch->id() . '/edit');
     $this->assertSession()->statusCodeEquals(403);
-    $this->drupalGet('/gpc/batches');
+    $this->drupalGet('/batches');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('Batch Alpha v2');
   }
@@ -1133,7 +1133,7 @@ class GpcEntityAddFormsTest extends BrowserTestBase {
     ]);
 
     $this->drupalLogin($batch_user);
-    $this->drupalGet('/gpc/batches/add');
+    $this->drupalGet('/batches/add');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->submitForm([
