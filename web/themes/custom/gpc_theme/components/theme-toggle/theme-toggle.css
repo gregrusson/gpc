@@ -2,11 +2,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--gpc-space-2);
-  min-width: 2.75rem;
-  min-height: 2.75rem;
+  min-width: var(--gpc-button-min-height);
+  min-height: var(--gpc-button-min-height);
   justify-content: center;
-  padding: 0.7rem 0.8rem;
-  border-radius: 999px;
+  padding: var(--gpc-button-padding-y) var(--gpc-button-padding-x);
+  border-radius: var(--gpc-button-radius);
   border: 1px solid var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
   color: var(--gpc-color-text);

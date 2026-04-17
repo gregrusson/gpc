@@ -15,9 +15,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--gpc-space-2);
-  min-height: 2.75rem;
+  min-height: var(--gpc-button-min-height);
   padding: 0.45rem 0.65rem 0.45rem 0.45rem;
-  border-radius: 999px;
+  border-radius: var(--gpc-button-radius);
   border: 1px solid var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
   color: var(--gpc-color-text);
@@ -52,7 +52,7 @@
 
 .gpc-account-menu__label {
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -27,12 +27,13 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: var(--gpc-button-min-height);
+  height: var(--gpc-button-min-height);
   padding: 0;
-  border-radius: 999px;
+  border-radius: var(--gpc-button-radius);
   border-color: var(--gpc-color-border);
   background: var(--gpc-color-surface-elevated);
+  box-shadow: var(--gpc-shadow-sm);
 }
 
 .gpc-app-header__toggle-icon {

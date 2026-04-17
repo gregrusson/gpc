@@ -1,3 +1,4 @@
+/* Design tokens */
 :root {
   color-scheme: light;
   --gpc-color-background: #f4f6fa;
@@ -78,6 +79,7 @@
   }
 }
 
+/* Global document */
 html,
 body {
   min-height: 100%;
@@ -102,6 +104,7 @@ body.is-drawer-open {
   background: rgba(29, 92, 255, 0.18);
 }
 
+/* Base shell */
 .gpc-page-shell a {
   color: var(--gpc-color-primary);
   text-decoration-thickness: 0.08em;
@@ -217,6 +220,7 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Shell layout */
 .gpc-page-shell--gpc .gpc-main {
   padding-top: var(--gpc-space-4);
 }
@@ -227,117 +231,11 @@ h3 {
   padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-7);
 }
 
+/* Page header chrome */
 .gpc-page-meta {
   display: grid;
   gap: var(--gpc-space-4);
   margin-bottom: var(--gpc-space-5);
-}
-
-/* Hard reset for page-meta lists so breadcrumbs/actions never render as raw lists. */
-.gpc-page-meta__pre-content ul,
-.gpc-page-meta__pre-content ol {
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none !important;
-}
-
-.gpc-page-meta__pre-content li {
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none !important;
-}
-
-/* Breadcrumbs: handle both classed and unclassed markup. */
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] ol,
-.gpc-page-meta__pre-content .breadcrumb,
-.gpc-page-meta__pre-content .breadcrumb__list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem 0.45rem;
-  color: var(--gpc-color-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.35;
-}
-
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] li,
-.gpc-page-meta__pre-content .breadcrumb li,
-.gpc-page-meta__pre-content .breadcrumb__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-width: 0;
-}
-
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] li + li::before,
-.gpc-page-meta__pre-content .breadcrumb li + li::before,
-.gpc-page-meta__pre-content .breadcrumb__item + .breadcrumb__item::before {
-  content: "/";
-  color: var(--gpc-color-text-muted);
-  opacity: 0.7;
-}
-
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] a,
-.gpc-page-meta__pre-content .breadcrumb a,
-.gpc-page-meta__pre-content .breadcrumb__link {
-  color: var(--gpc-color-text-muted);
-  text-decoration: none;
-}
-
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] a:hover,
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] a:focus-visible,
-.gpc-page-meta__pre-content .breadcrumb a:hover,
-.gpc-page-meta__pre-content .breadcrumb a:focus-visible,
-.gpc-page-meta__pre-content .breadcrumb__link:hover,
-.gpc-page-meta__pre-content .breadcrumb__link:focus-visible {
-  color: var(--gpc-color-text);
-  text-decoration: none;
-}
-
-.gpc-page-meta__pre-content nav[aria-labelledby='system-breadcrumb'] [aria-current='page'],
-.gpc-page-meta__pre-content .breadcrumb [aria-current='page'] {
-  color: var(--gpc-color-text);
-  font-weight: 600;
-}
-
-/* Local actions: handle both classed and generic list markup in pre-content. */
-.gpc-page-meta__pre-content .action-links,
-.gpc-page-meta__pre-content .menu-local-actions,
-.gpc-page-meta__pre-content > ul {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--gpc-space-2);
-}
-
-.gpc-page-meta__pre-content .action-links a,
-.gpc-page-meta__pre-content .menu-local-actions a,
-.gpc-page-meta__pre-content > ul > li > a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.5rem;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid color-mix(in srgb, var(--gpc-color-primary) 22%, var(--gpc-color-border));
-  border-radius: var(--gpc-radius-md);
-  background: color-mix(in srgb, var(--gpc-color-primary) 8%, var(--gpc-color-surface));
-  color: var(--gpc-color-text);
-  text-decoration: none;
-  font-weight: 600;
-  line-height: 1.1;
-  white-space: nowrap;
-  box-shadow: none;
-}
-
-.gpc-page-meta__pre-content .action-links a:hover,
-.gpc-page-meta__pre-content .action-links a:focus-visible,
-.gpc-page-meta__pre-content .menu-local-actions a:hover,
-.gpc-page-meta__pre-content .menu-local-actions a:focus-visible,
-.gpc-page-meta__pre-content > ul > li > a:hover,
-.gpc-page-meta__pre-content > ul > li > a:focus-visible {
-  text-decoration: none;
-  background: color-mix(in srgb, var(--gpc-color-primary) 12%, var(--gpc-color-surface-elevated));
-  border-color: color-mix(in srgb, var(--gpc-color-primary) 30%, var(--gpc-color-border));
 }
 
 .gpc-page-meta__pre-content {
@@ -348,6 +246,13 @@ h3 {
 
 .gpc-page-meta__pre-content > * + * {
   margin-top: var(--gpc-space-4);
+}
+
+.gpc-page-meta__pre-content :is(.block-system-breadcrumb-block, .block-local-actions-block, .block-local-tasks-block) :is(ul, ol),
+.gpc-page-meta__pre-content :is(.block-system-breadcrumb-block, .block-local-actions-block, .block-local-tasks-block) li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .block-system-breadcrumb-block,
@@ -390,6 +295,7 @@ h3 {
   display: none;
 }
 
+/* Navigation menus */
 .gpc-menu,
 .gpc-menu .menu {
   margin: 0;
@@ -507,6 +413,7 @@ h3 {
   color: var(--gpc-color-text-muted);
 }
 
+/* Drupal page chrome */
 .gpc-page-shell .block-system-breadcrumb-block nav[aria-labelledby='system-breadcrumb'],
 .gpc-page-shell .block-system-breadcrumb-block .breadcrumb {
   min-width: 0;
@@ -675,6 +582,8 @@ h3 {
 .gpc-page-shell input[type='submit'],
 .gpc-page-shell input[type='button'],
 .gpc-page-shell input[type='reset'] {
+  appearance: none;
+  cursor: pointer;
   font: inherit;
   display: inline-flex;
   align-items: center;
@@ -688,6 +597,7 @@ h3 {
   box-shadow: var(--gpc-shadow-sm);
   font-weight: var(--gpc-button-font-weight);
   line-height: 1.1;
+  text-decoration: none;
   white-space: nowrap;
   transition:
     background-color var(--gpc-transition),
@@ -849,6 +759,7 @@ h3 {
   box-shadow: none;
 }
 
+/* Drupal dropbuttons */
 .gpc-page-shell .dropbutton-widget {
   display: inline-flex;
   align-items: stretch;
@@ -929,7 +840,7 @@ h3 {
   margin-inline-end: 0;
 }
 
-/* Form controls: only text-like inputs get full-width field treatment. */
+/* Form controls */
 .gpc-page-shell input:not([type]),
 .gpc-page-shell input[type='text'],
 .gpc-page-shell input[type='search'],
@@ -1325,6 +1236,7 @@ h3 {
   min-height: 2.625rem;
 }
 
+/* Motion and responsive adjustments */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
