@@ -1,4 +1,7 @@
+/* Component button variants sit on top of the shared theme button tokens. */
 .gpc-button {
+  appearance: none;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -9,8 +12,10 @@
   padding: var(--gpc-button-padding-y) var(--gpc-button-padding-x);
   text-decoration: none;
   box-shadow: var(--gpc-shadow-sm);
+  font: inherit;
   font-weight: var(--gpc-button-font-weight);
   line-height: 1.1;
+  white-space: nowrap;
   transition:
     background-color var(--gpc-transition),
     border-color var(--gpc-transition),
