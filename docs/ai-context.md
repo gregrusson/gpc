@@ -32,7 +32,7 @@ Current focus:
 - Drupal 11.
 - Custom module approach.
 - Logged-in user workflows for user-owned records, with shared reference contribution available from the same logged-in dashboard while list/edit/delete remain admin-governed.
-- A simple `/gpc` dashboard is the primary user-facing entry point for Firearms, Recipes, Batches, and shared-reference contribution links.
+- A simple dashboard is the primary user-facing entry point for Firearms, Recipes, Batches, and shared-reference contribution links.
 - Prefer custom content entities for core domain records.
 - Use Drupal core patterns before introducing custom frameworks or abstractions.
 - Keep business logic inside the module.

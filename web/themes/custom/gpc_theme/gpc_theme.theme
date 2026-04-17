@@ -11,15 +11,6 @@ use Drupal\Core\Template\Attribute;
  */
 
 /**
- * Adds the GPC page suggestion for app routes.
- */
-function gpc_theme_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
-  if (gpc_theme_is_gpc_path()) {
-    $suggestions[] = 'page__gpc';
-  }
-}
-
-/**
  * Prepares HTML template variables.
  */
 function gpc_theme_preprocess_html(array &$variables): void {
@@ -41,7 +32,6 @@ function gpc_theme_preprocess_page(array &$variables): void {
   $variables['gpc_drawer_id'] = 'gpc-drawer';
   $variables['gpc_drawer_menu'] = gpc_theme_build_menu_tree('main', ['gpc-menu', 'gpc-menu--drawer'], 'menu__gpc_drawer');
   $variables['gpc_account_menu'] = gpc_theme_build_account_menu();
-  $variables['is_gpc_route'] = gpc_theme_is_gpc_path();
   $variables['has_drawer'] = !empty($variables['gpc_drawer_menu']['#items']);
   $variables['has_account_menu'] = !empty($variables['gpc_account_menu']['menu']['#items']);
 
@@ -53,14 +43,6 @@ function gpc_theme_preprocess_page(array &$variables): void {
     $variables['page']['#cache']['contexts'] ?? [],
     ['user']
   );
-}
-
-/**
- * Determines whether the current request is inside the GPC app area.
- */
-function gpc_theme_is_gpc_path(): bool {
-  $request = \Drupal::requestStack()->getCurrentRequest();
-  return $request !== null && str_starts_with($request->getPathInfo(), '/gpc');
 }
 
 /**

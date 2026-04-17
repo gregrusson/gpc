@@ -4,7 +4,7 @@
  * Default page shell for the GPC theme.
  */
 #}
-<div class="gpc-page-shell{% if is_gpc_route %} gpc-page-shell--app{% endif %}">
+<div class="gpc-page-shell gpc-page-shell--app">
   {{ include('gpc_theme:app-header', {
     site_name: site_name,
     site_slogan: site_slogan,
@@ -46,12 +46,6 @@
         </section>
       {% else %}
         {{ title_suffix }}
-      {% endif %}
-
-      {% if page.pre_content %}
-        <div class="gpc-page-region gpc-page-region--pre-content">
-          {{ page.pre_content }}
-        </div>
       {% endif %}
 
       {% if page.highlighted %}

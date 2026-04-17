@@ -21,8 +21,8 @@ This document defines the access model for the current GPC direction.
 - Firearm uses a normal logged-in UI path and is not treated as admin-only content.
 - Recipe uses a normal logged-in UI path and is not treated as admin-only content.
 - Batch uses a normal logged-in UI path and is not treated as admin-only content.
-- `/gpc` is the user-facing landing page for Firearm, Recipe, and Batch navigation.
-- `/gpc` also surfaces shared-reference contribution links for Caliber and Component.
+- The dashboard is the user-facing landing page for Firearm, Recipe, and Batch navigation.
+- The dashboard also surfaces shared-reference contribution links for Caliber and Component.
 
 ## Practical Implications
 

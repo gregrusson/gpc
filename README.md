@@ -4,7 +4,7 @@ Gunners Project Companion is a Drupal 11 application for firearms and reloading 
 
 ## Project Purpose
 
-The goal is to model a small, durable domain for tracking calibers, firearms, reloading components, reloading recipes, and reloading batches. The first version stays small, but it should be usable by logged-in users through the `/gpc` dashboard rather than only through `/admin`. Caliber and Component are shared reference records that logged-in users can contribute, while admins and managers govern correctness and duplicates. Sharing and analytics are later, limited additions.
+The goal is to model a small, durable domain for tracking calibers, firearms, reloading components, reloading recipes, and reloading batches. The first version stays small, but it should be usable by logged-in users through the main dashboard rather than only through `/admin`. Caliber and Component are shared reference records that logged-in users can contribute, while admins and managers govern correctness and duplicates. Sharing and analytics are later, limited additions.
 
 ## Current Scope
 

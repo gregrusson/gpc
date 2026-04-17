@@ -221,7 +221,7 @@ h3 {
 }
 
 /* Shell layout */
-.gpc-page-shell--gpc .gpc-main {
+.gpc-page-shell--app .gpc-main {
   padding-top: var(--gpc-space-4);
 }
 
@@ -1327,8 +1327,7 @@ h3 {
     z-index: 30;
   }
 
-  .gpc-page-shell--app .gpc-main,
-  .gpc-page-shell--gpc .gpc-main {
+  .gpc-page-shell--app .gpc-main {
     width: 100%;
   }
 

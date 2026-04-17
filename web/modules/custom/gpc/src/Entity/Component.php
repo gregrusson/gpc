@@ -45,7 +45,7 @@ use Drupal\gpc\Routing\ComponentHtmlRouteProvider;
     ],
   ],
   links: [
-    'canonical' => '/gpc/components/{gpc_component}',
+    'canonical' => '/components/{gpc_component}',
     'collection' => '/admin/gpc/components',
     'add-page' => '/admin/gpc/components/add',
     'add-form' => '/admin/gpc/components/add/{component_type}',
