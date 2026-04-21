@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -31,8 +34,9 @@ function gpc_theme_preprocess_page(array &$variables): void {
   $variables['site_slogan'] = (string) $site_config->get('slogan');
   $variables['gpc_drawer_id'] = 'gpc-drawer';
   $variables['gpc_drawer_menu'] = gpc_theme_build_menu_tree('main', ['gpc-menu', 'gpc-menu--drawer'], 'menu__gpc_drawer');
+  $variables['gpc_admin_utility'] = gpc_theme_build_admin_utility();
   $variables['gpc_account_menu'] = gpc_theme_build_account_menu();
-  $variables['has_drawer'] = !empty($variables['gpc_drawer_menu']['#items']);
+  $variables['has_drawer'] = !empty($variables['gpc_drawer_menu']['#items']) || !empty($variables['gpc_admin_utility']);
   $variables['has_account_menu'] = !empty($variables['gpc_account_menu']['menu']['#items']);
 
   $variables['page']['#cache']['tags'] = Cache::mergeTags(
@@ -41,7 +45,7 @@ function gpc_theme_preprocess_page(array &$variables): void {
   );
   $variables['page']['#cache']['contexts'] = Cache::mergeContexts(
     $variables['page']['#cache']['contexts'] ?? [],
-    ['user']
+    ['user', 'user.permissions']
   );
 }
 
@@ -82,4 +86,28 @@ function gpc_theme_build_account_menu(): array {
     'trigger_label' => t('Account menu'),
     'menu' => gpc_theme_build_menu_tree('account', ['gpc-menu', 'gpc-menu--account']),
   ];
+}
+
+/**
+ * Builds the bottom-of-sidebar GPC admin utility link.
+ */
+function gpc_theme_build_admin_utility(): array {
+  $account = \Drupal::currentUser();
+  $access_result = \Drupal::service('access_manager')->checkNamedRoute('gpc.admin', [], $account, TRUE);
+  if (!$access_result->isAllowed()) {
+    return [];
+  }
+
+  $build = [
+    '#theme' => 'item_list',
+    '#attributes' => [
+      'class' => ['gpc-app-drawer__utility-list'],
+    ],
+    '#items' => [
+      Link::fromTextAndUrl(t('GPC Admin'), Url::fromRoute('gpc.admin'))->toRenderable(),
+    ],
+  ];
+
+  CacheableMetadata::createFromObject($access_result)->applyTo($build);
+  return $build;
 }

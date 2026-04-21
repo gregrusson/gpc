@@ -33,38 +33,40 @@ final class GpcDrawerNavigationTest extends BrowserTestBase {
   protected $defaultTheme = 'gpc_theme';
 
   /**
-   * Tests that a user with GPC tool access sees nested drawer items.
+   * Tests that a user with GPC tool access sees the bottom admin utility.
    */
-  public function testDrawerRendersNestedGpcChildren(): void {
+  public function testDrawerRendersGpcAdminUtilityForAuthorizedUsers(): void {
     $user = $this->drupalCreateUser([
       'view gpc calibers',
-      'review gpc calibers',
       'view gpc components',
-      'review gpc components',
     ]);
     $this->drupalLogin($user);
 
     $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementExists('css', '#gpc-drawer');
-    $this->assertSession()->elementExists('css', '#gpc-drawer a[href="/admin/gpc"]');
-    $this->assertSession()->elementExists('css', '#gpc-drawer li.menu-item--expanded');
-    $this->assertSession()->elementExists('css', '#gpc-drawer ul.gpc-menu--subtree a[href="/admin/gpc/calibers"]');
-    $this->assertSession()->elementExists('css', '#gpc-drawer ul.gpc-menu--subtree a[href="/admin/gpc/components"]');
-    $this->assertSession()->elementExists('css', '#gpc-drawer ul.gpc-menu--subtree a[href="/admin/gpc/calibers/review"]');
-    $this->assertSession()->elementExists('css', '#gpc-drawer ul.gpc-menu--subtree a[href="/admin/gpc/components/review"]');
-    $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/reference-merge"]');
+    $this->assertSession()->elementExists('css', '#gpc-drawer .gpc-app-drawer__main');
+    $this->assertSession()->elementExists('css', '#gpc-drawer .gpc-app-drawer__utility');
+    $this->assertSession()->elementExists('xpath', '//aside[@id="gpc-drawer"]//div[contains(@class,"gpc-app-drawer__main")]/following-sibling::div[contains(@class,"gpc-app-drawer__utility")]');
+    $this->assertSession()->elementExists('css', '#gpc-drawer .gpc-app-drawer__utility a[href="/admin/gpc"]');
+    $this->assertSession()->linkExists('GPC Admin');
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/calibers"]');
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/components"]');
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/calibers/review"]');
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/components/review"]');
   }
 
   /**
-   * Tests that unauthorized users do not see GPC child links in the drawer.
+   * Tests that unauthorized users do not see the admin utility link.
    */
-  public function testDrawerHidesGpcChildrenWithoutPermission(): void {
+  public function testDrawerHidesGpcAdminUtilityWithoutPermission(): void {
     $user = $this->drupalCreateUser([]);
     $this->drupalLogin($user);
 
     $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer .gpc-app-drawer__utility');
+    $this->assertSession()->elementNotExists('css', '#gpc-drawer .gpc-app-drawer__main + .gpc-app-drawer__utility');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc"]');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/calibers"]');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc/components"]');

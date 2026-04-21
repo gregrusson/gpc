@@ -67,8 +67,8 @@ ddev drush config:set system.theme admin gin -y
 - The drawer uses the Drupal `main` menu tree.
 - The account menu uses the Drupal `account` menu tree.
 - Both menus are rendered by preprocess/theme code and passed into SDC components.
-- The GPC parent menu link is marked `expanded` in `gpc.links.menu.yml` so Drupal includes its child links in the rendered tree.
-- The drawer menu template renders the nested tree recursively, so any second-level child links under `GPC` appear automatically when the parent is expanded and the current user has route access.
+- The drawer also receives a separate `GPC Admin` utility link, which is rendered in a footer area at the bottom of the sidebar when the current user can access `/admin/gpc`.
+- The drawer uses a flex column layout with the main nav region scrolling and the utility footer staying pinned to the bottom.
 
 Menu links are defined in `web/modules/custom/gpc/gpc.links.menu.yml`, so they can be managed through Drupal config and rendered consistently in the theme.
 
@@ -82,8 +82,8 @@ Menu links are defined in `web/modules/custom/gpc/gpc.links.menu.yml`, so they c
 
 - Manage the drawer menu under `Structure > Menus > Main navigation`.
 - Manage the account actions under `Structure > Menus > Account`.
-- If you add or remove GPC navigation items, update the menu link definitions in the GPC module so the theme continues to render the correct menu tree.
-- If you want different labels or hierarchy in the drawer, edit the `main` menu structure in Drupal rather than changing Twig templates.
+- If you add or remove app navigation items, update the menu link definitions in the GPC module so the theme continues to render the correct menu tree.
+- If you need a new authenticated utility action, add it as a separate drawer utility rather than as a nested main-menu item.
 
 ## What to customize next
 
