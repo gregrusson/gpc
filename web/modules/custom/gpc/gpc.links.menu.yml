@@ -12,6 +12,54 @@ gpc.admin:
   parent: system.admin
   weight: 30
 
+gpc.main:
+  title: 'GPC Admin'
+  description: 'Shared reference management and governance tools.'
+  route_name: gpc.admin
+  menu_name: main
+  expanded: true
+  weight: 20
+
+gpc.main.caliber.collection:
+  title: 'Calibers'
+  description: 'Manage shared caliber reference records.'
+  route_name: entity.gpc_caliber.collection
+  menu_name: main
+  parent: gpc.main
+  weight: 10
+
+gpc.main.component.collection:
+  title: 'Components'
+  description: 'Manage shared component reference records.'
+  route_name: entity.gpc_component.collection
+  menu_name: main
+  parent: gpc.main
+  weight: 11
+
+gpc.main.caliber.review_queue:
+  title: 'Caliber Review'
+  description: 'Review new and questionable caliber submissions.'
+  route_name: gpc.caliber_review_queue
+  menu_name: main
+  parent: gpc.main
+  weight: 12
+
+gpc.main.component.review_queue:
+  title: 'Component Review'
+  description: 'Review new and questionable component submissions.'
+  route_name: gpc.component_review_queue
+  menu_name: main
+  parent: gpc.main
+  weight: 13
+
+gpc.main.reference_merge:
+  title: 'Reference merge'
+  description: 'Preview and execute manual Caliber and Component merge candidates.'
+  route_name: gpc.reference_merge.landing
+  menu_name: main
+  parent: gpc.main
+  weight: 14
+
 gpc.recipe.collection:
   title: 'Recipes'
   description: 'Manage reloading recipe definitions.'

@@ -19,7 +19,7 @@ gpc.admin:
     _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
     _title: 'GPC'
   requirements:
-    _permission: 'access administration pages'
+    _gpc_admin_overview_access: 'TRUE'
   options:
     _admin_route: TRUE
 
