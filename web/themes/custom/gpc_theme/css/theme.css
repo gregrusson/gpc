@@ -621,7 +621,7 @@ h3 {
   align-items: center;
   justify-content: center;
   padding: var(--gpc-button-padding-y) var(--gpc-button-padding-x);
-  margin-block-end: var(--gpc-space-4);
+  /*margin-block-end: var(--gpc-space-4);*/
   border: 1px solid transparent;
   border-radius: var(--gpc-button-radius);
   background: var(--gpc-color-surface-elevated);
