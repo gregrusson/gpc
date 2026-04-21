@@ -36,7 +36,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  scrollbar-gutter: stable;
 }
 
 .gpc-app-drawer__header {

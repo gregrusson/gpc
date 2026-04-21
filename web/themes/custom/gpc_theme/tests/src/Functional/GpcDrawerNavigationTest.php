@@ -44,6 +44,8 @@ final class GpcDrawerNavigationTest extends BrowserTestBase {
 
     $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->elementExists('css', '.gpc-main');
+    $this->assertSession()->elementExists('css', '.gpc-main > #main-content.gpc-main__content');
     $this->assertSession()->elementExists('css', '#gpc-drawer');
     $this->assertSession()->elementExists('css', '#gpc-drawer .gpc-app-drawer__main');
     $this->assertSession()->elementExists('css', '#gpc-drawer .gpc-app-drawer__utility');
@@ -65,6 +67,7 @@ final class GpcDrawerNavigationTest extends BrowserTestBase {
 
     $this->drupalGet('/dashboard');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->elementExists('css', '.gpc-main > #main-content.gpc-main__content');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer .gpc-app-drawer__utility');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer .gpc-app-drawer__main + .gpc-app-drawer__utility');
     $this->assertSession()->elementNotExists('css', '#gpc-drawer a[href="/admin/gpc"]');
