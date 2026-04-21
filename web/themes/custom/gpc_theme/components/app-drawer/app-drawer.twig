@@ -21,7 +21,15 @@
     </div>
 
     <div class="gpc-app-drawer__content">
-      {{ content }}
+      <div class="gpc-app-drawer__main">
+        {{ content }}
+      </div>
+
+      {% if utility %}
+        <div class="gpc-app-drawer__utility">
+          {{ utility }}
+        </div>
+      {% endif %}
     </div>
   </div>
 </aside>

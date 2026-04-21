@@ -21,6 +21,7 @@
   {{ include('gpc_theme:app-drawer', {
     drawer_id: gpc_drawer_id,
     content: gpc_drawer_menu,
+    utility: gpc_admin_utility,
   }, with_context = false) }}
       <button class="gpc-drawer-backdrop" type="button" data-drawer-backdrop aria-hidden="true" aria-label="{{ 'Close navigation'|t }}"></button>
     {% endif %}
