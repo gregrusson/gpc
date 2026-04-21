@@ -69,6 +69,7 @@ ddev drush config:set system.theme admin gin -y
 - Both menus are rendered by preprocess/theme code and passed into SDC components.
 - The drawer also receives a separate `GPC Admin` utility link, which is rendered in a footer area at the bottom of the sidebar when the current user can access `/admin/gpc`.
 - The drawer uses a flex column layout with the main nav region scrolling and the utility footer staying pinned to the bottom.
+- The app shell keeps the browser window fixed and moves vertical scrolling into `#main-content`, so the sidebar stays full height while page content scrolls independently.
 
 Menu links are defined in `web/modules/custom/gpc/gpc.links.menu.yml`, so they can be managed through Drupal config and rendered consistently in the theme.
 
