@@ -23,4 +23,10 @@ props:
         - 'null'
       title: Content
       description: Rendered drawer content.
-
+    utility:
+      type:
+        - array
+        - object
+        - 'null'
+      title: Utility
+      description: Optional bottom-of-sidebar utility content.
