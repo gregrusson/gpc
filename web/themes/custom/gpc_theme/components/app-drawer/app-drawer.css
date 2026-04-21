@@ -136,7 +136,7 @@
 
 @media (min-width: 64rem) {
   .gpc-app-drawer {
-    position: sticky;
+    position: relative;
     inset: auto;
     transform: none;
     visibility: visible;
@@ -144,12 +144,13 @@
     width: var(--gpc-drawer-width);
     max-width: none;
     pointer-events: auto;
-    align-self: start;
+    height: 100%;
+    align-self: stretch;
   }
 
   .gpc-app-drawer__panel {
     margin: var(--gpc-space-4);
-    min-height: calc(100vh - var(--gpc-header-height) - var(--gpc-space-4));
+    height: calc(100% - (var(--gpc-space-4) * 2));
   }
 
   .gpc-app-drawer__close {
