@@ -67,6 +67,8 @@ ddev drush config:set system.theme admin gin -y
 - The drawer uses the Drupal `main` menu tree.
 - The account menu uses the Drupal `account` menu tree.
 - Both menus are rendered by preprocess/theme code and passed into SDC components.
+- The GPC parent menu link is marked `expanded` in `gpc.links.menu.yml` so Drupal includes its child links in the rendered tree.
+- The drawer menu template renders the nested tree recursively, so any second-level child links under `GPC` appear automatically when the parent is expanded and the current user has route access.
 
 Menu links are defined in `web/modules/custom/gpc/gpc.links.menu.yml`, so they can be managed through Drupal config and rendered consistently in the theme.
 

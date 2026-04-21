@@ -33,6 +33,13 @@ parameters:
       description: Duplicate or canonical component record.
 
 services:
+  gpc.access.admin_overview:
+    class: Drupal\gpc\Access\GpcAdminOverviewAccessCheck
+    arguments:
+      - '@access_manager'
+    tags:
+      - { name: access_check, applies_to: _gpc_admin_overview_access }
+
   gpc.reference_discovery_registry:
     class: Drupal\gpc\ReferenceDiscovery\ReferenceDiscoveryRegistry
     arguments:
