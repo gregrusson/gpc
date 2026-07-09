@@ -178,7 +178,8 @@ h3 {
 .gpc-site-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -205,6 +206,7 @@ h3 {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
   background:
     radial-gradient(circle at top, rgba(29, 92, 255, 0.06), transparent 30%),
     var(--gpc-color-background);
@@ -226,35 +228,31 @@ h3 {
 .gpc-page-shell--app .gpc-page-shell__body {
   display: grid;
   flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
 }
 
 /* Shell layout */
 .gpc-page-shell--app .gpc-main {
-  padding-top: var(--gpc-space-4);
+  padding-top: 0;
 }
 
 .gpc-main {
-  display: flex;
-  flex-direction: column;
+  /* Keep the sidebar fixed to the shell while page content scrolls here. */
+  flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
   height: 100%;
   width: min(100%, var(--gpc-body-max-width));
   margin-inline: auto;
-}
-
-.gpc-main__content {
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  height: 100%;
-  padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-7);
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+  padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-7);
 }
 
 /* Page header chrome */
@@ -1317,7 +1315,7 @@ h3 {
 }
 
 @media (min-width: 48rem) {
-  .gpc-main__content {
+  .gpc-main {
     padding: var(--gpc-space-5) var(--gpc-space-5) var(--gpc-space-7);
   }
 }
@@ -1338,7 +1336,7 @@ h3 {
     height: calc(100% - (var(--gpc-space-4) * 2));
   }
 
-  .gpc-main__content {
+  .gpc-main {
     padding-left: 0;
   }
 
@@ -1416,7 +1414,7 @@ h3 {
     border-radius: 0 0 var(--gpc-radius-lg) 0;
   }
 
-  .gpc-main__content {
+  .gpc-main {
     padding: var(--gpc-space-4) var(--gpc-space-4) var(--gpc-space-6);
   }
 
@@ -1427,7 +1425,7 @@ h3 {
 }
 
 @media (max-width: 37.5rem) {
-  .gpc-main__content {
+  .gpc-main {
     padding-inline: var(--gpc-space-3);
   }
 
